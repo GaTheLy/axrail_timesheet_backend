@@ -1,0 +1,270 @@
+{
+ "Resources": {
+  "TimesheetUserPoolD2697F8F": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": true
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": true,
+      "RequireUppercase": true,
+      "TemporaryPasswordValidityDays": 7
+     }
+    },
+    "Schema": [
+     {
+      "Mutable": true,
+      "Name": "email",
+      "Required": true
+     },
+     {
+      "Mutable": true,
+      "Name": "name",
+      "Required": true
+     },
+     {
+      "AttributeDataType": "String",
+      "Mutable": true,
+      "Name": "userType",
+      "StringAttributeConstraints": {
+       "MaxLength": "20",
+       "MinLength": "1"
+      }
+     },
+     {
+      "AttributeDataType": "String",
+      "Mutable": true,
+      "Name": "role",
+      "StringAttributeConstraints": {
+       "MaxLength": "30",
+       "MinLength": "1"
+      }
+     },
+     {
+      "AttributeDataType": "String",
+      "Mutable": true,
+      "Name": "departmentId",
+      "StringAttributeConstraints": {
+       "MaxLength": "36",
+       "MinLength": "0"
+      }
+     },
+     {
+      "AttributeDataType": "String",
+      "Mutable": true,
+      "Name": "positionId",
+      "StringAttributeConstraints": {
+       "MaxLength": "36",
+       "MinLength": "0"
+      }
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "TimesheetUserPool-dev",
+    "UserPoolTags": {
+     "Component": "Timesheet-Auth",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "UsernameAttributes": [
+     "email"
+    ],
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/TimesheetUserPool/Resource"
+   }
+  },
+  "TimesheetUserPoolTimesheetUserPoolClient14F8627C": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AccessTokenValidity": 60,
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "TimesheetWebClient-dev",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "IdTokenValidity": 60,
+    "PreventUserExistenceErrors": "ENABLED",
+    "RefreshTokenValidity": 43200,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "TokenValidityUnits": {
+     "AccessToken": "minutes",
+     "IdToken": "minutes",
+     "RefreshToken": "minutes"
+    },
+    "UserPoolId": {
+     "Ref": "TimesheetUserPoolD2697F8F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/TimesheetUserPool/TimesheetUserPoolClient/Resource"
+   }
+  },
+  "CognitoGroupsuperadmin": {
+   "Type": "AWS::Cognito::UserPoolGroup",
+   "Properties": {
+    "Description": "superadmin group for timesheet system",
+    "GroupName": "superadmin",
+    "UserPoolId": {
+     "Ref": "TimesheetUserPoolD2697F8F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/CognitoGroup-superadmin"
+   }
+  },
+  "CognitoGroupadmin": {
+   "Type": "AWS::Cognito::UserPoolGroup",
+   "Properties": {
+    "Description": "admin group for timesheet system",
+    "GroupName": "admin",
+    "UserPoolId": {
+     "Ref": "TimesheetUserPoolD2697F8F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/CognitoGroup-admin"
+   }
+  },
+  "CognitoGroupuser": {
+   "Type": "AWS::Cognito::UserPoolGroup",
+   "Properties": {
+    "Description": "user group for timesheet system",
+    "GroupName": "user",
+    "UserPoolId": {
+     "Ref": "TimesheetUserPoolD2697F8F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/CognitoGroup-user"
+   }
+  },
+  "SSMuserpoolid15CE20FC": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/auth/user-pool-id",
+    "Tags": {
+     "Component": "Timesheet-Auth",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "TimesheetUserPoolD2697F8F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/SSM-user-pool-id/Resource"
+   }
+  },
+  "SSMuserpoolarn354FC618": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/auth/user-pool-arn",
+    "Tags": {
+     "Component": "Timesheet-Auth",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetUserPoolD2697F8F",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/SSM-user-pool-arn/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/2WNywrCMBBFv6X7ZGxr/6ALt0FxLTHGOjaPMplSJOTfpYhFcHXPfcBtoe1qqCu9JGluo3R4hXxibUahl3TJJg4BOUI+J0sqRif6e9j4C71DG/i3+k8OFOepiJT8ekAYBqVJe8uW1tlmSilCvfgRw24PTQNNVz0ToqQ5MHoLx4++AZ5pD+u5AAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetAuthStack-dev/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

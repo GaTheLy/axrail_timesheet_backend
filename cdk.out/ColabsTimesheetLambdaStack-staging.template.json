@@ -1,0 +1,5912 @@
+{
+ "Parameters": {
+  "SsmParameterValuetimesheetstagingdynamodbsubmissionsstreamarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/timesheet/staging/dynamodb/submissions/stream-arn"
+  },
+  "SsmParameterValuetimesheetstagingauthuserpoolidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/timesheet/staging/auth/user-pool-id"
+  },
+  "SsmParameterValuetimesheetstagingauthuserpoolarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/timesheet/staging/auth/user-pool-arn"
+  },
+  "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/timesheet/staging/api/graphql-api-id"
+  },
+  "SsmParameterValuetimesheetstagingapigraphqlapiarnC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/timesheet/staging/api/graphql-api-arn"
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Resources": {
+  "ImportedGraphqlApiUserManagementDataSourceServiceRole925BBD94": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/UserManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiUserManagementDataSourceServiceRoleDefaultPolicyE7D77CE7": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "UserManagementLambda267779AC",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "UserManagementLambda267779AC",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiUserManagementDataSourceServiceRoleDefaultPolicyE7D77CE7",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiUserManagementDataSourceServiceRole925BBD94"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/UserManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiUserManagementDataSourceDB0DDAE1": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "UserManagementLambda267779AC",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "UserManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiUserManagementDataSourceServiceRole925BBD94",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/UserManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationcreateUserResolver03CFF245": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "UserManagementDataSource",
+    "FieldName": "createUser",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiUserManagementDataSourceDB0DDAE1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_createUser_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdateUserResolver2870CF86": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "UserManagementDataSource",
+    "FieldName": "updateUser",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiUserManagementDataSourceDB0DDAE1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updateUser_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationdeleteUserResolverC9D193CF": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "UserManagementDataSource",
+    "FieldName": "deleteUser",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiUserManagementDataSourceDB0DDAE1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_deleteUser_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerygetUserResolver319E0B90": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "UserManagementDataSource",
+    "FieldName": "getUser",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiUserManagementDataSourceDB0DDAE1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_getUser_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistUsersResolverDDE6B485": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "UserManagementDataSource",
+    "FieldName": "listUsers",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiUserManagementDataSourceDB0DDAE1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listUsers_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiDepartmentManagementDataSourceServiceRoleEA960BEE": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/DepartmentManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiDepartmentManagementDataSourceServiceRoleDefaultPolicyB0F321AE": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DepartmentManagementLambdaBE970B4D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DepartmentManagementLambdaBE970B4D",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiDepartmentManagementDataSourceServiceRoleDefaultPolicyB0F321AE",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiDepartmentManagementDataSourceServiceRoleEA960BEE"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/DepartmentManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiDepartmentManagementDataSourceBD772264": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "DepartmentManagementLambdaBE970B4D",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "DepartmentManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiDepartmentManagementDataSourceServiceRoleEA960BEE",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/DepartmentManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationcreateDepartmentResolverBCFAB436": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "DepartmentManagementDataSource",
+    "FieldName": "createDepartment",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiDepartmentManagementDataSourceBD772264"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_createDepartment_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdateDepartmentResolverCCC4A4D7": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "DepartmentManagementDataSource",
+    "FieldName": "updateDepartment",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiDepartmentManagementDataSourceBD772264"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updateDepartment_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationdeleteDepartmentResolver4BF539A4": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "DepartmentManagementDataSource",
+    "FieldName": "deleteDepartment",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiDepartmentManagementDataSourceBD772264"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_deleteDepartment_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistDepartmentsResolver5DF01B37": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "DepartmentManagementDataSource",
+    "FieldName": "listDepartments",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiDepartmentManagementDataSourceBD772264"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listDepartments_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiPositionManagementDataSourceServiceRoleC31771B2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/PositionManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiPositionManagementDataSourceServiceRoleDefaultPolicyF7540462": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PositionManagementLambdaD8B63671",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PositionManagementLambdaD8B63671",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiPositionManagementDataSourceServiceRoleDefaultPolicyF7540462",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiPositionManagementDataSourceServiceRoleC31771B2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/PositionManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiPositionManagementDataSourceBA4AB84F": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "PositionManagementLambdaD8B63671",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "PositionManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiPositionManagementDataSourceServiceRoleC31771B2",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/PositionManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationcreatePositionResolver2F32E02D": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PositionManagementDataSource",
+    "FieldName": "createPosition",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPositionManagementDataSourceBA4AB84F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_createPosition_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdatePositionResolver3B6F3C4F": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PositionManagementDataSource",
+    "FieldName": "updatePosition",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPositionManagementDataSourceBA4AB84F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updatePosition_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationdeletePositionResolver6285ABF8": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PositionManagementDataSource",
+    "FieldName": "deletePosition",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPositionManagementDataSourceBA4AB84F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_deletePosition_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistPositionsResolver9F3ABD67": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PositionManagementDataSource",
+    "FieldName": "listPositions",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPositionManagementDataSourceBA4AB84F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listPositions_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiProjectManagementDataSourceServiceRole03EE67C7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ProjectManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiProjectManagementDataSourceServiceRoleDefaultPolicy732D80D8": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ProjectManagementLambda87D16BEB",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ProjectManagementLambda87D16BEB",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiProjectManagementDataSourceServiceRoleDefaultPolicy732D80D8",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiProjectManagementDataSourceServiceRole03EE67C7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ProjectManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiProjectManagementDataSource555B0B01": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "ProjectManagementLambda87D16BEB",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "ProjectManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiProjectManagementDataSourceServiceRole03EE67C7",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ProjectManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationcreateProjectResolverF4CA527A": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ProjectManagementDataSource",
+    "FieldName": "createProject",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiProjectManagementDataSource555B0B01"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_createProject_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationapproveProjectResolver65C49C2F": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ProjectManagementDataSource",
+    "FieldName": "approveProject",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiProjectManagementDataSource555B0B01"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_approveProject_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationrejectProjectResolver6238697D": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ProjectManagementDataSource",
+    "FieldName": "rejectProject",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiProjectManagementDataSource555B0B01"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_rejectProject_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdateProjectResolver3BF20D67": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ProjectManagementDataSource",
+    "FieldName": "updateProject",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiProjectManagementDataSource555B0B01"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updateProject_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistProjectsResolver65BCCE61": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ProjectManagementDataSource",
+    "FieldName": "listProjects",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiProjectManagementDataSource555B0B01"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listProjects_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiPeriodManagementDataSourceServiceRole17265177": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/PeriodManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiPeriodManagementDataSourceServiceRoleDefaultPolicyBAD3D111": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PeriodManagementLambdaD1DD9536",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PeriodManagementLambdaD1DD9536",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiPeriodManagementDataSourceServiceRoleDefaultPolicyBAD3D111",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiPeriodManagementDataSourceServiceRole17265177"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/PeriodManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiPeriodManagementDataSource05B17E5F": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "PeriodManagementLambdaD1DD9536",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "PeriodManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiPeriodManagementDataSourceServiceRole17265177",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/PeriodManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationcreateTimesheetPeriodResolver290ED93A": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PeriodManagementDataSource",
+    "FieldName": "createTimesheetPeriod",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPeriodManagementDataSource05B17E5F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_createTimesheetPeriod_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdateTimesheetPeriodResolverB87FE5F0": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PeriodManagementDataSource",
+    "FieldName": "updateTimesheetPeriod",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPeriodManagementDataSource05B17E5F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updateTimesheetPeriod_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistTimesheetPeriodsResolverD3362231": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PeriodManagementDataSource",
+    "FieldName": "listTimesheetPeriods",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPeriodManagementDataSource05B17E5F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listTimesheetPeriods_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerygetCurrentPeriodResolverE345951D": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "PeriodManagementDataSource",
+    "FieldName": "getCurrentPeriod",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiPeriodManagementDataSource05B17E5F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_getCurrentPeriod_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiSubmissionManagementDataSourceServiceRole50A84034": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/SubmissionManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiSubmissionManagementDataSourceServiceRoleDefaultPolicy8F87E0D8": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SubmissionManagementLambdaC661FF36",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "SubmissionManagementLambdaC661FF36",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiSubmissionManagementDataSourceServiceRoleDefaultPolicy8F87E0D8",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiSubmissionManagementDataSourceServiceRole50A84034"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/SubmissionManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiSubmissionManagementDataSource1EC280C6": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "SubmissionManagementLambdaC661FF36",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "SubmissionManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiSubmissionManagementDataSourceServiceRole50A84034",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/SubmissionManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationcreateTimesheetSubmissionResolverFA3C213A": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "SubmissionManagementDataSource",
+    "FieldName": "createTimesheetSubmission",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiSubmissionManagementDataSource1EC280C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_createTimesheetSubmission_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationsubmitTimesheetResolverFD8D3DB1": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "SubmissionManagementDataSource",
+    "FieldName": "submitTimesheet",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiSubmissionManagementDataSource1EC280C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_submitTimesheet_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerygetTimesheetSubmissionResolver50428152": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "SubmissionManagementDataSource",
+    "FieldName": "getTimesheetSubmission",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiSubmissionManagementDataSource1EC280C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_getTimesheetSubmission_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistMySubmissionsResolverC00DD3C3": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "SubmissionManagementDataSource",
+    "FieldName": "listMySubmissions",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiSubmissionManagementDataSource1EC280C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listMySubmissions_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiEntryManagementDataSourceServiceRole86228940": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/EntryManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiEntryManagementDataSourceServiceRoleDefaultPolicyD01F974C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "EntryManagementLambda5DEB22B5",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "EntryManagementLambda5DEB22B5",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiEntryManagementDataSourceServiceRoleDefaultPolicyD01F974C",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiEntryManagementDataSourceServiceRole86228940"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/EntryManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiEntryManagementDataSource63DA4261": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "EntryManagementLambda5DEB22B5",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "EntryManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiEntryManagementDataSourceServiceRole86228940",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/EntryManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationaddTimesheetEntryResolverA98EC14C": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "EntryManagementDataSource",
+    "FieldName": "addTimesheetEntry",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiEntryManagementDataSource63DA4261"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_addTimesheetEntry_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdateTimesheetEntryResolverCA817879": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "EntryManagementDataSource",
+    "FieldName": "updateTimesheetEntry",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiEntryManagementDataSource63DA4261"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updateTimesheetEntry_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationremoveTimesheetEntryResolverD8C3A5A5": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "EntryManagementDataSource",
+    "FieldName": "removeTimesheetEntry",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiEntryManagementDataSource63DA4261"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_removeTimesheetEntry_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiReviewManagementDataSourceServiceRole08953D4D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ReviewManagementDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiReviewManagementDataSourceServiceRoleDefaultPolicy0D170DEE": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ReviewManagementLambda3EA903C3",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ReviewManagementLambda3EA903C3",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiReviewManagementDataSourceServiceRoleDefaultPolicy0D170DEE",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiReviewManagementDataSourceServiceRole08953D4D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ReviewManagementDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiReviewManagementDataSourceD59F24C6": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "ReviewManagementLambda3EA903C3",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "ReviewManagementDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiReviewManagementDataSourceServiceRole08953D4D",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ReviewManagementDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationapproveTimesheetResolver57794BE7": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ReviewManagementDataSource",
+    "FieldName": "approveTimesheet",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiReviewManagementDataSourceD59F24C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_approveTimesheet_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationrejectTimesheetResolverE11D173A": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ReviewManagementDataSource",
+    "FieldName": "rejectTimesheet",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiReviewManagementDataSourceD59F24C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_rejectTimesheet_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistPendingTimesheetsResolver4EB90E60": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ReviewManagementDataSource",
+    "FieldName": "listPendingTimesheets",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiReviewManagementDataSourceD59F24C6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listPendingTimesheets_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiReportGeneratorDataSourceServiceRole03AB48BA": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ReportGeneratorDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiReportGeneratorDataSourceServiceRoleDefaultPolicy6D17F34C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ReportGeneratorLambda8F7516F3",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ReportGeneratorLambda8F7516F3",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiReportGeneratorDataSourceServiceRoleDefaultPolicy6D17F34C",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiReportGeneratorDataSourceServiceRole03AB48BA"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ReportGeneratorDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiReportGeneratorDataSourceF53294C5": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "ReportGeneratorLambda8F7516F3",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "ReportGeneratorDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiReportGeneratorDataSourceServiceRole03AB48BA",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ReportGeneratorDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerygetTCSummaryReportResolverA6086D75": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ReportGeneratorDataSource",
+    "FieldName": "getTCSummaryReport",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiReportGeneratorDataSourceF53294C5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_getTCSummaryReport_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerygetProjectSummaryReportResolverFFA76084": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "ReportGeneratorDataSource",
+    "FieldName": "getProjectSummaryReport",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiReportGeneratorDataSourceF53294C5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_getProjectSummaryReport_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiNotificationConfigDataSourceServiceRole9BF9F88B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/NotificationConfigDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiNotificationConfigDataSourceServiceRoleDefaultPolicy89CF7FF1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "NotificationConfigLambdaC17AB1C3",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "NotificationConfigLambdaC17AB1C3",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiNotificationConfigDataSourceServiceRoleDefaultPolicy89CF7FF1",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiNotificationConfigDataSourceServiceRole9BF9F88B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/NotificationConfigDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiNotificationConfigDataSource1F74013D": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "NotificationConfigLambdaC17AB1C3",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "NotificationConfigDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiNotificationConfigDataSourceServiceRole9BF9F88B",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/NotificationConfigDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdateReportDistributionConfigResolver24D96602": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "NotificationConfigDataSource",
+    "FieldName": "updateReportDistributionConfig",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiNotificationConfigDataSource1F74013D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updateReportDistributionConfig_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerygetReportDistributionConfigResolver60F67F7B": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "NotificationConfigDataSource",
+    "FieldName": "getReportDistributionConfig",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiNotificationConfigDataSource1F74013D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_getReportDistributionConfig_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMainDatabaseDataSourceServiceRole72505E3C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/MainDatabaseDataSource/ServiceRole/Resource"
+   }
+  },
+  "ImportedGraphqlApiMainDatabaseDataSourceServiceRoleDefaultPolicy6AB0AA0A": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "MainDatabaseLambdaBF01A957",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "MainDatabaseLambdaBF01A957",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ImportedGraphqlApiMainDatabaseDataSourceServiceRoleDefaultPolicy6AB0AA0A",
+    "Roles": [
+     {
+      "Ref": "ImportedGraphqlApiMainDatabaseDataSourceServiceRole72505E3C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/MainDatabaseDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ImportedGraphqlApiMainDatabaseDataSource0ACDBF4F": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "MainDatabaseLambdaBF01A957",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "MainDatabaseDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "ImportedGraphqlApiMainDatabaseDataSourceServiceRole72505E3C",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/MainDatabaseDataSource/Resource"
+   }
+  },
+  "ImportedGraphqlApiQuerylistMainDatabaseResolverF81CEE34": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "MainDatabaseDataSource",
+    "FieldName": "listMainDatabase",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiMainDatabaseDataSource0ACDBF4F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listMainDatabase_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationupdateMainDatabaseRecordResolverBD94D8EF": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "MainDatabaseDataSource",
+    "FieldName": "updateMainDatabaseRecord",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiMainDatabaseDataSource0ACDBF4F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_updateMainDatabaseRecord_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationbulkImportCSVResolver12A67166": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "MainDatabaseDataSource",
+    "FieldName": "bulkImportCSV",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiMainDatabaseDataSource0ACDBF4F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_bulkImportCSV_Resolver/Resource"
+   }
+  },
+  "ImportedGraphqlApiMutationrefreshDatabaseResolverE6B513F5": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "SsmParameterValuetimesheetstagingapigraphqlapiidC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "DataSourceName": "MainDatabaseDataSource",
+    "FieldName": "refreshDatabase",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "ImportedGraphqlApiMainDatabaseDataSource0ACDBF4F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_refreshDatabase_Resolver/Resource"
+   }
+  },
+  "UserManagementLambdaServiceRole6CF43196": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/UserManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "UserManagementLambdaServiceRoleDefaultPolicyCC8C3CE0": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "cognito-idp:AdminCreateUser",
+        "cognito-idp:AdminDeleteUser",
+        "cognito-idp:AdminAddUserToGroup",
+        "cognito-idp:AdminUpdateUserAttributes"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "SsmParameterValuetimesheetstagingauthuserpoolarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "UserManagementLambdaServiceRoleDefaultPolicyCC8C3CE0",
+    "Roles": [
+     {
+      "Ref": "UserManagementLambdaServiceRole6CF43196"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/UserManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "UserManagementLambda267779AC": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE": "Timesheet_Users-staging",
+      "USER_POOL_ID": {
+       "Ref": "SsmParameterValuetimesheetstagingauthuserpoolidC96584B6F00A464EAD1953AFF4B05118Parameter"
+      }
+     }
+    },
+    "FunctionName": "TimesheetUserManagement-staging",
+    "Handler": "users.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "UserManagementLambdaServiceRole6CF43196",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "UserManagementLambdaServiceRoleDefaultPolicyCC8C3CE0",
+    "UserManagementLambdaServiceRole6CF43196"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/UserManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DepartmentManagementLambdaServiceRole0927FE26": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DepartmentManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "DepartmentManagementLambdaServiceRoleDefaultPolicyFE107C06": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Departments-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Departments-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DepartmentManagementLambdaServiceRoleDefaultPolicyFE107C06",
+    "Roles": [
+     {
+      "Ref": "DepartmentManagementLambdaServiceRole0927FE26"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DepartmentManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "DepartmentManagementLambdaBE970B4D": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "DEPARTMENTS_TABLE": "Timesheet_Departments-staging",
+      "USERS_TABLE": "Timesheet_Users-staging"
+     }
+    },
+    "FunctionName": "TimesheetDepartmentManagement-staging",
+    "Handler": "departments.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "DepartmentManagementLambdaServiceRole0927FE26",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "DepartmentManagementLambdaServiceRoleDefaultPolicyFE107C06",
+    "DepartmentManagementLambdaServiceRole0927FE26"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DepartmentManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "PositionManagementLambdaServiceRoleAC2A449D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PositionManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "PositionManagementLambdaServiceRoleDefaultPolicy3F9599D4": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Positions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Positions-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PositionManagementLambdaServiceRoleDefaultPolicy3F9599D4",
+    "Roles": [
+     {
+      "Ref": "PositionManagementLambdaServiceRoleAC2A449D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PositionManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "PositionManagementLambdaD8B63671": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "POSITIONS_TABLE": "Timesheet_Positions-staging"
+     }
+    },
+    "FunctionName": "TimesheetPositionManagement-staging",
+    "Handler": "positions.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "PositionManagementLambdaServiceRoleAC2A449D",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "PositionManagementLambdaServiceRoleDefaultPolicy3F9599D4",
+    "PositionManagementLambdaServiceRoleAC2A449D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PositionManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ProjectManagementLambdaServiceRole1115397F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ProjectManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "ProjectManagementLambdaServiceRoleDefaultPolicyAAA8A69E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ProjectManagementLambdaServiceRoleDefaultPolicyAAA8A69E",
+    "Roles": [
+     {
+      "Ref": "ProjectManagementLambdaServiceRole1115397F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ProjectManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ProjectManagementLambda87D16BEB": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "PROJECTS_TABLE": "Timesheet_Projects-staging"
+     }
+    },
+    "FunctionName": "TimesheetProjectManagement-staging",
+    "Handler": "projects.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ProjectManagementLambdaServiceRole1115397F",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "ProjectManagementLambdaServiceRoleDefaultPolicyAAA8A69E",
+    "ProjectManagementLambdaServiceRole1115397F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ProjectManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "PeriodManagementLambdaServiceRoleA48561F0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PeriodManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "PeriodManagementLambdaServiceRoleDefaultPolicyD5947F0B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PeriodManagementLambdaServiceRoleDefaultPolicyD5947F0B",
+    "Roles": [
+     {
+      "Ref": "PeriodManagementLambdaServiceRoleA48561F0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PeriodManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "PeriodManagementLambdaD1DD9536": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "PERIODS_TABLE": "Timesheet_Periods-staging"
+     }
+    },
+    "FunctionName": "TimesheetPeriodManagement-staging",
+    "Handler": "periods.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "PeriodManagementLambdaServiceRoleA48561F0",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "PeriodManagementLambdaServiceRoleDefaultPolicyD5947F0B",
+    "PeriodManagementLambdaServiceRoleA48561F0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PeriodManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SubmissionManagementLambdaServiceRole7CE285F7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/SubmissionManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "SubmissionManagementLambdaServiceRoleDefaultPolicy8AA9851C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SubmissionManagementLambdaServiceRoleDefaultPolicy8AA9851C",
+    "Roles": [
+     {
+      "Ref": "SubmissionManagementLambdaServiceRole7CE285F7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/SubmissionManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "SubmissionManagementLambdaC661FF36": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SUBMISSIONS_TABLE": "Timesheet_Submissions-staging",
+      "ENTRIES_TABLE": "Timesheet_Entries-staging"
+     }
+    },
+    "FunctionName": "TimesheetSubmissionManagement-staging",
+    "Handler": "submissions.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "SubmissionManagementLambdaServiceRole7CE285F7",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "SubmissionManagementLambdaServiceRoleDefaultPolicy8AA9851C",
+    "SubmissionManagementLambdaServiceRole7CE285F7"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/SubmissionManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "EntryManagementLambdaServiceRole2A92DDE6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/EntryManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "EntryManagementLambdaServiceRoleDefaultPolicy6CA7A299": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EntryManagementLambdaServiceRoleDefaultPolicy6CA7A299",
+    "Roles": [
+     {
+      "Ref": "EntryManagementLambdaServiceRole2A92DDE6"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/EntryManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "EntryManagementLambda5DEB22B5": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "ENTRIES_TABLE": "Timesheet_Entries-staging",
+      "SUBMISSIONS_TABLE": "Timesheet_Submissions-staging",
+      "PROJECTS_TABLE": "Timesheet_Projects-staging"
+     }
+    },
+    "FunctionName": "TimesheetEntryManagement-staging",
+    "Handler": "entries.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "EntryManagementLambdaServiceRole2A92DDE6",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "EntryManagementLambdaServiceRoleDefaultPolicy6CA7A299",
+    "EntryManagementLambdaServiceRole2A92DDE6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/EntryManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ReviewManagementLambdaServiceRole6B963836": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ReviewManagementLambda/ServiceRole/Resource"
+   }
+  },
+  "ReviewManagementLambdaServiceRoleDefaultPolicyF58559FA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ReviewManagementLambdaServiceRoleDefaultPolicyF58559FA",
+    "Roles": [
+     {
+      "Ref": "ReviewManagementLambdaServiceRole6B963836"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ReviewManagementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ReviewManagementLambda3EA903C3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SUBMISSIONS_TABLE": "Timesheet_Submissions-staging",
+      "USERS_TABLE": "Timesheet_Users-staging"
+     }
+    },
+    "FunctionName": "TimesheetReviewManagement-staging",
+    "Handler": "reviews.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ReviewManagementLambdaServiceRole6B963836",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "ReviewManagementLambdaServiceRoleDefaultPolicyF58559FA",
+    "ReviewManagementLambdaServiceRole6B963836"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ReviewManagementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DeadlineEnforcementLambdaServiceRoleD62EB21C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DeadlineEnforcementLambda/ServiceRole/Resource"
+   }
+  },
+  "DeadlineEnforcementLambdaServiceRoleDefaultPolicy47F3B726": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "DeadlineEnforcementLambdaServiceRoleDefaultPolicy47F3B726",
+    "Roles": [
+     {
+      "Ref": "DeadlineEnforcementLambdaServiceRoleD62EB21C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DeadlineEnforcementLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "DeadlineEnforcementLambda949B4E84": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "PERIODS_TABLE": "Timesheet_Periods-staging",
+      "SUBMISSIONS_TABLE": "Timesheet_Submissions-staging",
+      "USERS_TABLE": "Timesheet_Users-staging"
+     }
+    },
+    "FunctionName": "TimesheetDeadlineEnforcement-staging",
+    "Handler": "deadline_enforcement.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "DeadlineEnforcementLambdaServiceRoleD62EB21C",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "DeadlineEnforcementLambdaServiceRoleDefaultPolicy47F3B726",
+    "DeadlineEnforcementLambdaServiceRoleD62EB21C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DeadlineEnforcementLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DeadlineEnforcementRuleDE9C48F7": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Triggers deadline enforcement Lambda to lock expired timesheet periods",
+    "Name": "TimesheetDeadlineEnforcement-staging",
+    "ScheduleExpression": "rate(1 hour)",
+    "State": "ENABLED",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "DeadlineEnforcementLambda949B4E84",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DeadlineEnforcementRule/Resource"
+   }
+  },
+  "DeadlineEnforcementRuleAllowEventRuleColabsTimesheetLambdaStackstagingDeadlineEnforcementLambda6C596E7D14EE41D8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DeadlineEnforcementLambda949B4E84",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "DeadlineEnforcementRuleDE9C48F7",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/DeadlineEnforcementRule/AllowEventRuleColabsTimesheetLambdaStackstagingDeadlineEnforcementLambda6C596E7D"
+   }
+  },
+  "ReportGeneratorLambdaServiceRole569F0BC5": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ReportGeneratorLambda/ServiceRole/Resource"
+   }
+  },
+  "ReportGeneratorLambdaServiceRoleDefaultPolicy9865405B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_EmployeePerformance-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_EmployeePerformance-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::colabs-timesheet-reports-staging"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::colabs-timesheet-reports-staging/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "dynamodb:ListStreams",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "dynamodb:DescribeStream",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "SsmParameterValuetimesheetstagingdynamodbsubmissionsstreamarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ReportGeneratorLambdaServiceRoleDefaultPolicy9865405B",
+    "Roles": [
+     {
+      "Ref": "ReportGeneratorLambdaServiceRole569F0BC5"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ReportGeneratorLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ReportGeneratorLambda8F7516F3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SUBMISSIONS_TABLE": "Timesheet_Submissions-staging",
+      "ENTRIES_TABLE": "Timesheet_Entries-staging",
+      "USERS_TABLE": "Timesheet_Users-staging",
+      "PROJECTS_TABLE": "Timesheet_Projects-staging",
+      "EMPLOYEE_PERFORMANCE_TABLE": "Timesheet_EmployeePerformance-staging",
+      "PERIODS_TABLE": "Timesheet_Periods-staging",
+      "REPORT_BUCKET": "colabs-timesheet-reports-staging"
+     }
+    },
+    "FunctionName": "TimesheetReportGenerator-staging",
+    "Handler": "reports.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ReportGeneratorLambdaServiceRole569F0BC5",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "ReportGeneratorLambdaServiceRoleDefaultPolicy9865405B",
+    "ReportGeneratorLambdaServiceRole569F0BC5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ReportGeneratorLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ReportGeneratorLambdaDynamoDBEventSourceColabsTimesheetLambdaStackstagingImportedsubmissionsstreamAD237E2F55675A76": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 10,
+    "EventSourceArn": {
+     "Ref": "SsmParameterValuetimesheetstagingdynamodbsubmissionsstreamarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "FunctionName": {
+     "Ref": "ReportGeneratorLambda8F7516F3"
+    },
+    "MaximumRetryAttempts": 3,
+    "StartingPosition": "TRIM_HORIZON",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ReportGeneratorLambda/DynamoDBEventSource:ColabsTimesheetLambdaStackstagingImportedsubmissionsstreamAD237E2F/Resource"
+   }
+  },
+  "PerformanceTrackingLambdaServiceRoleF969E518": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PerformanceTrackingLambda/ServiceRole/Resource"
+   }
+  },
+  "PerformanceTrackingLambdaServiceRoleDefaultPolicy779C2E9E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_EmployeePerformance-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_EmployeePerformance-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "dynamodb:ListStreams",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "dynamodb:DescribeStream",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "SsmParameterValuetimesheetstagingdynamodbsubmissionsstreamarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "PerformanceTrackingLambdaServiceRoleDefaultPolicy779C2E9E",
+    "Roles": [
+     {
+      "Ref": "PerformanceTrackingLambdaServiceRoleF969E518"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PerformanceTrackingLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "PerformanceTrackingLambda8A79B16B": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "EMPLOYEE_PERFORMANCE_TABLE": "Timesheet_EmployeePerformance-staging"
+     }
+    },
+    "FunctionName": "TimesheetPerformanceTracking-staging",
+    "Handler": "performance.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "PerformanceTrackingLambdaServiceRoleF969E518",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "PerformanceTrackingLambdaServiceRoleDefaultPolicy779C2E9E",
+    "PerformanceTrackingLambdaServiceRoleF969E518"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PerformanceTrackingLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "PerformanceTrackingLambdaDynamoDBEventSourceColabsTimesheetLambdaStackstagingImportedsubmissionsstreamAD237E2F94F9795A": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 10,
+    "EventSourceArn": {
+     "Ref": "SsmParameterValuetimesheetstagingdynamodbsubmissionsstreamarnC96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "FunctionName": {
+     "Ref": "PerformanceTrackingLambda8A79B16B"
+    },
+    "MaximumRetryAttempts": 3,
+    "StartingPosition": "TRIM_HORIZON",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/PerformanceTrackingLambda/DynamoDBEventSource:ColabsTimesheetLambdaStackstagingImportedsubmissionsstreamAD237E2F/Resource"
+   }
+  },
+  "NotificationLambdaServiceRoleA65BA193": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationLambda/ServiceRole/Resource"
+   }
+  },
+  "NotificationLambdaServiceRoleDefaultPolicy56F80AE2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Entries-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Users-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Projects-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_EmployeePerformance-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_EmployeePerformance-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_ReportDistributionConfig-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_ReportDistributionConfig-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::colabs-timesheet-reports-staging"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::colabs-timesheet-reports-staging/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "NotificationLambdaServiceRoleDefaultPolicy56F80AE2",
+    "Roles": [
+     {
+      "Ref": "NotificationLambdaServiceRoleA65BA193"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "NotificationLambda0BF28E71": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SUBMISSIONS_TABLE": "Timesheet_Submissions-staging",
+      "ENTRIES_TABLE": "Timesheet_Entries-staging",
+      "USERS_TABLE": "Timesheet_Users-staging",
+      "PROJECTS_TABLE": "Timesheet_Projects-staging",
+      "EMPLOYEE_PERFORMANCE_TABLE": "Timesheet_EmployeePerformance-staging",
+      "PERIODS_TABLE": "Timesheet_Periods-staging",
+      "REPORT_DISTRIBUTION_CONFIG_TABLE": "Timesheet_ReportDistributionConfig-staging",
+      "REPORT_BUCKET": "colabs-timesheet-reports-staging",
+      "SES_FROM_EMAIL": "noreply@example.com"
+     }
+    },
+    "FunctionName": "TimesheetNotification-staging",
+    "Handler": "notifications.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "NotificationLambdaServiceRoleA65BA193",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "NotificationLambdaServiceRoleDefaultPolicy56F80AE2",
+    "NotificationLambdaServiceRoleA65BA193"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "NotificationScheduleRuleF9214ED2": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Triggers notification Lambda to generate and email timesheet reports",
+    "Name": "TimesheetNotification-staging",
+    "ScheduleExpression": "cron(0 8 ? * MON *)",
+    "State": "ENABLED",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "NotificationLambda0BF28E71",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationScheduleRule/Resource"
+   }
+  },
+  "NotificationScheduleRuleAllowEventRuleColabsTimesheetLambdaStackstagingNotificationLambda2090B8E7F24B4616": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "NotificationLambda0BF28E71",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "NotificationScheduleRuleF9214ED2",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationScheduleRule/AllowEventRuleColabsTimesheetLambdaStackstagingNotificationLambda2090B8E7"
+   }
+  },
+  "NotificationConfigLambdaServiceRole4632C33F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationConfigLambda/ServiceRole/Resource"
+   }
+  },
+  "NotificationConfigLambdaServiceRoleDefaultPolicy4590CDC7": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_ReportDistributionConfig-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_ReportDistributionConfig-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "NotificationConfigLambdaServiceRoleDefaultPolicy4590CDC7",
+    "Roles": [
+     {
+      "Ref": "NotificationConfigLambdaServiceRole4632C33F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationConfigLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "NotificationConfigLambdaC17AB1C3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "REPORT_DISTRIBUTION_CONFIG_TABLE": "Timesheet_ReportDistributionConfig-staging"
+     }
+    },
+    "FunctionName": "TimesheetNotificationConfig-staging",
+    "Handler": "notification_config.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "NotificationConfigLambdaServiceRole4632C33F",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "NotificationConfigLambdaServiceRoleDefaultPolicy4590CDC7",
+    "NotificationConfigLambdaServiceRole4632C33F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/NotificationConfigLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ArchivalLambdaServiceRoleD87802FC": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ArchivalLambda/ServiceRole/Resource"
+   }
+  },
+  "ArchivalLambdaServiceRoleDefaultPolicy30D24557": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Submissions-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_Periods-staging"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ArchivalLambdaServiceRoleDefaultPolicy30D24557",
+    "Roles": [
+     {
+      "Ref": "ArchivalLambdaServiceRoleD87802FC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ArchivalLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ArchivalLambdaB3B3F0D3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SUBMISSIONS_TABLE": "Timesheet_Submissions-staging",
+      "PERIODS_TABLE": "Timesheet_Periods-staging"
+     }
+    },
+    "FunctionName": "TimesheetArchival-staging",
+    "Handler": "archival.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "ArchivalLambdaServiceRoleD87802FC",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "ArchivalLambdaServiceRoleDefaultPolicy30D24557",
+    "ArchivalLambdaServiceRoleD87802FC"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ArchivalLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ArchivalScheduleRule5454A382": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Triggers archival Lambda to archive submissions for ended biweekly periods",
+    "Name": "TimesheetArchival-staging",
+    "ScheduleExpression": "rate(1 day)",
+    "State": "ENABLED",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "ArchivalLambdaB3B3F0D3",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ArchivalScheduleRule/Resource"
+   }
+  },
+  "ArchivalScheduleRuleAllowEventRuleColabsTimesheetLambdaStackstagingArchivalLambdaC8942C55ACA8C320": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ArchivalLambdaB3B3F0D3",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "ArchivalScheduleRule5454A382",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/ArchivalScheduleRule/AllowEventRuleColabsTimesheetLambdaStackstagingArchivalLambdaC8942C55"
+   }
+  },
+  "MainDatabaseLambdaServiceRole2C96E665": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/MainDatabaseLambda/ServiceRole/Resource"
+   }
+  },
+  "MainDatabaseLambdaServiceRoleDefaultPolicy294FC810": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_MainDatabase-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":dynamodb:ap-southeast-1:",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":table/Timesheet_MainDatabase-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::colabs-timesheet-reports-staging"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::colabs-timesheet-reports-staging/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "MainDatabaseLambdaServiceRoleDefaultPolicy294FC810",
+    "Roles": [
+     {
+      "Ref": "MainDatabaseLambdaServiceRole2C96E665"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/MainDatabaseLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "MainDatabaseLambdaBF01A957": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "MAIN_DATABASE_TABLE": "Timesheet_MainDatabase-staging",
+      "REPORT_BUCKET": "colabs-timesheet-reports-staging"
+     }
+    },
+    "FunctionName": "TimesheetMainDatabase-staging",
+    "Handler": "main_database.handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "MainDatabaseLambdaServiceRole2C96E665",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Lambda"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "MainDatabaseLambdaServiceRoleDefaultPolicy294FC810",
+    "MainDatabaseLambdaServiceRole2C96E665"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/MainDatabaseLambda/Resource",
+    "aws:asset:path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/2VPy26DMBD8ltzNNoT8QNLXpZUQ9B4tZpu4GNv1mkTI4t8rm1aK1NM8dnbs3cFuv4XtBm9cyH4otOogtgHlIPDGp9jPBkfbd/CBnaYjMgmu4DjJgUJW6BzPRkJ89egu3/rgVPbfcOx6fMKArZ28JPH4ae5UQ2z1lXyy//giFI4QG6tzOmNttZJzkitbhM7FEF8mI4OyJs3ueU1+VMxJPV/JhPXBd3ROmXMK/HcXwdUJmSkwHBIIShmG2Ey/f5k0LUuuR48jBfL5hHxLXmkDnnNVPYeLNQ8VlCWU+80XK1X4yQQ1EjQr/gAkE448dQEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetLambdaStack-staging/CDKMetadata/Default"
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,376 @@
+# Employee Timesheet Management System - GraphQL Schema
+
+# ---------------------------------------------------------------
+# Enums
+# ---------------------------------------------------------------
+
+enum UserType {
+  superadmin
+  admin
+  user
+}
+
+enum Role {
+  Project_Manager
+  Tech_Lead
+  Employee
+}
+
+enum SubmissionStatus {
+  Draft
+  Submitted
+  Approved
+  Rejected
+  Locked
+}
+
+enum ApprovalStatus {
+  Pending_Approval
+  Approved
+  Rejected
+}
+
+# ---------------------------------------------------------------
+# Types
+# ---------------------------------------------------------------
+
+type User {
+  userId: ID!
+  email: String!
+  fullName: String!
+  userType: UserType!
+  role: Role!
+  positionId: ID!
+  departmentId: ID!
+  supervisorId: ID
+  createdAt: AWSDateTime!
+  createdBy: ID
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+type Department {
+  departmentId: ID!
+  departmentName: String!
+  createdAt: AWSDateTime!
+  createdBy: ID
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+type Position {
+  positionId: ID!
+  positionName: String!
+  description: String
+  createdAt: AWSDateTime!
+  createdBy: ID
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+type Project {
+  projectId: ID!
+  projectCode: String!
+  projectName: String!
+  startDate: AWSDate!
+  plannedHours: Float!
+  projectManagerId: ID!
+  status: String!
+  approval_status: ApprovalStatus!
+  rejectionReason: String
+  createdAt: AWSDateTime!
+  createdBy: ID
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+type TimesheetPeriod {
+  periodId: ID!
+  startDate: AWSDate!
+  endDate: AWSDate!
+  submissionDeadline: AWSDateTime!
+  periodString: String!
+  biweeklyPeriodId: String
+  isLocked: Boolean!
+  createdAt: AWSDateTime!
+  createdBy: ID
+}
+
+type TimesheetSubmission {
+  submissionId: ID!
+  periodId: ID!
+  employeeId: ID!
+  status: SubmissionStatus!
+  archived: Boolean!
+  entries: [TimesheetEntry!]!
+  totalHours: Float!
+  chargeableHours: Float!
+  approvedBy: ID
+  approvedAt: AWSDateTime
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+type TimesheetEntry {
+  entryId: ID!
+  submissionId: ID!
+  projectCode: String!
+  saturday: Float!
+  sunday: Float!
+  monday: Float!
+  tuesday: Float!
+  wednesday: Float!
+  thursday: Float!
+  friday: Float!
+  totalHours: Float!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+type EmployeePerformance {
+  userId: ID!
+  year: Int!
+  ytdChargable_hours: Float!
+  ytdTotalHours: Float!
+  ytdChargabilityPercentage: Float!
+  updatedAt: AWSDateTime
+}
+
+type MainDatabaseRecord {
+  recordId: ID!
+  type: String!
+  chargeCode: String!
+  projectName: String!
+  budgetEffort: Float!
+  projectStatus: String!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+type ReportDownloadUrl {
+  url: String!
+  expiresAt: AWSDateTime!
+}
+
+type BulkImportResult {
+  totalRows: Int!
+  successCount: Int!
+  failureCount: Int!
+  errors: [ImportError!]!
+}
+
+type ImportError {
+  row: Int!
+  message: String!
+}
+
+type RefreshResult {
+  recordsImported: Int!
+  previousRecordsRemoved: Int!
+  timestamp: AWSDateTime!
+}
+
+type ReportDistributionConfig {
+  configId: ID!
+  schedule_cron_expression: String!
+  recipient_emails: [String!]!
+  enabled: Boolean!
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+type UserConnection {
+  items: [User!]!
+  nextToken: String
+}
+
+type ProjectConnection {
+  items: [Project!]!
+  nextToken: String
+}
+
+# ---------------------------------------------------------------
+# Input Types
+# ---------------------------------------------------------------
+
+input CreateUserInput {
+  email: String!
+  fullName: String!
+  userType: UserType!
+  role: Role!
+  positionId: ID!
+  departmentId: ID!
+  supervisorId: ID
+}
+
+input UpdateUserInput {
+  email: String
+  fullName: String
+  userType: UserType
+  role: Role
+  positionId: ID
+  departmentId: ID
+  supervisorId: ID
+}
+
+input UserFilterInput {
+  userType: UserType
+  role: Role
+  departmentId: ID
+  supervisorId: ID
+  nextToken: String
+  limit: Int
+}
+
+input CreateDepartmentInput {
+  departmentName: String!
+}
+
+input UpdateDepartmentInput {
+  departmentName: String!
+}
+
+input CreatePositionInput {
+  positionName: String!
+  description: String
+}
+
+input UpdatePositionInput {
+  positionName: String
+  description: String
+}
+
+input CreateProjectInput {
+  projectCode: String!
+  projectName: String!
+  startDate: AWSDate!
+  plannedHours: Float!
+  projectManagerId: ID!
+}
+
+input UpdateProjectInput {
+  projectName: String
+  startDate: AWSDate
+  plannedHours: Float
+  projectManagerId: ID
+  status: String
+}
+
+input ProjectFilterInput {
+  approval_status: ApprovalStatus
+  projectManagerId: ID
+  status: String
+  nextToken: String
+  limit: Int
+}
+
+input CreateTimesheetPeriodInput {
+  startDate: AWSDate!
+  endDate: AWSDate!
+  submissionDeadline: AWSDateTime!
+  periodString: String!
+  biweeklyPeriodId: String
+}
+
+input UpdateTimesheetPeriodInput {
+  submissionDeadline: AWSDateTime
+  periodString: String
+  biweeklyPeriodId: String
+}
+
+input TimesheetEntryInput {
+  projectCode: String!
+  saturday: Float!
+  sunday: Float!
+  monday: Float!
+  tuesday: Float!
+  wednesday: Float!
+  thursday: Float!
+  friday: Float!
+}
+
+input SubmissionFilterInput {
+  periodId: ID
+  status: SubmissionStatus
+}
+
+input PeriodFilterInput {
+  startDate: AWSDate
+  endDate: AWSDate
+  isLocked: Boolean
+}
+
+input S3ObjectInput {
+  bucket: String!
+  key: String!
+}
+
+input UpdateMainDBInput {
+  type: String
+  chargeCode: String
+  projectName: String
+  budgetEffort: Float
+  projectStatus: String
+}
+
+input UpdateReportDistributionConfigInput {
+  schedule_cron_expression: String
+  recipient_emails: [String]
+  enabled: Boolean
+}
+
+# ---------------------------------------------------------------
+# Queries
+# ---------------------------------------------------------------
+
+type Query {
+  getUser(userId: ID!): User
+  listUsers(filter: UserFilterInput): UserConnection!
+  listDepartments: [Department!]!
+  listPositions: [Position!]!
+  listProjects(filter: ProjectFilterInput): ProjectConnection!
+  getCurrentPeriod: TimesheetPeriod
+  listTimesheetPeriods(filter: PeriodFilterInput): [TimesheetPeriod!]!
+  getTimesheetSubmission(submissionId: ID!): TimesheetSubmission!
+  listMySubmissions(filter: SubmissionFilterInput): [TimesheetSubmission!]!
+  listPendingTimesheets: [TimesheetSubmission!]!
+  getTCSummaryReport(techLeadId: ID!, periodId: ID!): ReportDownloadUrl!
+  getProjectSummaryReport(periodId: ID!): ReportDownloadUrl!
+  listMainDatabase: [MainDatabaseRecord!]!
+  getReportDistributionConfig: ReportDistributionConfig
+}
+
+# ---------------------------------------------------------------
+# Mutations
+# ---------------------------------------------------------------
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  updateUser(userId: ID!, input: UpdateUserInput!): User!
+  deleteUser(userId: ID!): Boolean!
+  createDepartment(input: CreateDepartmentInput!): Department!
+  updateDepartment(departmentId: ID!, input: UpdateDepartmentInput!): Department!
+  deleteDepartment(departmentId: ID!): Boolean!
+  createPosition(input: CreatePositionInput!): Position!
+  updatePosition(positionId: ID!, input: UpdatePositionInput!): Position!
+  deletePosition(positionId: ID!): Boolean!
+  createProject(input: CreateProjectInput!): Project!
+  approveProject(projectId: ID!): Project!
+  rejectProject(projectId: ID!, reason: String!): Project!
+  updateProject(projectId: ID!, input: UpdateProjectInput!): Project!
+  createTimesheetPeriod(input: CreateTimesheetPeriodInput!): TimesheetPeriod!
+  updateTimesheetPeriod(periodId: ID!, input: UpdateTimesheetPeriodInput!): TimesheetPeriod!
+  createTimesheetSubmission(periodId: ID!): TimesheetSubmission!
+  submitTimesheet(submissionId: ID!): TimesheetSubmission!
+  addTimesheetEntry(submissionId: ID!, input: TimesheetEntryInput!): TimesheetEntry!
+  updateTimesheetEntry(entryId: ID!, input: TimesheetEntryInput!): TimesheetEntry!
+  removeTimesheetEntry(entryId: ID!): Boolean!
+  approveTimesheet(submissionId: ID!): TimesheetSubmission!
+  rejectTimesheet(submissionId: ID!): TimesheetSubmission!
+  updateMainDatabaseRecord(id: ID!, input: UpdateMainDBInput!): MainDatabaseRecord!
+  bulkImportCSV(file: S3ObjectInput!): BulkImportResult!
+  refreshDatabase(file: S3ObjectInput!): RefreshResult!
+  updateReportDistributionConfig(input: UpdateReportDistributionConfigInput!): ReportDistributionConfig!
+}

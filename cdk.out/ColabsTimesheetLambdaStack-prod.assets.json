@@ -1,0 +1,36 @@
+{
+  "version": "50.0.0",
+  "files": {
+    "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030": {
+      "displayName": "UserManagementLambda/Code",
+      "source": {
+        "path": "asset.73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-southeast-1-919f5b3e": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+          "objectKey": "73d859abad77985bd46333827bfd6e784a3179ec2175482e0a2dce37df791030.zip",
+          "region": "ap-southeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+        }
+      }
+    },
+    "720077a546f1b900c3f0fd14988614b1fff89162882fa0cdd6463844fa36b708": {
+      "displayName": "ColabsTimesheetLambdaStack-prod Template",
+      "source": {
+        "path": "ColabsTimesheetLambdaStack-prod.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-southeast-1-a39ca938": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+          "objectKey": "720077a546f1b900c3f0fd14988614b1fff89162882fa0cdd6463844fa36b708.json",
+          "region": "ap-southeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

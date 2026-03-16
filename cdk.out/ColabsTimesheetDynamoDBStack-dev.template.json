@@ -1,0 +1,1095 @@
+{
+ "Resources": {
+  "UsersTable9725E9C8": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "email",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "departmentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "supervisorId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "email-index",
+      "KeySchema": [
+       {
+        "AttributeName": "email",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "departmentId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "departmentId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "supervisorId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "supervisorId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_Users-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/UsersTable/Resource"
+   }
+  },
+  "DepartmentsTable64CA1F45": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "departmentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "departmentName",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "departmentName-index",
+      "KeySchema": [
+       {
+        "AttributeName": "departmentName",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "departmentId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_Departments-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/DepartmentsTable/Resource"
+   }
+  },
+  "PositionsTable41EA5B9F": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "positionId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "positionName",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "positionName-index",
+      "KeySchema": [
+       {
+        "AttributeName": "positionName",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "positionId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_Positions-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/PositionsTable/Resource"
+   }
+  },
+  "ProjectsTableAA0A2089": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "projectId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "projectCode",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "approval_status",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "projectManagerId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "projectCode-index",
+      "KeySchema": [
+       {
+        "AttributeName": "projectCode",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "approval_status-index",
+      "KeySchema": [
+       {
+        "AttributeName": "approval_status",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "projectManagerId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "projectManagerId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "projectId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_Projects-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/ProjectsTable/Resource"
+   }
+  },
+  "TimesheetPeriodsTable70A03DC6": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "periodId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "startDate",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "startDate-index",
+      "KeySchema": [
+       {
+        "AttributeName": "startDate",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "periodId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_Periods-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/TimesheetPeriodsTable/Resource"
+   }
+  },
+  "TimesheetSubmissionsTableE868A2AC": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "submissionId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "employeeId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "periodId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "status",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "employeeId-periodId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "employeeId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "periodId",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "periodId-status-index",
+      "KeySchema": [
+       {
+        "AttributeName": "periodId",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "status",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "status-index",
+      "KeySchema": [
+       {
+        "AttributeName": "status",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "submissionId",
+      "KeyType": "HASH"
+     }
+    ],
+    "StreamSpecification": {
+     "StreamViewType": "NEW_AND_OLD_IMAGES"
+    },
+    "TableName": "Timesheet_Submissions-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/TimesheetSubmissionsTable/Resource"
+   }
+  },
+  "TimesheetEntriesTable8D87DA0A": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "entryId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "submissionId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "projectCode",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "submissionId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "submissionId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "projectCode-index",
+      "KeySchema": [
+       {
+        "AttributeName": "projectCode",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "entryId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_Entries-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/TimesheetEntriesTable/Resource"
+   }
+  },
+  "EmployeePerformanceTableBD136C46": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "year",
+      "AttributeType": "N"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "year",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "Timesheet_EmployeePerformance-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/EmployeePerformanceTable/Resource"
+   }
+  },
+  "ReportDistributionConfigTableB47E877E": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "configId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "configId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_ReportDistributionConfig-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/ReportDistributionConfigTable/Resource"
+   }
+  },
+  "MainDatabaseTable0795789D": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "recordId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "recordId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_MainDatabase-dev",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/MainDatabaseTable/Resource"
+   }
+  },
+  "SSMuserstablename3B6BBDBD": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/users/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "UsersTable9725E9C8"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-users-table-name/Resource"
+   }
+  },
+  "SSMuserstablearn505585DA": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/users/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "UsersTable9725E9C8",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-users-table-arn/Resource"
+   }
+  },
+  "SSMdepartmentstablename658132D1": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/departments/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "DepartmentsTable64CA1F45"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-departments-table-name/Resource"
+   }
+  },
+  "SSMdepartmentstablearn2B6B10A0": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/departments/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "DepartmentsTable64CA1F45",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-departments-table-arn/Resource"
+   }
+  },
+  "SSMpositionstablename1E50E5E1": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/positions/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "PositionsTable41EA5B9F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-positions-table-name/Resource"
+   }
+  },
+  "SSMpositionstablearn3108F5D1": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/positions/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "PositionsTable41EA5B9F",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-positions-table-arn/Resource"
+   }
+  },
+  "SSMprojectstablename5C5C15A7": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/projects/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "ProjectsTableAA0A2089"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-projects-table-name/Resource"
+   }
+  },
+  "SSMprojectstablearn8A062A57": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/projects/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "ProjectsTableAA0A2089",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-projects-table-arn/Resource"
+   }
+  },
+  "SSMperiodstablenameCAC5569D": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/periods/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "TimesheetPeriodsTable70A03DC6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-periods-table-name/Resource"
+   }
+  },
+  "SSMperiodstablearn4A7E28E5": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/periods/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetPeriodsTable70A03DC6",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-periods-table-arn/Resource"
+   }
+  },
+  "SSMsubmissionstablenameA8AA8F8E": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/submissions/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "TimesheetSubmissionsTableE868A2AC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-submissions-table-name/Resource"
+   }
+  },
+  "SSMsubmissionstablearnD6767F86": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/submissions/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetSubmissionsTableE868A2AC",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-submissions-table-arn/Resource"
+   }
+  },
+  "SSMentriestablenameBC38931E": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/entries/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "TimesheetEntriesTable8D87DA0A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-entries-table-name/Resource"
+   }
+  },
+  "SSMentriestablearnB302F47C": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/entries/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetEntriesTable8D87DA0A",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-entries-table-arn/Resource"
+   }
+  },
+  "SSMemployeeperformancetablename2625B74C": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/employee_performance/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "EmployeePerformanceTableBD136C46"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-employee_performance-table-name/Resource"
+   }
+  },
+  "SSMemployeeperformancetablearn69025EB6": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/employee_performance/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "EmployeePerformanceTableBD136C46",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-employee_performance-table-arn/Resource"
+   }
+  },
+  "SSMreportdistributionconfigtablename152B948E": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/report_distribution_config/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "ReportDistributionConfigTableB47E877E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-report_distribution_config-table-name/Resource"
+   }
+  },
+  "SSMreportdistributionconfigtablearnE220C1A7": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/report_distribution_config/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "ReportDistributionConfigTableB47E877E",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-report_distribution_config-table-arn/Resource"
+   }
+  },
+  "SSMmaindatabasetablename581FE288": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/main_database/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "MainDatabaseTable0795789D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-main_database-table-name/Resource"
+   }
+  },
+  "SSMmaindatabasetablearn7933EB47": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/main_database/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "MainDatabaseTable0795789D",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-main_database-table-arn/Resource"
+   }
+  },
+  "SSMsubmissionsstreamarnD0A8CEE2": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/dev/dynamodb/submissions/stream-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "dev",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetSubmissionsTableE868A2AC",
+      "StreamArn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/SSM-submissions-stream-arn/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2KQQ6DIBBFz+IepmK9QS9gbPfNANOWKpAwGGMIdzfapKv/Xt7voOtbaBtcWRo7ydlpKPeMZhK48rPYLaCPVkN5oJ5J3F7hhCqY/fFMLrwHTOgpUzryX2oVI3FckqEqhi1/YrhcQSlQffNl52RaQnaeYPztDoaimziLAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-dev/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

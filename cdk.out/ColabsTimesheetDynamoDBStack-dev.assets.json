@@ -1,0 +1,21 @@
+{
+  "version": "50.0.0",
+  "files": {
+    "4466d6450d63057bc08a701933c81b1e582788b21acf943a1729c2c1cac30155": {
+      "displayName": "ColabsTimesheetDynamoDBStack-dev Template",
+      "source": {
+        "path": "ColabsTimesheetDynamoDBStack-dev.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-southeast-1-6f80a6d7": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+          "objectKey": "4466d6450d63057bc08a701933c81b1e582788b21acf943a1729c2c1cac30155.json",
+          "region": "ap-southeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

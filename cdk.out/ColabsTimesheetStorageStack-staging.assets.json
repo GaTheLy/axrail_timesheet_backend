@@ -1,0 +1,21 @@
+{
+  "version": "50.0.0",
+  "files": {
+    "8319fa45213733036534c2c455ebd0cf8c4078fd52e7bcd7a6707d897e942767": {
+      "displayName": "ColabsTimesheetStorageStack-staging Template",
+      "source": {
+        "path": "ColabsTimesheetStorageStack-staging.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-southeast-1-b641e1ce": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+          "objectKey": "8319fa45213733036534c2c455ebd0cf8c4078fd52e7bcd7a6707d897e942767.json",
+          "region": "ap-southeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

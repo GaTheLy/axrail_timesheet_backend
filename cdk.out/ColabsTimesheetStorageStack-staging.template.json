@@ -1,0 +1,211 @@
+{
+ "Resources": {
+  "TimesheetReportBucketDB3597FB": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "colabs-timesheet-reports-staging",
+    "CorsConfiguration": {
+     "CorsRules": [
+      {
+       "AllowedHeaders": [
+        "*"
+       ],
+       "AllowedMethods": [
+        "GET"
+       ],
+       "AllowedOrigins": [
+        "*"
+       ],
+       "MaxAge": 3600
+      }
+     ]
+    },
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "Id": "TransitionToIA",
+       "Status": "Enabled",
+       "Transitions": [
+        {
+         "StorageClass": "STANDARD_IA",
+         "TransitionInDays": 90
+        }
+       ]
+      },
+      {
+       "ExpirationInDays": 365,
+       "Id": "ExpireAfterOneYear",
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Storage"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetStorageStack-staging/TimesheetReportBucket/Resource"
+   }
+  },
+  "TimesheetReportBucketPolicy1225804F": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "TimesheetReportBucketDB3597FB"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "TimesheetReportBucketDB3597FB",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "TimesheetReportBucketDB3597FB",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetStorageStack-staging/TimesheetReportBucket/Policy/Resource"
+   }
+  },
+  "SSMreportbucketnameAF181EA5": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/storage/report-bucket-name",
+    "Tags": {
+     "Component": "Timesheet-Storage",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "TimesheetReportBucketDB3597FB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetStorageStack-staging/SSM-report-bucket-name/Resource"
+   }
+  },
+  "SSMreportbucketarn2D9D59B4": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/storage/report-bucket-arn",
+    "Tags": {
+     "Component": "Timesheet-Storage",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetReportBucketDB3597FB",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetStorageStack-staging/SSM-report-bucket-arn/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WMUQ7CIBBEz9J/WEvbE+gFiB7AIFJdKTRht2kawt1NQ6Nfb95kMh10QwttY1aS9unlhA/INzbWC7PSPVMP+bxY71hcxnikCj1PaLd/Xb0IorBfJIwvbZIJjl3aVz8ppQi98XuOpx6UAjU0H0KUaYmMwcG18gtoLZhYmwAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetStorageStack-staging/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

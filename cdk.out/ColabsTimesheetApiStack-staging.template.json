@@ -1,0 +1,365 @@
+{
+ "Parameters": {
+  "SsmParameterValuetimesheetstagingauthuserpoolidC96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/timesheet/staging/auth/user-pool-id"
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Resources": {
+  "TimesheetGraphQLApiApiLogsRoleD87F3B17": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Api"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/TimesheetGraphQLApi/ApiLogsRole/Resource"
+   }
+  },
+  "TimesheetGraphQLApiF1542981": {
+   "Type": "AWS::AppSync::GraphQLApi",
+   "Properties": {
+    "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
+    "LogConfig": {
+     "CloudWatchLogsRoleArn": {
+      "Fn::GetAtt": [
+       "TimesheetGraphQLApiApiLogsRoleD87F3B17",
+       "Arn"
+      ]
+     },
+     "FieldLogLevel": "ERROR"
+    },
+    "Name": "TimesheetGraphQLApi-staging",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Api"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "UserPoolConfig": {
+     "AwsRegion": "ap-southeast-1",
+     "DefaultAction": "ALLOW",
+     "UserPoolId": {
+      "Ref": "SsmParameterValuetimesheetstagingauthuserpoolidC96584B6F00A464EAD1953AFF4B05118Parameter"
+     }
+    },
+    "XrayEnabled": true
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/TimesheetGraphQLApi/Resource"
+   }
+  },
+  "TimesheetGraphQLApiSchema4D389766": {
+   "Type": "AWS::AppSync::GraphQLSchema",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "TimesheetGraphQLApiF1542981",
+      "ApiId"
+     ]
+    },
+    "Definition": "# Employee Timesheet Management System - GraphQL Schema\n\n# ---------------------------------------------------------------\n# Enums\n# ---------------------------------------------------------------\n\nenum UserType {\n  superadmin\n  admin\n  user\n}\n\nenum Role {\n  Project_Manager\n  Tech_Lead\n  Employee\n}\n\nenum SubmissionStatus {\n  Draft\n  Submitted\n  Approved\n  Rejected\n  Locked\n}\n\nenum ApprovalStatus {\n  Pending_Approval\n  Approved\n  Rejected\n}\n\n# ---------------------------------------------------------------\n# Types\n# ---------------------------------------------------------------\n\ntype User {\n  userId: ID!\n  email: String!\n  fullName: String!\n  userType: UserType!\n  role: Role!\n  positionId: ID!\n  departmentId: ID!\n  supervisorId: ID\n  createdAt: AWSDateTime!\n  createdBy: ID\n  updatedAt: AWSDateTime\n  updatedBy: ID\n}\n\ntype Department {\n  departmentId: ID!\n  departmentName: String!\n  createdAt: AWSDateTime!\n  createdBy: ID\n  updatedAt: AWSDateTime\n  updatedBy: ID\n}\n\ntype Position {\n  positionId: ID!\n  positionName: String!\n  description: String\n  createdAt: AWSDateTime!\n  createdBy: ID\n  updatedAt: AWSDateTime\n  updatedBy: ID\n}\n\ntype Project {\n  projectId: ID!\n  projectCode: String!\n  projectName: String!\n  startDate: AWSDate!\n  plannedHours: Float!\n  projectManagerId: ID!\n  status: String!\n  approval_status: ApprovalStatus!\n  rejectionReason: String\n  createdAt: AWSDateTime!\n  createdBy: ID\n  updatedAt: AWSDateTime\n  updatedBy: ID\n}\n\ntype TimesheetPeriod {\n  periodId: ID!\n  startDate: AWSDate!\n  endDate: AWSDate!\n  submissionDeadline: AWSDateTime!\n  periodString: String!\n  biweeklyPeriodId: String\n  isLocked: Boolean!\n  createdAt: AWSDateTime!\n  createdBy: ID\n}\n\ntype TimesheetSubmission {\n  submissionId: ID!\n  periodId: ID!\n  employeeId: ID!\n  status: SubmissionStatus!\n  archived: Boolean!\n  entries: [TimesheetEntry!]!\n  totalHours: Float!\n  chargeableHours: Float!\n  approvedBy: ID\n  approvedAt: AWSDateTime\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime\n  updatedBy: ID\n}\n\ntype TimesheetEntry {\n  entryId: ID!\n  submissionId: ID!\n  projectCode: String!\n  saturday: Float!\n  sunday: Float!\n  monday: Float!\n  tuesday: Float!\n  wednesday: Float!\n  thursday: Float!\n  friday: Float!\n  totalHours: Float!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ntype EmployeePerformance {\n  userId: ID!\n  year: Int!\n  ytdChargable_hours: Float!\n  ytdTotalHours: Float!\n  ytdChargabilityPercentage: Float!\n  updatedAt: AWSDateTime\n}\n\ntype MainDatabaseRecord {\n  recordId: ID!\n  type: String!\n  chargeCode: String!\n  projectName: String!\n  budgetEffort: Float!\n  projectStatus: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  updatedBy: ID\n}\n\ntype ReportDownloadUrl {\n  url: String!\n  expiresAt: AWSDateTime!\n}\n\ntype BulkImportResult {\n  totalRows: Int!\n  successCount: Int!\n  failureCount: Int!\n  errors: [ImportError!]!\n}\n\ntype ImportError {\n  row: Int!\n  message: String!\n}\n\ntype RefreshResult {\n  recordsImported: Int!\n  previousRecordsRemoved: Int!\n  timestamp: AWSDateTime!\n}\n\ntype ReportDistributionConfig {\n  configId: ID!\n  schedule_cron_expression: String!\n  recipient_emails: [String!]!\n  enabled: Boolean!\n  updatedAt: AWSDateTime\n  updatedBy: ID\n}\n\ntype UserConnection {\n  items: [User!]!\n  nextToken: String\n}\n\ntype ProjectConnection {\n  items: [Project!]!\n  nextToken: String\n}\n\n# ---------------------------------------------------------------\n# Input Types\n# ---------------------------------------------------------------\n\ninput CreateUserInput {\n  email: String!\n  fullName: String!\n  userType: UserType!\n  role: Role!\n  positionId: ID!\n  departmentId: ID!\n  supervisorId: ID\n}\n\ninput UpdateUserInput {\n  email: String\n  fullName: String\n  userType: UserType\n  role: Role\n  positionId: ID\n  departmentId: ID\n  supervisorId: ID\n}\n\ninput UserFilterInput {\n  userType: UserType\n  role: Role\n  departmentId: ID\n  supervisorId: ID\n  nextToken: String\n  limit: Int\n}\n\ninput CreateDepartmentInput {\n  departmentName: String!\n}\n\ninput UpdateDepartmentInput {\n  departmentName: String!\n}\n\ninput CreatePositionInput {\n  positionName: String!\n  description: String\n}\n\ninput UpdatePositionInput {\n  positionName: String\n  description: String\n}\n\ninput CreateProjectInput {\n  projectCode: String!\n  projectName: String!\n  startDate: AWSDate!\n  plannedHours: Float!\n  projectManagerId: ID!\n}\n\ninput UpdateProjectInput {\n  projectName: String\n  startDate: AWSDate\n  plannedHours: Float\n  projectManagerId: ID\n  status: String\n}\n\ninput ProjectFilterInput {\n  approval_status: ApprovalStatus\n  projectManagerId: ID\n  status: String\n  nextToken: String\n  limit: Int\n}\n\ninput CreateTimesheetPeriodInput {\n  startDate: AWSDate!\n  endDate: AWSDate!\n  submissionDeadline: AWSDateTime!\n  periodString: String!\n  biweeklyPeriodId: String\n}\n\ninput UpdateTimesheetPeriodInput {\n  submissionDeadline: AWSDateTime\n  periodString: String\n  biweeklyPeriodId: String\n}\n\ninput TimesheetEntryInput {\n  projectCode: String!\n  saturday: Float!\n  sunday: Float!\n  monday: Float!\n  tuesday: Float!\n  wednesday: Float!\n  thursday: Float!\n  friday: Float!\n}\n\ninput SubmissionFilterInput {\n  periodId: ID\n  status: SubmissionStatus\n}\n\ninput PeriodFilterInput {\n  startDate: AWSDate\n  endDate: AWSDate\n  isLocked: Boolean\n}\n\ninput S3ObjectInput {\n  bucket: String!\n  key: String!\n}\n\ninput UpdateMainDBInput {\n  type: String\n  chargeCode: String\n  projectName: String\n  budgetEffort: Float\n  projectStatus: String\n}\n\ninput UpdateReportDistributionConfigInput {\n  schedule_cron_expression: String\n  recipient_emails: [String]\n  enabled: Boolean\n}\n\n# ---------------------------------------------------------------\n# Queries\n# ---------------------------------------------------------------\n\ntype Query {\n  getUser(userId: ID!): User\n  listUsers(filter: UserFilterInput): UserConnection!\n  listDepartments: [Department!]!\n  listPositions: [Position!]!\n  listProjects(filter: ProjectFilterInput): ProjectConnection!\n  getCurrentPeriod: TimesheetPeriod\n  listTimesheetPeriods(filter: PeriodFilterInput): [TimesheetPeriod!]!\n  getTimesheetSubmission(submissionId: ID!): TimesheetSubmission!\n  listMySubmissions(filter: SubmissionFilterInput): [TimesheetSubmission!]!\n  listPendingTimesheets: [TimesheetSubmission!]!\n  getTCSummaryReport(techLeadId: ID!, periodId: ID!): ReportDownloadUrl!\n  getProjectSummaryReport(periodId: ID!): ReportDownloadUrl!\n  listMainDatabase: [MainDatabaseRecord!]!\n  getReportDistributionConfig: ReportDistributionConfig\n}\n\n# ---------------------------------------------------------------\n# Mutations\n# ---------------------------------------------------------------\n\ntype Mutation {\n  createUser(input: CreateUserInput!): User!\n  updateUser(userId: ID!, input: UpdateUserInput!): User!\n  deleteUser(userId: ID!): Boolean!\n  createDepartment(input: CreateDepartmentInput!): Department!\n  updateDepartment(departmentId: ID!, input: UpdateDepartmentInput!): Department!\n  deleteDepartment(departmentId: ID!): Boolean!\n  createPosition(input: CreatePositionInput!): Position!\n  updatePosition(positionId: ID!, input: UpdatePositionInput!): Position!\n  deletePosition(positionId: ID!): Boolean!\n  createProject(input: CreateProjectInput!): Project!\n  approveProject(projectId: ID!): Project!\n  rejectProject(projectId: ID!, reason: String!): Project!\n  updateProject(projectId: ID!, input: UpdateProjectInput!): Project!\n  createTimesheetPeriod(input: CreateTimesheetPeriodInput!): TimesheetPeriod!\n  updateTimesheetPeriod(periodId: ID!, input: UpdateTimesheetPeriodInput!): TimesheetPeriod!\n  createTimesheetSubmission(periodId: ID!): TimesheetSubmission!\n  submitTimesheet(submissionId: ID!): TimesheetSubmission!\n  addTimesheetEntry(submissionId: ID!, input: TimesheetEntryInput!): TimesheetEntry!\n  updateTimesheetEntry(entryId: ID!, input: TimesheetEntryInput!): TimesheetEntry!\n  removeTimesheetEntry(entryId: ID!): Boolean!\n  approveTimesheet(submissionId: ID!): TimesheetSubmission!\n  rejectTimesheet(submissionId: ID!): TimesheetSubmission!\n  updateMainDatabaseRecord(id: ID!, input: UpdateMainDBInput!): MainDatabaseRecord!\n  bulkImportCSV(file: S3ObjectInput!): BulkImportResult!\n  refreshDatabase(file: S3ObjectInput!): RefreshResult!\n  updateReportDistributionConfig(input: UpdateReportDistributionConfigInput!): ReportDistributionConfig!\n}\n"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/TimesheetGraphQLApi/Schema"
+   }
+  },
+  "TimesheetGraphQLApiLogRetention08F51D89": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/appsync/apis/",
+       {
+        "Fn::GetAtt": [
+         "TimesheetGraphQLApiF1542981",
+         "ApiId"
+        ]
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/TimesheetGraphQLApi/LogRetention/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Api"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:PutRetentionPolicy",
+        "logs:DeleteRetentionPolicy"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "Roles": [
+     {
+      "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Handler": "index.handler",
+    "Runtime": "nodejs22.x",
+    "Timeout": 900,
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1"
+     },
+     "S3Key": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      "Arn"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-Api"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "DependsOn": [
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+    "aws:asset:path": "asset.2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SSMgraphqlapiid1C523FEF": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/api/graphql-api-id",
+    "Tags": {
+     "Component": "Timesheet-Api",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetGraphQLApiF1542981",
+      "ApiId"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/SSM-graphql-api-id/Resource"
+   }
+  },
+  "SSMgraphqlapiurl7FE5E750": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/api/graphql-api-url",
+    "Tags": {
+     "Component": "Timesheet-Api",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetGraphQLApiF1542981",
+      "GraphQLUrl"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/SSM-graphql-api-url/Resource"
+   }
+  },
+  "SSMgraphqlapiarnE8C31EC8": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/api/graphql-api-arn",
+    "Tags": {
+     "Component": "Timesheet-Api",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "TimesheetGraphQLApiF1542981",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/SSM-graphql-api-arn/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOS27DMAwFz5K9zMRxLpB00U0Wjn2AgFVZmbU+rigjMAzdPbCKou1q+ECCb45wPB3gsMOHVPp9rCy/wdon1KN6+fAtRnSUKKqOJMxRk8KH3FecJlm8hvU14jR82fPE23lJt+v/1OuBHGbF6GDtgqVtV9gGy3opPWXKygYjcA2mo0Q+cfBKmjuKUBI4b1DSwGXWI6ULCikRt9lG9uZX9a93zqXtR7786BMa9iardklD8PsG6hrq0+5TmKs4+8SOoPvmE0pTokofAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetApiStack-staging/CDKMetadata/Default"
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

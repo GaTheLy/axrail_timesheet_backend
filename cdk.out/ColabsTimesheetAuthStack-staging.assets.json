@@ -1,0 +1,21 @@
+{
+  "version": "50.0.0",
+  "files": {
+    "04085420dcbd93bb110798ad1660ab13449df514fe5722e1f392940ed47ca235": {
+      "displayName": "ColabsTimesheetAuthStack-staging Template",
+      "source": {
+        "path": "ColabsTimesheetAuthStack-staging.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-southeast-1-06a61c22": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+          "objectKey": "04085420dcbd93bb110798ad1660ab13449df514fe5722e1f392940ed47ca235.json",
+          "region": "ap-southeast-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
