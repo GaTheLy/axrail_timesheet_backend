@@ -244,12 +244,9 @@ def _generate_tc_summary(tech_lead_id, period_id):
         total_hours = _to_decimal(submission.get("totalHours", 0))
 
         # Current period chargeability
-        if total_hours > 0:
-            current_chargeability = (chargeable_hours / total_hours * Decimal("100")).quantize(
-                Decimal("0.01"), rounding=ROUND_HALF_UP
-            )
-        else:
-            current_chargeability = Decimal("0")
+        current_chargeability = calculate_current_period_chargeability(
+            chargeable_hours, total_hours
+        )
 
         # YTD chargeability from Employee_Performance table
         ytd_chargeability = _get_ytd_chargeability(emp_id, year)
@@ -321,12 +318,7 @@ def _generate_project_summary(period_id):
         charged_hours = _to_decimal(project_hours.get(project_code, 0))
 
         # Utilization = (charged hours / planned hours) * 100
-        if planned_hours > 0:
-            utilization = (charged_hours / planned_hours * Decimal("100")).quantize(
-                Decimal("0.01"), rounding=ROUND_HALF_UP
-            )
-        else:
-            utilization = Decimal("0")
+        utilization = calculate_project_utilization(charged_hours, planned_hours)
 
         biweekly_effort = _to_decimal(biweekly_hours.get(project_code, 0))
 
@@ -736,6 +728,50 @@ def _build_csv(columns, rows):
     for row in rows:
         writer.writerow(row)
     return output.getvalue()
+
+
+def calculate_current_period_chargeability(chargeable_hours, total_hours):
+    """Calculate current period chargeability percentage.
+
+    Pure function that computes (chargeable_hours / total_hours) * 100,
+    rounded to 2 decimal places using ROUND_HALF_UP.
+
+    Args:
+        chargeable_hours: Decimal chargeable hours for the period.
+        total_hours: Decimal total hours for the period.
+
+    Returns:
+        Decimal chargeability percentage, or Decimal("0") if total hours is 0.
+
+    Validates: Requirements 9.3
+    """
+    if total_hours > 0:
+        return (chargeable_hours / total_hours * Decimal("100")).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+    return Decimal("0")
+
+def calculate_project_utilization(charged_hours, planned_hours):
+    """Calculate project utilization percentage.
+
+    Pure function that computes (charged_hours / planned_hours) * 100,
+    rounded to 2 decimal places using ROUND_HALF_UP.
+
+    Args:
+        charged_hours: Decimal charged hours for the project.
+        planned_hours: Decimal planned hours for the project.
+
+    Returns:
+        Decimal utilization percentage, or Decimal("0") if planned hours is 0.
+
+    Validates: Requirements 10.3
+    """
+    if planned_hours > 0:
+        return (charged_hours / planned_hours * Decimal("100")).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+    return Decimal("0")
+
 
 
 def _to_decimal(value):

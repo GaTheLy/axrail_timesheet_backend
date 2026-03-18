@@ -52,7 +52,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Implement `require_user_type(event, allowed_types)` helper for userType checks
     - _Requirements: 1.3, 1.5_
 
-  - [ ]* 3.2 Write unit tests for auth utilities
+  - [x] 3.2 Write unit tests for auth utilities
     - Test `get_caller_identity` extracts claims correctly from AppSync event
     - Test `require_role` raises forbidden for unauthorized roles
     - Test `require_user_type` raises forbidden for unauthorized user types
@@ -66,7 +66,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Implement `get_user` and `list_users` resolvers with filtering support
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10_
 
-  - [ ]* 4.2 Write unit tests for User Management resolvers
+  - [x] 4.2 Write unit tests for User Management resolvers
     - Test Superadmin can create admin and user accounts
     - Test Admin can only create user accounts, forbidden for admin/superadmin creation
     - Test email uniqueness enforcement
@@ -93,7 +93,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Enforce Superadmin-only access for all mutations
     - _Requirements: 3.2, 3.4, 3.6_
 
-  - [ ]* 5.3 Write unit tests for Department & Position resolvers
+  - [x] 5.3 Write unit tests for Department & Position resolvers
     - Test unique name enforcement for departments and positions
     - Test deletion rejection when associations exist
     - Test Superadmin-only authorization
@@ -113,7 +113,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Validate `plannedHours` is a positive float
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.6, 4.7, 4.8, 4.9_
 
-  - [ ]* 6.2 Write unit tests for Project Management resolvers
+  - [x] 6.2 Write unit tests for Project Management resolvers
     - Test Superadmin creates with Approved status directly
     - Test Admin creates with Pending_Approval status
     - Test approval/rejection state transitions
@@ -136,12 +136,12 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Enforce Superadmin-only access for mutations
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-  - [ ]* 8.2 Write property test for period date validation
+  - [x] 8.2 Write property test for period date validation
     - **Property 1: Period date constraints**
     - For any valid period, startDate is always Saturday, endDate is always Friday, and endDate == startDate + 6 days
     - **Validates: Requirements 5.2, 5.3**
 
-  - [ ]* 8.3 Write unit tests for Timesheet Period resolvers
+  - [x] 8.3 Write unit tests for Timesheet Period resolvers
     - Test Saturday/Friday validation rejects invalid days
     - Test overlap detection rejects conflicting periods
     - Test submissionDeadline >= endDate enforcement
@@ -166,17 +166,17 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Validate total daily hours across all entries does not exceed 24.0
     - _Requirements: 6.2, 6.3, 6.5, 6.7, 6.8, 15.1, 15.2, 15.3, 15.4, 15.5_
 
-  - [ ]* 9.3 Write property test for timesheet entry validation
+  - [x] 9.3 Write property test for timesheet entry validation
     - **Property 2: Daily hours constraint**
     - For any set of entries in a submission, the sum of hours for any single day across all entries never exceeds 24.0
     - **Validates: Requirements 15.2**
 
-  - [ ]* 9.4 Write property test for row total computation
+  - [x] 9.4 Write property test for row total computation
     - **Property 3: Row total equals sum of daily values**
     - For any timesheet entry, totalHours == saturday + sunday + monday + tuesday + wednesday + thursday + friday
     - **Validates: Requirements 6.8, 15.5**
 
-  - [ ]* 9.5 Write unit tests for Submission & Entry resolvers
+  - [x] 9.5 Write unit tests for Submission & Entry resolvers
     - Test one-submission-per-period enforcement
     - Test status transition Draft to Submitted
     - Test entry editing blocked when status is Submitted or Locked
@@ -196,12 +196,12 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Implement `list_pending_timesheets`: query submissions with status Submitted for employees under reviewer's supervision (via `supervisorId-index` on Users table)
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-  - [ ]* 10.2 Write property test for submission status transitions
+  - [x] 10.2 Write property test for submission status transitions
     - **Property 4: Valid status transitions**
     - The only valid review transitions are Submitted to Approved and Submitted to Rejected. Any other source status must be rejected.
     - **Validates: Requirements 7.1, 7.2, 7.5**
 
-  - [ ]* 10.3 Write unit tests for Review resolvers
+  - [x] 10.3 Write unit tests for Review resolvers
     - Test approve transitions Submitted to Approved with approvedBy/approvedAt
     - Test reject transitions Submitted to Rejected
     - Test invalid transition from Draft/Locked/Approved is rejected
@@ -225,7 +225,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Log all locking actions
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-  - [ ]* 12.2 Write unit tests for Deadline Enforcement Lambda
+  - [x] 12.2 Write unit tests for Deadline Enforcement Lambda
     - Test Draft submissions are locked after deadline
     - Test Submitted submissions are locked after deadline
     - Test missing submissions are created as Locked with zero hours
@@ -245,12 +245,12 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Recalculate `ytdChargabilityPercentage = (ytdChargable_hours / ytdTotalHours) * 100`
     - _Requirements: 11.1, 11.2, 11.3, 11.4_
 
-  - [ ]* 13.2 Write property test for chargeability calculation
+  - [x] 13.2 Write property test for chargeability calculation
     - **Property 5: Chargeability percentage consistency**
     - For any Employee_Performance record where ytdTotalHours > 0, ytdChargabilityPercentage == (ytdChargable_hours / ytdTotalHours) * 100
     - **Validates: Requirements 11.2**
 
-  - [ ]* 13.3 Write unit tests for Performance Tracking
+  - [x] 13.3 Write unit tests for Performance Tracking
     - Test new record creation when none exists for employee/year
     - Test cumulative hour addition to existing record
     - Test chargeability percentage recalculation
@@ -264,17 +264,17 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Implement `get_tc_summary_report` and `get_project_summary_report` resolvers returning pre-signed S3 URLs
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7_
 
-  - [ ]* 14.2 Write property test for TC Summary chargeability
+  - [x] 14.2 Write property test for TC Summary chargeability
     - **Property 6: TC Summary chargeability calculation**
     - For any employee row in TC Summary, current period chargeability == (chargeable hours / total hours) * 100 when total hours > 0
     - **Validates: Requirements 9.3**
 
-  - [ ]* 14.3 Write property test for Project Summary utilization
+  - [x] 14.3 Write property test for Project Summary utilization
     - **Property 7: Project utilization calculation**
     - For any project row in Project Summary, utilization == (charged hours / planned hours) * 100 when planned hours > 0
     - **Validates: Requirements 10.3**
 
-  - [ ]* 14.4 Write unit tests for Report Generator
+  - [x] 14.4 Write unit tests for Report Generator
     - Test TC Summary includes only Approved/Locked submissions
     - Test Project Summary includes all projects regardless of status
     - Test CSV output format matches expected columns
@@ -302,7 +302,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Implement `get_report_distribution_config` resolver
     - _Requirements: 12.4, 12.5, 12.7_
 
-  - [ ]* 16.3 Write unit tests for Notification Service
+  - [x] 16.3 Write unit tests for Notification Service
     - Test email sending with CSV attachment
     - Test failure logging on SES errors
     - Test config update persists correctly
@@ -321,7 +321,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Ensure archived submissions are returned as read-only via API (add archived check to submission resolvers)
     - _Requirements: 13.1, 13.2, 13.3_
 
-  - [ ]* 17.2 Write unit tests for Archival Lambda
+  - [x] 17.2 Write unit tests for Archival Lambda
     - Test submissions are marked as archived
     - Test entries and metadata are retained
     - Test archived submissions are read-only
@@ -340,7 +340,7 @@ Implement a serverless Employee Timesheet Management System on AWS using CDK (Py
     - Implement `refresh_database` resolver: replace all existing records with imported data, log operation (Superadmin only)
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
 
-  - [ ]* 18.2 Write unit tests for Main Database Management
+  - [x] 18.2 Write unit tests for Main Database Management
     - Test CSV row validation rejects invalid rows with error details
     - Test valid rows are persisted while invalid rows are skipped
     - Test refresh replaces all existing records

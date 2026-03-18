@@ -1,4 +1,4 @@
-from lambdas.shared.auth import (
+from shared.auth import (
     ForbiddenError,
     get_caller_identity,
     require_role,

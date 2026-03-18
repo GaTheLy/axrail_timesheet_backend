@@ -156,6 +156,28 @@ def _extract_year(approved_at_iso):
     return datetime.now(timezone.utc).year
 
 
+def calculate_chargeability_percentage(ytd_chargeable_hours, ytd_total_hours):
+    """Calculate the YTD chargeability percentage.
+
+    Pure function that computes (ytdChargable_hours / ytdTotalHours) * 100,
+    rounded to 2 decimal places using ROUND_HALF_UP.
+
+    Args:
+        ytd_chargeable_hours: Decimal year-to-date chargeable hours.
+        ytd_total_hours: Decimal year-to-date total hours.
+
+    Returns:
+        Decimal chargeability percentage, or Decimal("0") if total hours is 0.
+
+    Validates: Requirements 11.2
+    """
+    if ytd_total_hours > 0:
+        return (ytd_chargeable_hours / ytd_total_hours * Decimal("100")).quantize(
+            Decimal("0.01"), rounding=ROUND_HALF_UP
+        )
+    return Decimal("0")
+
+
 def _update_performance_record(employee_id, year, chargeable_hours, total_hours):
     """Update or create an Employee_Performance record with atomic increments.
 
@@ -205,12 +227,7 @@ def _update_performance_record(employee_id, year, chargeable_hours, total_hours)
     new_total = Decimal(str(updated.get("ytdTotalHours", 0)))
 
     # Step 2: Recalculate chargeability percentage
-    if new_total > 0:
-        percentage = (new_chargeable / new_total * Decimal("100")).quantize(
-            Decimal("0.01"), rounding=ROUND_HALF_UP
-        )
-    else:
-        percentage = Decimal("0")
+    percentage = calculate_chargeability_percentage(new_chargeable, new_total)
 
     # Step 3: Update the percentage
     table.update_item(

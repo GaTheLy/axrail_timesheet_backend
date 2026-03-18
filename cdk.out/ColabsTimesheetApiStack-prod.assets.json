@@ -8,26 +8,26 @@
         "packaging": "zip"
       },
       "destinations": {
-        "current_account-ap-southeast-1-8805024d": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+        "815254799325-ap-southeast-1-da32886e": {
+          "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
           "objectKey": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip",
           "region": "ap-southeast-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }
       }
     },
-    "879cff04cb3959b2c0c58cb1002f4fe9e646b81e90bee5b4039fa52054a21239": {
+    "d32a05c14397940dc8112a1333d094f3ab861c4aab347258b945eeb8ed5c4e57": {
       "displayName": "ColabsTimesheetApiStack-prod Template",
       "source": {
         "path": "ColabsTimesheetApiStack-prod.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-ap-southeast-1-f400a949": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
-          "objectKey": "879cff04cb3959b2c0c58cb1002f4fe9e646b81e90bee5b4039fa52054a21239.json",
+        "815254799325-ap-southeast-1-f936294d": {
+          "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
+          "objectKey": "d32a05c14397940dc8112a1333d094f3ab861c4aab347258b945eeb8ed5c4e57.json",
           "region": "ap-southeast-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }
       }
     }

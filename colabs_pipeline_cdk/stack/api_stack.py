@@ -7,7 +7,7 @@ Looks up User Pool from SSM. Exports API ID and URL to SSM.
 
 import os
 
-from aws_cdk import Stack, Tags, aws_appsync as appsync, aws_cognito as cognito, aws_ssm as ssm
+from aws_cdk import Duration, Expiration, Stack, Tags, aws_appsync as appsync, aws_cognito as cognito, aws_ssm as ssm
 from constructs import Construct
 
 from colabs_pipeline_cdk.environment import (
@@ -86,6 +86,20 @@ class TimesheetApiStack(Stack):
                     user_pool_config=appsync.UserPoolConfig(
                         user_pool=user_pool,
                     ),
+                ),
+                additional_authorization_modes=(
+                    [
+                        appsync.AuthorizationMode(
+                            authorization_type=appsync.AuthorizationType.API_KEY,
+                            api_key_config=appsync.ApiKeyConfig(
+                                name="DevTestKey",
+                                description="API key for dev/testing only",
+                                expires=Expiration.after(Duration.days(365)),
+                            ),
+                        ),
+                    ]
+                    if self.env_name == "dev"
+                    else []
                 ),
             ),
             log_config=appsync.LogConfig(

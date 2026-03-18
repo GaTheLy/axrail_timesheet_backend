@@ -8,26 +8,26 @@
         "packaging": "zip"
       },
       "destinations": {
-        "current_account-ap-southeast-1-8805024d": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
+        "815254799325-ap-southeast-1-da32886e": {
+          "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
           "objectKey": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip",
           "region": "ap-southeast-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }
       }
     },
-    "aef1e07a7604677eac8e808f08e16e325af421a36ee2fdb65ed3338e491923e9": {
+    "e3d174c66657a7c6df26bff1a265018ddee4ae47b6b159ff723e4bbf0c3158e9": {
       "displayName": "ColabsTimesheetApiStack-staging Template",
       "source": {
         "path": "ColabsTimesheetApiStack-staging.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-ap-southeast-1-961e03a8": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-ap-southeast-1",
-          "objectKey": "aef1e07a7604677eac8e808f08e16e325af421a36ee2fdb65ed3338e491923e9.json",
+        "815254799325-ap-southeast-1-80a42246": {
+          "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
+          "objectKey": "e3d174c66657a7c6df26bff1a265018ddee4ae47b6b159ff723e4bbf0c3158e9.json",
           "region": "ap-southeast-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-ap-southeast-1"
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }
       }
     }

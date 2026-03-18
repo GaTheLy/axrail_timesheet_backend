@@ -16,17 +16,17 @@ ENVIRONMENTS = ["dev", "staging", "prod"]
 # Environment-specific configurations
 ENV_CONFIG = {
     "dev": {
-        "account": "",  # AWS account ID for dev
+        "account": "815254799325",  # AWS account ID for dev
         "region": "ap-southeast-1",
         "suffix": "dev",
     },
     "staging": {
-        "account": "",  # AWS account ID for staging
+        "account": "815254799325",  # AWS account ID for staging
         "region": "ap-southeast-1",
         "suffix": "staging",
     },
     "prod": {
-        "account": "",  # AWS account ID for prod
+        "account": "815254799325",  # AWS account ID for prod
         "region": "ap-southeast-1",
         "suffix": "prod",
     },

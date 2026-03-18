@@ -34,7 +34,7 @@ enum ApprovalStatus {
 # Types
 # ---------------------------------------------------------------
 
-type User {
+type User @aws_api_key @aws_cognito_user_pools {
   userId: ID!
   email: String!
   fullName: String!
@@ -49,7 +49,7 @@ type User {
   updatedBy: ID
 }
 
-type Department {
+type Department @aws_api_key @aws_cognito_user_pools {
   departmentId: ID!
   departmentName: String!
   createdAt: AWSDateTime!
@@ -58,7 +58,7 @@ type Department {
   updatedBy: ID
 }
 
-type Position {
+type Position @aws_api_key @aws_cognito_user_pools {
   positionId: ID!
   positionName: String!
   description: String
@@ -68,7 +68,7 @@ type Position {
   updatedBy: ID
 }
 
-type Project {
+type Project @aws_api_key @aws_cognito_user_pools {
   projectId: ID!
   projectCode: String!
   projectName: String!
@@ -84,7 +84,7 @@ type Project {
   updatedBy: ID
 }
 
-type TimesheetPeriod {
+type TimesheetPeriod @aws_api_key @aws_cognito_user_pools {
   periodId: ID!
   startDate: AWSDate!
   endDate: AWSDate!
@@ -96,7 +96,7 @@ type TimesheetPeriod {
   createdBy: ID
 }
 
-type TimesheetSubmission {
+type TimesheetSubmission @aws_api_key @aws_cognito_user_pools {
   submissionId: ID!
   periodId: ID!
   employeeId: ID!
@@ -112,7 +112,7 @@ type TimesheetSubmission {
   updatedBy: ID
 }
 
-type TimesheetEntry {
+type TimesheetEntry @aws_api_key @aws_cognito_user_pools {
   entryId: ID!
   submissionId: ID!
   projectCode: String!
@@ -128,7 +128,7 @@ type TimesheetEntry {
   updatedAt: AWSDateTime
 }
 
-type EmployeePerformance {
+type EmployeePerformance @aws_api_key @aws_cognito_user_pools {
   userId: ID!
   year: Int!
   ytdChargable_hours: Float!
@@ -137,7 +137,7 @@ type EmployeePerformance {
   updatedAt: AWSDateTime
 }
 
-type MainDatabaseRecord {
+type MainDatabaseRecord @aws_api_key @aws_cognito_user_pools {
   recordId: ID!
   type: String!
   chargeCode: String!
@@ -149,30 +149,30 @@ type MainDatabaseRecord {
   updatedBy: ID
 }
 
-type ReportDownloadUrl {
+type ReportDownloadUrl @aws_api_key @aws_cognito_user_pools {
   url: String!
   expiresAt: AWSDateTime!
 }
 
-type BulkImportResult {
+type BulkImportResult @aws_api_key @aws_cognito_user_pools {
   totalRows: Int!
   successCount: Int!
   failureCount: Int!
   errors: [ImportError!]!
 }
 
-type ImportError {
+type ImportError @aws_api_key @aws_cognito_user_pools {
   row: Int!
   message: String!
 }
 
-type RefreshResult {
+type RefreshResult @aws_api_key @aws_cognito_user_pools {
   recordsImported: Int!
   previousRecordsRemoved: Int!
   timestamp: AWSDateTime!
 }
 
-type ReportDistributionConfig {
+type ReportDistributionConfig @aws_api_key @aws_cognito_user_pools {
   configId: ID!
   schedule_cron_expression: String!
   recipient_emails: [String!]!
@@ -181,12 +181,12 @@ type ReportDistributionConfig {
   updatedBy: ID
 }
 
-type UserConnection {
+type UserConnection @aws_api_key @aws_cognito_user_pools {
   items: [User!]!
   nextToken: String
 }
 
-type ProjectConnection {
+type ProjectConnection @aws_api_key @aws_cognito_user_pools {
   items: [Project!]!
   nextToken: String
 }
@@ -325,7 +325,7 @@ input UpdateReportDistributionConfigInput {
 # Queries
 # ---------------------------------------------------------------
 
-type Query {
+type Query @aws_api_key @aws_cognito_user_pools {
   getUser(userId: ID!): User
   listUsers(filter: UserFilterInput): UserConnection!
   listDepartments: [Department!]!
@@ -346,7 +346,7 @@ type Query {
 # Mutations
 # ---------------------------------------------------------------
 
-type Mutation {
+type Mutation @aws_api_key @aws_cognito_user_pools {
   createUser(input: CreateUserInput!): User!
   updateUser(userId: ID!, input: UpdateUserInput!): User!
   deleteUser(userId: ID!): Boolean!
