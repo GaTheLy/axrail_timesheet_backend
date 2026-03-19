@@ -84,6 +84,14 @@ class TimesheetDynamoDBStack(Stack):
             string_value=self.submissions_table.table_stream_arn,
         )
 
+        # Projects stream ARN (needed by Lambda stack for main_database sync)
+        ssm.StringParameter(
+            self,
+            "SSM-projects-stream-arn",
+            parameter_name=self._ssm_path("projects/stream-arn"),
+            string_value=self.projects_table.table_stream_arn,
+        )
+
     def _create_tables(self, removal_policy: RemovalPolicy) -> None:
         # --- Users table ---
         self.users_table = dynamodb.Table(
@@ -151,7 +159,7 @@ class TimesheetDynamoDBStack(Stack):
             ),
         )
 
-        # --- Projects table ---
+        # --- Projects table (with DynamoDB Streams for main_database sync) ---
         self.projects_table = dynamodb.Table(
             self,
             "ProjectsTable",
@@ -161,6 +169,7 @@ class TimesheetDynamoDBStack(Stack):
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             removal_policy=removal_policy,
+            stream=dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
         )
         self.projects_table.add_global_secondary_index(
             index_name="projectCode-index",

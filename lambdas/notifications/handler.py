@@ -305,7 +305,7 @@ def _get_submissions_for_period(period_id, statuses):
 
     Args:
         period_id: The timesheet period ID.
-        statuses: List of status strings (e.g. ["Approved", "Locked"]).
+        statuses: List of status strings (e.g. ["Submitted"]).
 
     Returns:
         List of submission items.
@@ -456,7 +456,7 @@ def _get_biweekly_effort(biweekly_period_id):
     all_submission_ids = []
     for period in periods:
         pid = period["periodId"]
-        submissions = _get_submissions_for_period(pid, ["Approved", "Locked"])
+        submissions = _get_submissions_for_period(pid, ["Submitted"])
         all_submission_ids.extend(sub["submissionId"] for sub in submissions)
 
     return _aggregate_hours_by_project(all_submission_ids)
@@ -487,7 +487,7 @@ def _generate_project_summary_csv(period_id):
         logger.info("No projects found for Project Summary")
         return None
 
-    submissions = _get_submissions_for_period(period_id, ["Approved", "Locked"])
+    submissions = _get_submissions_for_period(period_id, ["Submitted"])
     submission_ids = [sub["submissionId"] for sub in submissions]
     project_hours = _aggregate_hours_by_project(submission_ids)
 
@@ -555,7 +555,7 @@ def _generate_tc_summary_csv(tech_lead_id, period_id):
 
     employee_map = {emp["userId"]: emp for emp in employees}
 
-    submissions = _get_submissions_for_period(period_id, ["Approved", "Locked"])
+    submissions = _get_submissions_for_period(period_id, ["Submitted"])
     supervised_ids = set(employee_map.keys())
     relevant_submissions = [
         sub for sub in submissions

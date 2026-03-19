@@ -1,9 +1,9 @@
 """Employee Performance Tracking Lambda.
 
 Triggered by DynamoDB Streams on the Timesheet_Submissions table.
-When a submission transitions to Approved status, this handler updates
+When a submission transitions to Submitted status, this handler updates
 the Employee_Performance record for the corresponding employee and year
-by atomically adding the approved chargeable and total hours, then
+by atomically adding the chargeable and total hours, then
 recalculating the YTD chargeability percentage.
 
 Environment variables:
@@ -29,10 +29,8 @@ def handler(event, context):
     """DynamoDB Streams event entry point.
 
     Processes stream records from the Timesheet_Submissions table.
-    For each record where the NEW status is 'Approved', updates the
+    For each record where the NEW status is 'Submitted', updates the
     Employee_Performance table with the submission's hours.
-
-    Validates: Requirements 11.1, 11.2, 11.3, 11.4
     """
     logger.info("Performance tracking Lambda invoked with %d record(s)",
                 len(event.get("Records", [])))
@@ -57,14 +55,14 @@ def _should_process(record):
     """Determine if a DynamoDB Stream record should be processed.
 
     Only processes INSERT or MODIFY events where the new status is
-    'Approved'. Also checks that the old status was not already 'Approved'
+    'Submitted'. Also checks that the old status was not already 'Submitted'
     to avoid duplicate processing on unrelated attribute updates.
 
     Args:
         record: A single DynamoDB Stream record.
 
     Returns:
-        True if the record represents a transition to Approved status.
+        True if the record represents a transition to Submitted status.
     """
     event_name = record.get("eventName")
     if event_name not in ("INSERT", "MODIFY"):
@@ -75,32 +73,21 @@ def _should_process(record):
         return False
 
     new_status = new_image.get("status", {}).get("S", "")
-    if new_status != "Approved":
+    if new_status != "Submitted":
         return False
 
-    # For MODIFY events, skip if old status was already Approved
+    # For MODIFY events, skip if old status was already Submitted
     if event_name == "MODIFY":
         old_image = record.get("dynamodb", {}).get("OldImage", {})
         old_status = old_image.get("status", {}).get("S", "")
-        if old_status == "Approved":
+        if old_status == "Submitted":
             return False
 
     return True
 
 
 def _process_approved_submission(record):
-    """Process a single approved submission and update performance record.
-
-    Extracts employee ID, chargeable hours, and total hours from the
-    stream record, determines the year from the approval timestamp,
-    then updates the Employee_Performance table.
-
-    Args:
-        record: A DynamoDB Stream record with NewImage containing an
-                Approved submission.
-
-    Validates: Requirements 11.1, 11.2, 11.3
-    """
+    """Process a single submitted submission and update performance record."""
     new_image = record["dynamodb"]["NewImage"]
 
     employee_id = new_image.get("employeeId", {}).get("S", "")
@@ -108,9 +95,9 @@ def _process_approved_submission(record):
     chargeable_hours = _extract_decimal(new_image.get("chargeableHours", {}))
     total_hours = _extract_decimal(new_image.get("totalHours", {}))
 
-    # Determine year from approvedAt timestamp, fall back to current year
-    approved_at = new_image.get("approvedAt", {}).get("S", "")
-    year = _extract_year(approved_at)
+    # Determine year from updatedAt timestamp, fall back to current year
+    updated_at = new_image.get("updatedAt", {}).get("S", "")
+    year = _extract_year(updated_at)
 
     logger.info(
         "Processing approved submission %s for employee %s: "

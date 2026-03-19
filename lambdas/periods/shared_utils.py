@@ -1,20 +1,54 @@
 """Shared utilities for period handlers."""
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
+
+
+# Malaysian Time is UTC+8
+MYT_OFFSET_HOURS = 8
+# Deadline: Friday 5PM MYT = Friday 09:00 UTC
+DEADLINE_HOUR_UTC = 9
+DEADLINE_MINUTE_UTC = 0
 
 
 def parse_date(date_str):
     return date.fromisoformat(date_str)
 
 
-def validate_period_dates(start_date_str, end_date_str, submission_deadline_str):
+def compute_submission_deadline(end_date_str):
+    """Compute the submission deadline: endDate (Friday) at 5PM MYT (09:00 UTC).
+
+    Args:
+        end_date_str: The end date string in YYYY-MM-DD format (must be a Friday).
+
+    Returns:
+        ISO 8601 datetime string for the deadline.
+    """
+    end_date = parse_date(end_date_str)
+    deadline = datetime(
+        end_date.year, end_date.month, end_date.day,
+        DEADLINE_HOUR_UTC, DEADLINE_MINUTE_UTC, 0,
+        tzinfo=timezone.utc,
+    )
+    return deadline.isoformat()
+
+
+def validate_period_dates(start_date_str, end_date_str):
+    """Validate period dates: startDate must be Monday, endDate must be Friday,
+    endDate must be exactly 4 days after startDate.
+
+    Args:
+        start_date_str: Start date in YYYY-MM-DD format.
+        end_date_str: End date in YYYY-MM-DD format.
+
+    Raises:
+        ValueError: If any validation fails.
+    """
     start_date = parse_date(start_date_str)
     end_date = parse_date(end_date_str)
-    deadline_date = parse_date(submission_deadline_str[:10])
 
-    if start_date.weekday() != 5:
+    if start_date.weekday() != 0:
         raise ValueError(
-            f"startDate '{start_date_str}' is not a Saturday. "
+            f"startDate '{start_date_str}' is not a Monday. "
             f"Got weekday {start_date.strftime('%A')}"
         )
     if end_date.weekday() != 4:
@@ -22,16 +56,11 @@ def validate_period_dates(start_date_str, end_date_str, submission_deadline_str)
             f"endDate '{end_date_str}' is not a Friday. "
             f"Got weekday {end_date.strftime('%A')}"
         )
-    expected_end = start_date + timedelta(days=6)
+    expected_end = start_date + timedelta(days=4)
     if end_date != expected_end:
         raise ValueError(
-            f"endDate '{end_date_str}' must be exactly 6 days after "
+            f"endDate '{end_date_str}' must be exactly 4 days after "
             f"startDate '{start_date_str}'. Expected '{expected_end.isoformat()}'"
-        )
-    if deadline_date < end_date:
-        raise ValueError(
-            f"submissionDeadline '{submission_deadline_str}' must be on or after "
-            f"endDate '{end_date_str}'"
         )
 
 

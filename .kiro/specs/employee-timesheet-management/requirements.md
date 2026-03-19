@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Employee Timesheet Management System replaces the existing Google Sheets and Apps Script-based timesheet workflow with a full-stack web application built on AWS. The system enables employees to submit weekly timesheets (Saturday through Friday), allows Project Managers and Tech Leads to review and approve submissions, and generates performance and project utilization reports. The system supports a biweekly reporting cycle with automated archival and email distribution of summary reports.
+The Employee Timesheet Management System replaces the existing Google Sheets and Apps Script-based timesheet workflow with a full-stack web application built on AWS. The system enables employees to fill weekly timesheets (Monday through Friday), with automatic submission at the Friday 5PM MYT deadline. The system generates performance and project utilization reports. The system supports a biweekly reporting cycle with automated archival and email distribution of summary reports.
 
 ## Glossary
 
@@ -12,16 +12,16 @@ The Employee Timesheet Management System replaces the existing Google Sheets and
 - **Timesheet_Database**: The set of DynamoDB tables storing all persistent data (users, projects, timesheet entries, periods, performance records)
 - **Report_Generator**: The backend service (AWS Lambda) responsible for computing and producing TC Summary and Project Summary reports
 - **Notification_Service**: The backend service (AWS Lambda + SES) responsible for sending scheduled email notifications with reports
-- **Employee**: A user with the "user" user type and "Employee" role who submits timesheets
-- **Project_Manager**: A user with the "admin" user type and "Project Manager" role who manages projects and reviews timesheets
-- **Tech_Lead**: A user with the "admin" user type and "Tech Lead" role who reviews team member timesheets and receives TC Summary reports
+- **Employee**: A user with the "user" user type and "Employee" role who fills timesheets
+- **Project_Manager**: A user with the "admin" user type and "Project Manager" role who manages projects
+- **Tech_Lead**: A user with the "admin" user type and "Tech Lead" role who receives TC Summary reports
 - **Superadmin**: A user with the "superadmin" user type who has full system access including user and department management
 - **Biweekly_Period**: A 14-day reporting cycle used for report generation and timesheet archival
-- **Submission_Status**: One of Draft, Submitted, Approved, Rejected, or Locked
+- **Submission_Status**: One of Draft or Submitted
 - **Approval_Status**: One of Pending_Approval, Approved, or Rejected — used for project creation requests by Admin users
 - **Report_Distribution_Config**: The configurable settings for automated report delivery, including schedule_cron_expression, recipient_emails, and enabled flag
 - **Chargeability_Percentage**: The ratio of chargeable hours to total hours, expressed as a percentage
-- **Period_String**: A human-readable label identifying a specific timesheet period (e.g., "2025-01-04 to 2025-01-10")
+- **Period_String**: A human-readable label identifying a specific timesheet period (e.g., "2025-01-06 to 2025-01-10")
 - **Charged_Hours**: The number of hours an Employee records against a specific project on a specific day, stored as a float using dot notation (e.g., 1.5)
 
 ## Requirements
@@ -37,6 +37,7 @@ The Employee Timesheet Management System replaces the existing Google Sheets and
 3. WHILE a user is authenticated, THE Auth_Service SHALL enforce role-based access control based on the user's user type (superadmin, admin, user) and role (Project_Manager, Tech_Lead, Employee)
 4. WHEN an authenticated session expires, THE Auth_Service SHALL require the user to re-authenticate before accessing protected resources
 5. IF an authenticated user attempts to access a resource outside the user's permitted scope, THEN THE Auth_Service SHALL deny access and return a forbidden error
+
 
 ### Requirement 2: User Management
 
@@ -54,6 +55,11 @@ The Employee Timesheet Management System replaces the existing Google Sheets and
 8. THE Timesheet_API SHALL enforce email uniqueness across all user records
 9. WHEN a user account is created, THE Timesheet_API SHALL validate that the role is one of Project_Manager, Tech_Lead, or Employee
 10. WHEN a user account is created, THE Timesheet_API SHALL validate that the user type is one of superadmin, admin, or user
+11. WHEN a user account is created, THE Timesheet_API SHALL set the user's status to active by default
+12. WHEN a Superadmin or Admin deactivates a user, THE Timesheet_API SHALL set the user's status to inactive, disable the Cognito account, and retain all user data for historical queries
+13. WHEN a Superadmin or Admin activates a previously deactivated user, THE Timesheet_API SHALL set the user's status to active and re-enable the Cognito account
+14. WHILE a user has status of inactive, THE Timesheet_System SHALL exclude the user from auto-provisioning, deadline enforcement, and deadline reminders
+15. THE Timesheet_API SHALL support filtering users by status (active/inactive) in the listUsers query
 
 ### Requirement 3: Department and Position Management
 
@@ -86,57 +92,53 @@ The Employee Timesheet Management System replaces the existing Google Sheets and
 
 ### Requirement 5: Timesheet Period Management
 
-**User Story:** As a Superadmin, I want to define timesheet periods with start dates, end dates, and submission deadlines, so that employees submit timesheets within structured weekly cycles (Saturday through Friday).
+**User Story:** As a system, I want to automatically create weekly timesheet periods (Monday through Friday) with auto-computed submission deadlines, so that employees have structured weekly cycles.
 
 #### Acceptance Criteria
 
-1. WHEN a Superadmin creates a new timesheet period with startDate, endDate, submissionDeadline, and periodString, THE Timesheet_API SHALL store the period record in the Timesheet_Database
-2. THE Timesheet_API SHALL validate that startDate falls on a Saturday and endDate falls on a Friday for each timesheet period
-3. THE Timesheet_API SHALL validate that endDate is exactly 6 days after startDate for each timesheet period
-4. THE Timesheet_API SHALL validate that submissionDeadline is on or after endDate for each timesheet period
+1. WHEN the auto-provisioning Lambda runs on Monday, THE Timesheet_System SHALL create a new timesheet period with startDate (Monday), endDate (Friday), auto-computed submissionDeadline (Friday 5PM MYT), and periodString
+2. THE Timesheet_API SHALL validate that startDate falls on a Monday and endDate falls on a Friday for each timesheet period
+3. THE Timesheet_API SHALL validate that endDate is exactly 4 days after startDate for each timesheet period
+4. THE Timesheet_API SHALL auto-compute the submissionDeadline as endDate (Friday) at 5PM MYT (09:00 UTC)
 5. THE Timesheet_API SHALL enforce that no two timesheet periods have overlapping date ranges
 
 ### Requirement 6: Timesheet Submission
 
-**User Story:** As an Employee, I want to create and submit a weekly timesheet by selecting projects and entering daily charged hours (Saturday through Friday), so that my work effort is recorded accurately.
+**User Story:** As an Employee, I want to fill my weekly timesheet by selecting projects and entering daily charged hours (Monday through Friday), so that my work effort is recorded accurately.
 
 #### Acceptance Criteria
 
-1. WHEN an Employee creates a new timesheet submission for a selected periodId, THE Timesheet_API SHALL create a submission record with status set to Draft
+1. WHEN the auto-provisioning Lambda runs on Monday, THE Timesheet_System SHALL create a Draft submission for each Employee for the new period
 2. WHEN an Employee adds a timesheet entry, THE Timesheet_API SHALL validate that the projectCode references an existing active project with approval_status of Approved
 3. THE Timesheet_API SHALL store all Charged_Hours values as float numbers using dot notation (e.g., 1.5)
-4. WHEN an Employee submits a Draft timesheet, THE Timesheet_API SHALL update the Submission_Status from Draft to Submitted and record the updatedAt timestamp
-5. WHILE a timesheet submission has Submission_Status of Draft, THE Timesheet_System SHALL allow the Employee to add, edit, and remove timesheet entries
-6. WHILE a timesheet submission has Submission_Status of Submitted, THE Timesheet_System SHALL prevent the Employee from editing timesheet entries
-7. THE Timesheet_API SHALL allow a maximum of 27 project entries per timesheet submission
-8. WHEN an Employee saves a timesheet entry, THE Timesheet_API SHALL compute and store the total hours as the sum of all daily Charged_Hours for that entry
-9. IF an Employee attempts to create a second submission for the same periodId, THEN THE Timesheet_API SHALL reject the creation and return an error indicating a submission already exists for that period
-10. WHEN an Employee views timesheet data, THE Timesheet_API SHALL return only the submissions and entries belonging to that Employee
-11. IF an Employee attempts to view or access another Employee's timesheet data, THEN THE Timesheet_API SHALL reject the request and return a forbidden error
+4. WHILE a timesheet submission has Submission_Status of Draft, THE Timesheet_System SHALL allow the Employee to add, edit, and remove timesheet entries
+5. WHILE a timesheet submission has Submission_Status of Submitted, THE Timesheet_System SHALL prevent the Employee from editing timesheet entries
+6. THE Timesheet_API SHALL allow a maximum of 27 project entries per timesheet submission
+7. WHEN an Employee saves a timesheet entry, THE Timesheet_API SHALL compute and store the total hours as the sum of all daily Charged_Hours for that entry
+8. WHEN an Employee views timesheet data, THE Timesheet_API SHALL return only the submissions and entries belonging to that Employee
+9. IF an Employee attempts to view or access another Employee's timesheet data, THEN THE Timesheet_API SHALL reject the request and return a forbidden error
 
-### Requirement 7: Timesheet Review and Approval
+### Requirement 7: Automatic Submission at Deadline
 
-**User Story:** As a Project_Manager or Tech_Lead, I want to review, approve, or reject submitted timesheets, so that I can verify the accuracy of reported hours before they are finalized.
+**User Story:** As a system, I want timesheets to be automatically submitted when the Friday 5PM MYT deadline passes, so that all employee hours are captured regardless of manual action.
 
 #### Acceptance Criteria
 
-1. WHEN a Project_Manager or Tech_Lead approves a submitted timesheet, THE Timesheet_API SHALL update the Submission_Status from Submitted to Approved and record the approvedBy and approvedAt fields
-2. WHEN a Project_Manager or Tech_Lead rejects a submitted timesheet, THE Timesheet_API SHALL update the Submission_Status from Submitted to Rejected and record the updatedBy and updatedAt fields
-3. WHILE a timesheet submission has Submission_Status of Rejected, THE Timesheet_System SHALL allow the Employee to edit and resubmit the timesheet
-4. WHEN a Project_Manager or Tech_Lead views pending timesheets, THE Timesheet_API SHALL return all submissions with Submission_Status of Submitted for employees under the reviewer's supervision
-5. IF a reviewer attempts to approve or reject a timesheet that does not have Submission_Status of Submitted, THEN THE Timesheet_API SHALL reject the action and return an error indicating invalid status transition
+1. WHEN the submissionDeadline for a timesheet period passes, THE Timesheet_System SHALL update all timesheet submissions for that period with Submission_Status of Draft to Submitted
+2. WHILE a timesheet submission has Submission_Status of Submitted, THE Timesheet_System SHALL prevent the Employee from editing the timesheet
+3. IF an Employee attempts to modify a timesheet entry belonging to a Submitted submission, THEN THE Timesheet_API SHALL reject the modification and return an error indicating the submission is submitted
+4. WHEN the submissionDeadline passes and an Employee has no submission for that period, THE Timesheet_System SHALL create a submission record with Submission_Status of Submitted and zero Charged_Hours
+5. WHEN the deadline enforcement runs, THE Timesheet_System SHALL mark the period as isLocked = true
+6. WHEN a submission is auto-submitted with less than 40 total hours, THE Timesheet_System SHALL send an under-40-hours notification email to the Employee only
 
+### Requirement 8: Deadline Reminder
 
-### Requirement 8: Submission Deadline Enforcement and Locking
-
-**User Story:** As a Project_Manager, I want timesheets to be automatically locked after the submission deadline passes, so that late or unsubmitted timesheets cannot be modified and reporting data remains consistent.
+**User Story:** As an Employee, I want to receive a reminder email before the submission deadline, so that I can complete my timesheet on time.
 
 #### Acceptance Criteria
 
-1. WHEN the submissionDeadline for a timesheet period passes, THE Timesheet_System SHALL update all timesheet submissions for that period with Submission_Status of Draft to Locked
-2. WHILE a timesheet submission has Submission_Status of Locked, THE Timesheet_System SHALL prevent the Employee from editing or submitting the timesheet
-3. IF an Employee attempts to modify a timesheet entry belonging to a Locked submission, THEN THE Timesheet_API SHALL reject the modification and return an error indicating the submission is locked
-4. WHEN the submissionDeadline passes and an Employee has no submission for that period, THE Timesheet_System SHALL create a submission record with Submission_Status of Locked and zero Charged_Hours
+1. THE Timesheet_System SHALL send a reminder email to all Employees with Draft submissions 4 hours before the deadline (Friday 1PM MYT = 05:00 UTC)
+2. THE reminder email SHALL include the period string and a prompt to complete the timesheet
 
 ### Requirement 9: TC Summary Report Generation
 
@@ -144,11 +146,11 @@ The Employee Timesheet Management System replaces the existing Google Sheets and
 
 #### Acceptance Criteria
 
-1. WHEN a timesheet submission transitions to Approved or Locked status, THE Report_Generator SHALL automatically recompute the TC Summary Report for the affected team lead and period
+1. WHEN a timesheet submission transitions to Submitted status, THE Report_Generator SHALL automatically recompute the TC Summary Report for the affected team lead and period
 2. THE Report_Generator SHALL compute the TC Summary Report containing: employee name, chargeable hours, total hours, current period Chargeability_Percentage, and YTD Chargeability_Percentage for each team member under the selected team lead
 3. THE Report_Generator SHALL calculate current period Chargeability_Percentage as (chargeable hours / total hours) * 100 for each employee
 4. THE Report_Generator SHALL calculate YTD Chargeability_Percentage using the ytdChargable_hours and ytdTotalHours from the Employee_Performance record
-5. THE Report_Generator SHALL include only employees with Approved or Locked timesheet submissions for the selected period
+5. THE Report_Generator SHALL include only employees with Submitted timesheet submissions for the selected period
 6. THE Report_Generator SHALL format the TC Summary Report as a downloadable CSV file with columns: Name, Chargable Hours, Total Hours, Current Period Chargability, YTD Chargability
 7. WHEN a Tech_Lead or Project_Manager requests a TC Summary Report, THE Timesheet_API SHALL return the most recently computed report for the selected team lead and period
 
@@ -158,10 +160,10 @@ The Employee Timesheet Management System replaces the existing Google Sheets and
 
 #### Acceptance Criteria
 
-1. WHEN a timesheet submission transitions to Approved or Locked status, THE Report_Generator SHALL automatically recompute the Project Summary Report for the affected projects and period
+1. WHEN a timesheet submission transitions to Submitted status, THE Report_Generator SHALL automatically recompute the Project Summary Report for the affected projects and period
 2. THE Report_Generator SHALL compute the Project Summary Report containing: projectCode, projectName, plannedHours, charged hours, utilization percentage, and current biweekly effort for each project
 3. THE Report_Generator SHALL calculate utilization as (total charged hours / plannedHours) * 100 for each project
-4. THE Report_Generator SHALL calculate current biweekly effort as the sum of all Charged_Hours from Approved or Locked submissions in the current Biweekly_Period for each project
+4. THE Report_Generator SHALL calculate current biweekly effort as the sum of all Charged_Hours from Submitted submissions in the current Biweekly_Period for each project
 5. THE Report_Generator SHALL format the Project Summary Report as a downloadable CSV file with columns: Project Charge Code, Project Name, Planned Hours, Charged Hours, Utilization, Current Biweekly Effort
 6. THE Report_Generator SHALL include all projects regardless of status in the Project Summary Report
 7. WHEN a Project_Manager or Tech_Lead requests a Project Summary Report, THE Timesheet_API SHALL return the most recently computed report for the selected period
@@ -172,7 +174,7 @@ The Employee Timesheet Management System replaces the existing Google Sheets and
 
 #### Acceptance Criteria
 
-1. WHEN a timesheet submission transitions to Approved status, THE Timesheet_API SHALL update the Employee_Performance record for the corresponding employee and year by adding the approved Charged_Hours to ytdChargable_hours and total hours to ytdTotalHours
+1. WHEN a timesheet submission transitions to Submitted status, THE Timesheet_API SHALL update the Employee_Performance record for the corresponding employee and year by adding the Charged_Hours to ytdChargable_hours and total hours to ytdTotalHours
 2. THE Timesheet_API SHALL recalculate ytdChargabilityPercentage as (ytdChargable_hours / ytdTotalHours) * 100 each time the Employee_Performance record is updated
 3. IF no Employee_Performance record exists for the employee and current year, THEN THE Timesheet_API SHALL create a new record with initial values of zero before applying the update
 4. THE Timesheet_API SHALL store one Employee_Performance record per employee per year, using userId and year as the composite primary key

@@ -96,6 +96,9 @@ def update_user(event):
     if "role" in args:
         _validate_enum(args["role"], VALID_ROLES, "role")
 
+    if "status" in args:
+        _validate_enum(args["status"], {"active", "inactive"}, "status")
+
     if "email" in args and args["email"] != existing["email"]:
         _check_email_unique(table, args["email"], exclude_user_id=user_id)
 
@@ -110,7 +113,7 @@ def update_user(event):
     expr_names["#updatedBy"] = "updatedBy"
 
     allowed_fields = [
-        "fullName", "email", "userType", "role",
+        "fullName", "email", "userType", "role", "status",
         "positionId", "departmentId", "supervisorId",
     ]
     remove_fields = []

@@ -17,7 +17,8 @@ from hypothesis import strategies as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lambdas"))
 
-from lambdas.entries.handler import _validate_daily_totals, DAY_FIELDS, MAX_DAILY_HOURS
+from lambdas.entries.shared_utils import validate_daily_totals, DAY_FIELDS, MAX_DAILY_HOURS
+
 
 
 # ---------------------------------------------------------------------------
@@ -25,10 +26,10 @@ from lambdas.entries.handler import _validate_daily_totals, DAY_FIELDS, MAX_DAIL
 # ---------------------------------------------------------------------------
 
 # Generate a valid daily hours Decimal: non-negative, max 2 decimal places,
-# range 0.00 to 24.00
+# range 0.00 to MAX_DAILY_HOURS (8.00 after bugfix)
 daily_hours_decimal = st.decimals(
     min_value=Decimal("0.00"),
-    max_value=Decimal("24.00"),
+    max_value=MAX_DAILY_HOURS,
     places=2,
     allow_nan=False,
     allow_infinity=False,
@@ -59,13 +60,11 @@ class TestDailyHoursConstraintProperty:
 
         **Validates: Requirements 15.2**
         """
-        # Ensure every day's total is within the limit
         for day in DAY_FIELDS:
             day_total = new[day] + sum(e[day] for e in existing)
             assume(day_total <= MAX_DAILY_HOURS)
 
-        # Should not raise
-        _validate_daily_totals(existing, new)
+        validate_daily_totals(existing, new)
 
     @given(
         existing=st.lists(entry_hours, min_size=0, max_size=26),
@@ -78,7 +77,6 @@ class TestDailyHoursConstraintProperty:
 
         **Validates: Requirements 15.2**
         """
-        # Ensure at least one day exceeds the limit
         any_exceeds = False
         for day in DAY_FIELDS:
             day_total = new[day] + sum(e[day] for e in existing)
@@ -88,7 +86,7 @@ class TestDailyHoursConstraintProperty:
         assume(any_exceeds)
 
         with pytest.raises(ValueError, match="exceeds the maximum"):
-            _validate_daily_totals(existing, new)
+            validate_daily_totals(existing, new)
 
     @given(
         base_hours=st.lists(
@@ -103,27 +101,19 @@ class TestDailyHoursConstraintProperty:
         (boundary condition).
 
         **Validates: Requirements 15.2**
-
-        Strategy: generate N existing entries with the same hours per day,
-        then construct a new entry whose hours are exactly (24.0 - sum of
-        existing) for each day. This guarantees every day sums to 24.0.
         """
         n = len(base_hours)
-        # Use the first generated value for all entries on each day
         per_entry_value = base_hours[0]
         total_existing = per_entry_value * n
         assume(total_existing <= MAX_DAILY_HOURS)
 
         remainder = MAX_DAILY_HOURS - total_existing
 
-        # Build existing entries — each entry has the same value for all days
         existing = [
             {day: per_entry_value for day in DAY_FIELDS}
             for _ in range(n)
         ]
 
-        # Build new entry so each day totals exactly 24.0
         new_hours = {day: remainder for day in DAY_FIELDS}
 
-        # Should not raise — 24.0 is the boundary, not exceeded
-        _validate_daily_totals(existing, new_hours)
+        validate_daily_totals(existing, new_hours)

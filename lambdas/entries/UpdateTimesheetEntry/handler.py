@@ -17,7 +17,7 @@ from shared.auth import ForbiddenError, get_caller_identity
 from shared_utils import (
     get_entries_table, get_submission, validate_submission_editable,
     validate_project_approved, parse_and_validate_daily_hours,
-    get_existing_entries, validate_daily_totals,
+    get_existing_entries, validate_daily_totals, validate_weekly_total,
 )
 
 
@@ -52,6 +52,7 @@ def update_timesheet_entry(event):
     hours = parse_and_validate_daily_hours(input_data)
     existing_entries = get_existing_entries(submission_id)
     validate_daily_totals(existing_entries, hours, exclude_entry_id=entry_id)
+    validate_weekly_total(existing_entries, hours, exclude_entry_id=entry_id)
 
     now = datetime.now(timezone.utc).isoformat()
 

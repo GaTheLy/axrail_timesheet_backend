@@ -28,7 +28,9 @@ from colabs_pipeline_cdk.environment import (
     ENV_CONFIG,
     PROJECT_NAME,
     TIMESHEET_ARCHIVAL_SCHEDULE,
+    TIMESHEET_AUTO_PROVISIONING_SCHEDULE,
     TIMESHEET_DEADLINE_ENFORCEMENT_SCHEDULE,
+    TIMESHEET_DEADLINE_REMINDER_SCHEDULE,
     TIMESHEET_LAMBDA_MEMORY_MB,
     TIMESHEET_LAMBDA_TIMEOUT_SECONDS,
     TIMESHEET_NOTIFICATION_SCHEDULE,
@@ -73,14 +75,16 @@ class TimesheetLambdaStack(Stack):
         self._create_period_lambdas()
         self._create_submission_lambdas()
         self._create_entry_lambdas()
-        self._create_review_lambdas()
         self._create_deadline_enforcement_lambda()
+        self._create_auto_provisioning_lambda()
+        self._create_deadline_reminder_lambda()
         self._create_report_lambdas()
         self._create_performance_tracking_lambda()
         self._create_notification_lambda()
         self._create_notification_config_lambdas()
         self._create_archival_lambda()
         self._create_main_database_lambdas()
+        self._create_sync_from_projects_lambda()
 
     def _ssm_lookup(self, path: str) -> str:
         return ssm.StringParameter.value_for_string_parameter(
@@ -115,6 +119,16 @@ class TimesheetLambdaStack(Stack):
             table_stream_arn=submissions_stream_arn,
         )
 
+        projects_stream_arn = self._ssm_lookup("dynamodb/projects/stream-arn")
+        self._projects_with_stream = dynamodb.Table.from_table_attributes(
+            self, "Imported-projects-stream",
+            table_arn=self.format_arn(
+                service="dynamodb", resource="table",
+                resource_name=self._table_names["projects"],
+            ),
+            table_stream_arn=projects_stream_arn,
+        )
+
         user_pool_id = self._ssm_lookup("auth/user-pool-id")
         user_pool_arn = self._ssm_lookup("auth/user-pool-arn")
         self._user_pool = cognito.UserPool.from_user_pool_arn(
@@ -144,7 +158,10 @@ class TimesheetLambdaStack(Stack):
             function_name=f"{function_name}-{self.env_name}",
             runtime=_lambda.Runtime.PYTHON_3_12,
             handler=handler_path,
-            code=_lambda.Code.from_asset("lambdas"),
+            code=_lambda.Code.from_asset(
+                "lambdas",
+                exclude=["__pycache__", "*.pyc", ".pytest_cache", ".hypothesis"],
+            ),
             timeout=Duration.seconds(timeout or TIMESHEET_LAMBDA_TIMEOUT_SECONDS),
             memory_size=TIMESHEET_LAMBDA_MEMORY_MB,
             environment=environment,
@@ -179,6 +196,8 @@ class TimesheetLambdaStack(Stack):
                 "cognito-idp:AdminDeleteUser",
                 "cognito-idp:AdminAddUserToGroup",
                 "cognito-idp:AdminUpdateUserAttributes",
+                "cognito-idp:AdminEnableUser",
+                "cognito-idp:AdminDisableUser",
             ],
             resources=[self._user_pool_arn],
         )
@@ -220,6 +239,22 @@ class TimesheetLambdaStack(Stack):
         self._tables["users"].grant_read_data(fn)
         ds = self._graphql_api.add_lambda_data_source("ListUsersDataSource", fn)
         ds.create_resolver("Query_listUsers_Resolver", type_name="Query", field_name="listUsers")
+
+        # DeactivateUser
+        fn = self._make_lambda("DeactivateUserLambda", "TimesheetDeactivateUser",
+                               "users.DeactivateUser.handler.handler", user_env)
+        self._tables["users"].grant_read_write_data(fn)
+        fn.add_to_role_policy(cognito_policy)
+        ds = self._graphql_api.add_lambda_data_source("DeactivateUserDataSource", fn)
+        ds.create_resolver("Mutation_deactivateUser_Resolver", type_name="Mutation", field_name="deactivateUser")
+
+        # ActivateUser
+        fn = self._make_lambda("ActivateUserLambda", "TimesheetActivateUser",
+                               "users.ActivateUser.handler.handler", user_env)
+        self._tables["users"].grant_read_write_data(fn)
+        fn.add_to_role_policy(cognito_policy)
+        ds = self._graphql_api.add_lambda_data_source("ActivateUserDataSource", fn)
+        ds.create_resolver("Mutation_activateUser_Resolver", type_name="Mutation", field_name="activateUser")
 
     # ------------------------------------------------------------------
     # Department Management (4 Lambdas)
@@ -379,22 +414,6 @@ class TimesheetLambdaStack(Stack):
             "ENTRIES_TABLE": self._table_names["entries"],
         }
 
-        # CreateTimesheetSubmission
-        fn = self._make_lambda("CreateSubmissionLambda", "TimesheetCreateSubmission",
-                               "submissions.CreateTimesheetSubmission.handler.handler",
-                               {"SUBMISSIONS_TABLE": self._table_names["submissions"]})
-        self._tables["submissions"].grant_read_write_data(fn)
-        ds = self._graphql_api.add_lambda_data_source("CreateSubmissionDataSource", fn)
-        ds.create_resolver("Mutation_createTimesheetSubmission_Resolver", type_name="Mutation", field_name="createTimesheetSubmission")
-
-        # SubmitTimesheet
-        fn = self._make_lambda("SubmitTimesheetLambda", "TimesheetSubmitTimesheet",
-                               "submissions.SubmitTimesheet.handler.handler",
-                               {"SUBMISSIONS_TABLE": self._table_names["submissions"]})
-        self._tables["submissions"].grant_read_write_data(fn)
-        ds = self._graphql_api.add_lambda_data_source("SubmitTimesheetDataSource", fn)
-        ds.create_resolver("Mutation_submitTimesheet_Resolver", type_name="Mutation", field_name="submitTimesheet")
-
         # GetTimesheetSubmission
         fn = self._make_lambda("GetSubmissionLambda", "TimesheetGetSubmission",
                                "submissions.GetTimesheetSubmission.handler.handler", sub_env)
@@ -410,6 +429,14 @@ class TimesheetLambdaStack(Stack):
         self._tables["submissions"].grant_read_data(fn)
         ds = self._graphql_api.add_lambda_data_source("ListMySubmissionsDataSource", fn)
         ds.create_resolver("Query_listMySubmissions_Resolver", type_name="Query", field_name="listMySubmissions")
+
+        # ListAllSubmissions
+        fn = self._make_lambda("ListAllSubmissionsLambda", "TimesheetListAllSubmissions",
+                               "submissions.ListAllSubmissions.handler.handler",
+                               {"SUBMISSIONS_TABLE": self._table_names["submissions"]})
+        self._tables["submissions"].grant_read_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("ListAllSubmissionsDataSource", fn)
+        ds.create_resolver("Query_listAllSubmissions_Resolver", type_name="Query", field_name="listAllSubmissions")
 
     # ------------------------------------------------------------------
     # Entry Management (3 Lambdas)
@@ -450,35 +477,48 @@ class TimesheetLambdaStack(Stack):
     # ------------------------------------------------------------------
     # Review Management (3 Lambdas)
     # ------------------------------------------------------------------
-    def _create_review_lambdas(self) -> None:
-        review_env = {
-            "SUBMISSIONS_TABLE": self._table_names["submissions"],
-            "USERS_TABLE": self._table_names["users"],
-        }
-
-        # ApproveTimesheet
-        fn = self._make_lambda("ApproveTimesheetLambda", "TimesheetApproveTimesheet",
-                               "reviews.ApproveTimesheet.handler.handler", review_env)
+    def _create_auto_provisioning_lambda(self) -> None:
+        """Lambda that runs every Monday to create period + Draft submissions."""
+        fn = self._make_lambda("AutoProvisioningLambda", "TimesheetAutoProvisioning",
+                               "auto_provisioning.handler.handler", {
+                                   "PERIODS_TABLE": self._table_names["periods"],
+                                   "SUBMISSIONS_TABLE": self._table_names["submissions"],
+                                   "USERS_TABLE": self._table_names["users"],
+                               })
+        self._tables["periods"].grant_read_write_data(fn)
         self._tables["submissions"].grant_read_write_data(fn)
         self._tables["users"].grant_read_data(fn)
-        ds = self._graphql_api.add_lambda_data_source("ApproveTimesheetDataSource", fn)
-        ds.create_resolver("Mutation_approveTimesheet_Resolver", type_name="Mutation", field_name="approveTimesheet")
+        rule = events.Rule(
+            self, "AutoProvisioningRule",
+            rule_name=f"TimesheetAutoProvisioning-{self.env_name}",
+            schedule=events.Schedule.expression(TIMESHEET_AUTO_PROVISIONING_SCHEDULE),
+            description="Creates weekly timesheet period and Draft submissions every Monday",
+        )
+        rule.add_target(targets.LambdaFunction(fn))
 
-        # RejectTimesheet
-        fn = self._make_lambda("RejectTimesheetLambda", "TimesheetRejectTimesheet",
-                               "reviews.RejectTimesheet.handler.handler", review_env)
-        self._tables["submissions"].grant_read_write_data(fn)
-        self._tables["users"].grant_read_data(fn)
-        ds = self._graphql_api.add_lambda_data_source("RejectTimesheetDataSource", fn)
-        ds.create_resolver("Mutation_rejectTimesheet_Resolver", type_name="Mutation", field_name="rejectTimesheet")
-
-        # ListPendingTimesheets
-        fn = self._make_lambda("ListPendingTimesheetsLambda", "TimesheetListPendingTimesheets",
-                               "reviews.ListPendingTimesheets.handler.handler", review_env)
+    def _create_deadline_reminder_lambda(self) -> None:
+        """Lambda that runs Friday 1PM MYT to remind employees to fill timesheets."""
+        fn = self._make_lambda("DeadlineReminderLambda", "TimesheetDeadlineReminder",
+                               "deadline_reminder.handler.handler", {
+                                   "PERIODS_TABLE": self._table_names["periods"],
+                                   "SUBMISSIONS_TABLE": self._table_names["submissions"],
+                                   "USERS_TABLE": self._table_names["users"],
+                                   "SES_FROM_EMAIL": TIMESHEET_SES_FROM_EMAIL,
+                               })
+        self._tables["periods"].grant_read_data(fn)
         self._tables["submissions"].grant_read_data(fn)
         self._tables["users"].grant_read_data(fn)
-        ds = self._graphql_api.add_lambda_data_source("ListPendingTimesheetsDataSource", fn)
-        ds.create_resolver("Query_listPendingTimesheets_Resolver", type_name="Query", field_name="listPendingTimesheets")
+        fn.add_to_role_policy(iam.PolicyStatement(
+            actions=["ses:SendEmail"],
+            resources=["*"],
+        ))
+        rule = events.Rule(
+            self, "DeadlineReminderRule",
+            rule_name=f"TimesheetDeadlineReminder-{self.env_name}",
+            schedule=events.Schedule.expression(TIMESHEET_DEADLINE_REMINDER_SCHEDULE),
+            description="Sends reminder emails 4 hours before timesheet deadline",
+        )
+        rule.add_target(targets.LambdaFunction(fn))
 
     # ------------------------------------------------------------------
     # Deadline Enforcement (1 Lambda — EventBridge triggered)
@@ -488,16 +528,23 @@ class TimesheetLambdaStack(Stack):
                                "deadline_enforcement.handler.handler", {
                                    "PERIODS_TABLE": self._table_names["periods"],
                                    "SUBMISSIONS_TABLE": self._table_names["submissions"],
+                                   "ENTRIES_TABLE": self._table_names["entries"],
                                    "USERS_TABLE": self._table_names["users"],
+                                   "SES_FROM_EMAIL": TIMESHEET_SES_FROM_EMAIL,
                                })
         self._tables["periods"].grant_read_write_data(fn)
         self._tables["submissions"].grant_read_write_data(fn)
+        self._tables["entries"].grant_read_data(fn)
         self._tables["users"].grant_read_data(fn)
+        fn.add_to_role_policy(iam.PolicyStatement(
+            actions=["ses:SendEmail"],
+            resources=["*"],
+        ))
         rule = events.Rule(
             self, "DeadlineEnforcementRule",
             rule_name=f"TimesheetDeadlineEnforcement-{self.env_name}",
             schedule=events.Schedule.expression(TIMESHEET_DEADLINE_ENFORCEMENT_SCHEDULE),
-            description="Triggers deadline enforcement Lambda to lock expired timesheet periods",
+            description="Auto-submits Draft timesheets and sends under-40h notifications at deadline",
         )
         rule.add_target(targets.LambdaFunction(fn))
 
@@ -683,3 +730,20 @@ class TimesheetLambdaStack(Stack):
         self._report_bucket.grant_read(fn)
         ds = self._graphql_api.add_lambda_data_source("RefreshDatabaseDataSource", fn)
         ds.create_resolver("Mutation_refreshDatabase_Resolver", type_name="Mutation", field_name="refreshDatabase")
+
+    def _create_sync_from_projects_lambda(self) -> None:
+        """Lambda triggered by Projects DynamoDB Stream to sync into Main_Database."""
+        fn = self._make_lambda(
+            "SyncFromProjectsLambda", "TimesheetSyncFromProjects",
+            "main_database.SyncFromProjects.handler.handler",
+            {"MAIN_DATABASE_TABLE": self._table_names["main_database"]},
+        )
+        self._tables["main_database"].grant_read_write_data(fn)
+        fn.add_event_source(
+            lambda_event_sources.DynamoEventSource(
+                self._projects_with_stream,
+                starting_position=_lambda.StartingPosition.TRIM_HORIZON,
+                batch_size=10,
+                retry_attempts=3,
+            )
+        )

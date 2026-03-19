@@ -1,6 +1,9 @@
 """Unit tests for Submission & Entry resolvers.
 
-Validates: Requirements 6.4, 6.5, 6.6, 6.7, 6.9, 6.10, 6.11
+Validates: Requirements 6.5, 6.7, 6.9, 6.10, 6.11
+Note: Manual submit (Draft→Submitted) no longer exists as a user action.
+      Auto-submit is handled by deadline_enforcement Lambda only.
+      Only two statuses exist: Draft and Submitted.
 """
 
 import os
@@ -76,7 +79,7 @@ def _make_entry_input(project_code="PROJ-001", hours=None):
 
 @pytest.fixture(autouse=True)
 def _mock_boto(monkeypatch):
-    """Patch boto3.resource used at module level in both handlers."""
+    """Patch boto3.resource used at module level in all handlers."""
     mock_submissions_table = MagicMock()
     mock_entries_table = MagicMock()
     mock_projects_table = MagicMock()
@@ -106,16 +109,33 @@ def _mock_boto(monkeypatch):
         for mod_name in list(sys.modules):
             if "lambdas.submissions" in mod_name or "lambdas.entries" in mod_name:
                 del sys.modules[mod_name]
+        # Also clear the bare 'shared_utils' module that entry handlers
+        # import via sys.path manipulation
+        if "shared_utils" in sys.modules:
+            del sys.modules["shared_utils"]
 
-        from lambdas.submissions import handler as sub_mod
-        from lambdas.entries import handler as ent_mod
+        from lambdas.submissions.CreateTimesheetSubmission import handler as create_sub_mod
+        from lambdas.submissions.GetTimesheetSubmission import handler as get_sub_mod
+        from lambdas.submissions.ListMySubmissions import handler as list_sub_mod
+        from lambdas.entries.AddTimesheetEntry import handler as add_ent_mod
+        from lambdas.entries.UpdateTimesheetEntry import handler as update_ent_mod
+        from lambdas.entries.RemoveTimesheetEntry import handler as remove_ent_mod
 
-        sub_mod.dynamodb = mock_dynamodb
-        ent_mod.dynamodb = mock_dynamodb
+        create_sub_mod.dynamodb = mock_dynamodb
+        get_sub_mod.dynamodb = mock_dynamodb
+        list_sub_mod.dynamodb = mock_dynamodb
+        # The entry handlers import shared_utils as a bare module via sys.path;
+        # patch it through the module that was actually loaded
+        if "shared_utils" in sys.modules:
+            sys.modules["shared_utils"].dynamodb = mock_dynamodb
 
         yield {
-            "sub_mod": sub_mod,
-            "ent_mod": ent_mod,
+            "create_sub_mod": create_sub_mod,
+            "get_sub_mod": get_sub_mod,
+            "list_sub_mod": list_sub_mod,
+            "add_ent_mod": add_ent_mod,
+            "update_ent_mod": update_ent_mod,
+            "remove_ent_mod": remove_ent_mod,
             "submissions_table": mock_submissions_table,
             "entries_table": mock_entries_table,
             "projects_table": mock_projects_table,
@@ -131,97 +151,32 @@ class TestOneSubmissionPerPeriod:
     """Enforce that an employee cannot create two submissions for the same period."""
 
     def test_first_submission_succeeds(self, _mock_boto):
-        mod = _mock_boto["sub_mod"]
+        mod = _mock_boto["create_sub_mod"]
         event = _make_event(arguments={"periodId": "period-001"})
         result = mod.create_timesheet_submission(event)
         assert result["status"] == "Draft"
         assert result["periodId"] == "period-001"
 
     def test_duplicate_submission_rejected(self, _mock_boto):
-        mod = _mock_boto["sub_mod"]
+        mod = _mock_boto["create_sub_mod"]
         table = _mock_boto["submissions_table"]
-        # Simulate existing submission for this employee+period
-        table.query.return_value = {
-            "Items": [_make_submission()]
-        }
+        table.query.return_value = {"Items": [_make_submission()]}
         event = _make_event(arguments={"periodId": "period-001"})
         with pytest.raises(ValueError, match="already exists"):
             mod.create_timesheet_submission(event)
 
 
 # ---------------------------------------------------------------------------
-# Requirement 6.4 — Status transition Draft to Submitted
-# ---------------------------------------------------------------------------
-
-
-class TestSubmitTimesheet:
-    """Employee can submit a Draft timesheet, transitioning to Submitted."""
-
-    def test_submit_draft_succeeds(self, _mock_boto):
-        mod = _mock_boto["sub_mod"]
-        table = _mock_boto["submissions_table"]
-        table.get_item.return_value = {"Item": _make_submission(status="Draft")}
-        table.update_item.return_value = {
-            "Attributes": {**_make_submission(status="Submitted"), "status": "Submitted"}
-        }
-        event = _make_event(
-            field_name="submitTimesheet",
-            arguments={"submissionId": "sub-001"},
-        )
-        result = mod.submit_timesheet(event)
-        assert result["status"] == "Submitted"
-
-    def test_submit_rejected_succeeds(self, _mock_boto):
-        """A Rejected timesheet can also be resubmitted."""
-        mod = _mock_boto["sub_mod"]
-        table = _mock_boto["submissions_table"]
-        table.get_item.return_value = {"Item": _make_submission(status="Rejected")}
-        table.update_item.return_value = {
-            "Attributes": {**_make_submission(status="Submitted"), "status": "Submitted"}
-        }
-        event = _make_event(
-            field_name="submitTimesheet",
-            arguments={"submissionId": "sub-001"},
-        )
-        result = mod.submit_timesheet(event)
-        assert result["status"] == "Submitted"
-
-    def test_submit_approved_rejected(self, _mock_boto):
-        """Cannot submit a timesheet that is already Approved."""
-        mod = _mock_boto["sub_mod"]
-        table = _mock_boto["submissions_table"]
-        table.get_item.return_value = {"Item": _make_submission(status="Approved")}
-        event = _make_event(
-            field_name="submitTimesheet",
-            arguments={"submissionId": "sub-001"},
-        )
-        with pytest.raises(ValueError, match="Cannot submit"):
-            mod.submit_timesheet(event)
-
-    def test_submit_locked_rejected(self, _mock_boto):
-        """Cannot submit a timesheet that is Locked."""
-        mod = _mock_boto["sub_mod"]
-        table = _mock_boto["submissions_table"]
-        table.get_item.return_value = {"Item": _make_submission(status="Locked")}
-        event = _make_event(
-            field_name="submitTimesheet",
-            arguments={"submissionId": "sub-001"},
-        )
-        with pytest.raises(ValueError, match="Cannot submit"):
-            mod.submit_timesheet(event)
-
-
-# ---------------------------------------------------------------------------
-# Requirements 6.5, 6.6 — Entry editing blocked when Submitted or Locked
+# Requirements 6.5 — Entry editing blocked when Submitted
 # ---------------------------------------------------------------------------
 
 
 class TestEntryEditingBlocked:
-    """Entries cannot be added/updated/removed when submission is Submitted or Locked."""
+    """Entries cannot be added/updated/removed when submission is Submitted."""
 
-    @pytest.mark.parametrize("status", ["Submitted", "Locked", "Approved"])
+    @pytest.mark.parametrize("status", ["Submitted"])
     def test_add_entry_blocked_non_editable_status(self, _mock_boto, status):
-        mod = _mock_boto["ent_mod"]
+        mod = _mock_boto["add_ent_mod"]
         table = _mock_boto["submissions_table"]
         table.get_item.return_value = {"Item": _make_submission(status=status)}
         event = _make_event(
@@ -234,9 +189,9 @@ class TestEntryEditingBlocked:
         with pytest.raises(ValueError, match="Cannot modify entries"):
             mod.add_timesheet_entry(event)
 
-    @pytest.mark.parametrize("status", ["Submitted", "Locked", "Approved"])
+    @pytest.mark.parametrize("status", ["Submitted"])
     def test_update_entry_blocked_non_editable_status(self, _mock_boto, status):
-        mod = _mock_boto["ent_mod"]
+        mod = _mock_boto["update_ent_mod"]
         sub_table = _mock_boto["submissions_table"]
         ent_table = _mock_boto["entries_table"]
         sub_table.get_item.return_value = {"Item": _make_submission(status=status)}
@@ -257,9 +212,9 @@ class TestEntryEditingBlocked:
         with pytest.raises(ValueError, match="Cannot modify entries"):
             mod.update_timesheet_entry(event)
 
-    @pytest.mark.parametrize("status", ["Submitted", "Locked", "Approved"])
+    @pytest.mark.parametrize("status", ["Submitted"])
     def test_remove_entry_blocked_non_editable_status(self, _mock_boto, status):
-        mod = _mock_boto["ent_mod"]
+        mod = _mock_boto["remove_ent_mod"]
         sub_table = _mock_boto["submissions_table"]
         ent_table = _mock_boto["entries_table"]
         sub_table.get_item.return_value = {"Item": _make_submission(status=status)}
@@ -276,9 +231,9 @@ class TestEntryEditingBlocked:
         with pytest.raises(ValueError, match="Cannot modify entries"):
             mod.remove_timesheet_entry(event)
 
-    @pytest.mark.parametrize("status", ["Draft", "Rejected"])
+    @pytest.mark.parametrize("status", ["Draft"])
     def test_add_entry_allowed_editable_status(self, _mock_boto, status):
-        mod = _mock_boto["ent_mod"]
+        mod = _mock_boto["add_ent_mod"]
         sub_table = _mock_boto["submissions_table"]
         sub_table.get_item.return_value = {"Item": _make_submission(status=status)}
         event = _make_event(
@@ -301,7 +256,7 @@ class TestMaxEntries:
     """A submission cannot have more than 27 entries."""
 
     def test_28th_entry_rejected(self, _mock_boto):
-        mod = _mock_boto["ent_mod"]
+        mod = _mock_boto["add_ent_mod"]
         sub_table = _mock_boto["submissions_table"]
         ent_table = _mock_boto["entries_table"]
         sub_table.get_item.return_value = {"Item": _make_submission(status="Draft")}
@@ -318,7 +273,7 @@ class TestMaxEntries:
             mod.add_timesheet_entry(event)
 
     def test_27th_entry_allowed(self, _mock_boto):
-        mod = _mock_boto["ent_mod"]
+        mod = _mock_boto["add_ent_mod"]
         sub_table = _mock_boto["submissions_table"]
         ent_table = _mock_boto["entries_table"]
         sub_table.get_item.return_value = {"Item": _make_submission(status="Draft")}
@@ -344,7 +299,7 @@ class TestEmployeeSubmissionAccess:
     """Employees can only view their own submissions."""
 
     def test_owner_can_view_submission(self, _mock_boto):
-        mod = _mock_boto["sub_mod"]
+        mod = _mock_boto["get_sub_mod"]
         table = _mock_boto["submissions_table"]
         ent_table = _mock_boto["entries_table"]
         table.get_item.return_value = {
@@ -360,7 +315,7 @@ class TestEmployeeSubmissionAccess:
         assert result["employeeId"] == "emp-001"
 
     def test_other_employee_forbidden(self, _mock_boto):
-        mod = _mock_boto["sub_mod"]
+        mod = _mock_boto["get_sub_mod"]
         table = _mock_boto["submissions_table"]
         table.get_item.return_value = {
             "Item": _make_submission(employee_id="emp-002")
@@ -375,7 +330,7 @@ class TestEmployeeSubmissionAccess:
             mod.get_timesheet_submission(event)
 
     def test_admin_can_view_any_submission(self, _mock_boto):
-        mod = _mock_boto["sub_mod"]
+        mod = _mock_boto["get_sub_mod"]
         table = _mock_boto["submissions_table"]
         ent_table = _mock_boto["entries_table"]
         table.get_item.return_value = {
@@ -393,7 +348,7 @@ class TestEmployeeSubmissionAccess:
         assert result["employeeId"] == "emp-002"
 
     def test_list_my_submissions_returns_own_only(self, _mock_boto):
-        mod = _mock_boto["sub_mod"]
+        mod = _mock_boto["list_sub_mod"]
         table = _mock_boto["submissions_table"]
         own_sub = _make_submission(employee_id="emp-001")
         table.query.return_value = {"Items": [own_sub]}
@@ -405,18 +360,3 @@ class TestEmployeeSubmissionAccess:
         result = mod.list_my_submissions(event)
         assert len(result) == 1
         assert result[0]["employeeId"] == "emp-001"
-
-    def test_submit_other_employee_forbidden(self, _mock_boto):
-        """An employee cannot submit another employee's timesheet."""
-        mod = _mock_boto["sub_mod"]
-        table = _mock_boto["submissions_table"]
-        table.get_item.return_value = {
-            "Item": _make_submission(employee_id="emp-002", status="Draft")
-        }
-        event = _make_event(
-            field_name="submitTimesheet",
-            user_id="emp-001",
-            arguments={"submissionId": "sub-001"},
-        )
-        with pytest.raises(Exception, match="only submit your own"):
-            mod.submit_timesheet(event)

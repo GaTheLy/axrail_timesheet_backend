@@ -2,7 +2,7 @@
 
 Handles BOTH DynamoDB Stream events AND AppSync resolver events:
 - DynamoDB Stream: triggered when Timesheet_Submissions status changes to
-  Approved or Locked. Generates both TC Summary and Project Summary CSVs
+  Submitted. Generates both TC Summary and Project Summary CSVs
   and stores them in S3.
 - AppSync resolver: returns pre-signed S3 URLs for downloading reports.
 
@@ -97,7 +97,7 @@ def _get_performance_table():
 def _handle_stream_event(event):
     """Process DynamoDB Stream records from Timesheet_Submissions table.
 
-    For each record where status transitions to Approved or Locked,
+    For each record where status transitions to Submitted,
     generates both TC Summary and Project Summary reports.
 
     Validates: Requirements 9.1, 10.1
@@ -136,14 +136,14 @@ def _should_process_stream_record(record):
     """Determine if a DynamoDB Stream record should trigger report generation.
 
     Only processes INSERT or MODIFY events where the new status is
-    Approved or Locked, and the old status was different (to avoid
+    Submitted, and the old status was different (to avoid
     duplicate processing).
 
     Args:
         record: A single DynamoDB Stream record.
 
     Returns:
-        True if the record represents a transition to Approved or Locked.
+        True if the record represents a transition to Submitted.
     """
     event_name = record.get("eventName")
     if event_name not in ("INSERT", "MODIFY"):
@@ -154,7 +154,7 @@ def _should_process_stream_record(record):
         return False
 
     new_status = new_image.get("status", {}).get("S", "")
-    if new_status not in ("Approved", "Locked"):
+    if new_status not in ("Submitted",):
         return False
 
     # For MODIFY events, skip if old status was already the same
@@ -199,7 +199,7 @@ def _generate_tc_summary(tech_lead_id, period_id):
     Columns: Name, Chargable Hours, Total Hours, Current Period Chargability,
              YTD Chargability
 
-    Includes only employees with Approved or Locked submissions for the period.
+    Includes only employees with Submitted submissions for the period.
 
     Validates: Requirements 9.2, 9.3, 9.4, 9.5, 9.6
     """
@@ -215,8 +215,8 @@ def _generate_tc_summary(tech_lead_id, period_id):
     # Build employee lookup by userId
     employee_map = {emp["userId"]: emp for emp in employees}
 
-    # Get Approved and Locked submissions for this period
-    submissions = _get_submissions_for_period(period_id, ["Approved", "Locked"])
+    # Get Submitted submissions for this period
+    submissions = _get_submissions_for_period(period_id, ["Submitted"])
 
     # Filter to only submissions from supervised employees
     supervised_ids = set(employee_map.keys())
@@ -226,7 +226,7 @@ def _generate_tc_summary(tech_lead_id, period_id):
     ]
 
     if not relevant_submissions:
-        logger.info("No Approved/Locked submissions for tech lead %s in period %s",
+        logger.info("No Submitted submissions for tech lead %s in period %s",
                      tech_lead_id, period_id)
         return None
 
@@ -296,8 +296,8 @@ def _generate_project_summary(period_id):
         logger.info("No projects found")
         return None
 
-    # Get all Approved/Locked submissions for this period
-    submissions = _get_submissions_for_period(period_id, ["Approved", "Locked"])
+    # Get all Submitted submissions for this period
+    submissions = _get_submissions_for_period(period_id, ["Submitted"])
     submission_ids = [sub["submissionId"] for sub in submissions]
 
     # Get all entries for these submissions, grouped by projectCode
@@ -475,7 +475,7 @@ def _get_submissions_for_period(period_id, statuses):
 
     Args:
         period_id: The timesheet period ID.
-        statuses: List of status strings (e.g. ["Approved", "Locked"]).
+        statuses: List of status strings (e.g. ["Submitted"]).
 
     Returns:
         List of submission items.
@@ -611,7 +611,7 @@ def _get_biweekly_period_id(period_id):
 def _get_biweekly_effort(biweekly_period_id):
     """Compute current biweekly effort per project.
 
-    Finds all periods in the same biweekly cycle, gets their Approved/Locked
+    Finds all periods in the same biweekly cycle, gets their Submitted
     submissions, and aggregates hours by projectCode.
 
     Args:
@@ -640,7 +640,7 @@ def _get_biweekly_effort(biweekly_period_id):
     all_submission_ids = []
     for period in periods:
         pid = period["periodId"]
-        submissions = _get_submissions_for_period(pid, ["Approved", "Locked"])
+        submissions = _get_submissions_for_period(pid, ["Submitted"])
         all_submission_ids.extend(sub["submissionId"] for sub in submissions)
 
     return _aggregate_hours_by_project(all_submission_ids)

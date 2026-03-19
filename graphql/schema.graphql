@@ -16,12 +16,14 @@ enum Role {
   Employee
 }
 
+enum UserStatus {
+  active
+  inactive
+}
+
 enum SubmissionStatus {
   Draft
   Submitted
-  Approved
-  Rejected
-  Locked
 }
 
 enum ApprovalStatus {
@@ -40,6 +42,7 @@ type User @aws_api_key @aws_cognito_user_pools {
   fullName: String!
   userType: UserType!
   role: Role!
+  status: UserStatus!
   positionId: ID!
   departmentId: ID!
   supervisorId: ID
@@ -105,8 +108,6 @@ type TimesheetSubmission @aws_api_key @aws_cognito_user_pools {
   entries: [TimesheetEntry!]!
   totalHours: Float!
   chargeableHours: Float!
-  approvedBy: ID
-  approvedAt: AWSDateTime
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime
   updatedBy: ID
@@ -210,6 +211,7 @@ input UpdateUserInput {
   fullName: String
   userType: UserType
   role: Role
+  status: UserStatus
   positionId: ID
   departmentId: ID
   supervisorId: ID
@@ -218,6 +220,7 @@ input UpdateUserInput {
 input UserFilterInput {
   userType: UserType
   role: Role
+  status: UserStatus
   departmentId: ID
   supervisorId: ID
   nextToken: String
@@ -269,13 +272,11 @@ input ProjectFilterInput {
 input CreateTimesheetPeriodInput {
   startDate: AWSDate!
   endDate: AWSDate!
-  submissionDeadline: AWSDateTime!
   periodString: String!
   biweeklyPeriodId: String
 }
 
 input UpdateTimesheetPeriodInput {
-  submissionDeadline: AWSDateTime
   periodString: String
   biweeklyPeriodId: String
 }
@@ -321,6 +322,12 @@ input UpdateReportDistributionConfigInput {
   enabled: Boolean
 }
 
+input AdminSubmissionFilterInput {
+  status: SubmissionStatus
+  periodId: ID
+  employeeId: ID
+}
+
 # ---------------------------------------------------------------
 # Queries
 # ---------------------------------------------------------------
@@ -335,7 +342,7 @@ type Query @aws_api_key @aws_cognito_user_pools {
   listTimesheetPeriods(filter: PeriodFilterInput): [TimesheetPeriod!]!
   getTimesheetSubmission(submissionId: ID!): TimesheetSubmission!
   listMySubmissions(filter: SubmissionFilterInput): [TimesheetSubmission!]!
-  listPendingTimesheets: [TimesheetSubmission!]!
+  listAllSubmissions(filter: AdminSubmissionFilterInput): [TimesheetSubmission!]!
   getTCSummaryReport(techLeadId: ID!, periodId: ID!): ReportDownloadUrl!
   getProjectSummaryReport(periodId: ID!): ReportDownloadUrl!
   listMainDatabase: [MainDatabaseRecord!]!
@@ -350,6 +357,8 @@ type Mutation @aws_api_key @aws_cognito_user_pools {
   createUser(input: CreateUserInput!): User!
   updateUser(userId: ID!, input: UpdateUserInput!): User!
   deleteUser(userId: ID!): Boolean!
+  deactivateUser(userId: ID!): User!
+  activateUser(userId: ID!): User!
   createDepartment(input: CreateDepartmentInput!): Department!
   updateDepartment(departmentId: ID!, input: UpdateDepartmentInput!): Department!
   deleteDepartment(departmentId: ID!): Boolean!
@@ -362,13 +371,9 @@ type Mutation @aws_api_key @aws_cognito_user_pools {
   updateProject(projectId: ID!, input: UpdateProjectInput!): Project!
   createTimesheetPeriod(input: CreateTimesheetPeriodInput!): TimesheetPeriod!
   updateTimesheetPeriod(periodId: ID!, input: UpdateTimesheetPeriodInput!): TimesheetPeriod!
-  createTimesheetSubmission(periodId: ID!): TimesheetSubmission!
-  submitTimesheet(submissionId: ID!): TimesheetSubmission!
   addTimesheetEntry(submissionId: ID!, input: TimesheetEntryInput!): TimesheetEntry!
   updateTimesheetEntry(entryId: ID!, input: TimesheetEntryInput!): TimesheetEntry!
   removeTimesheetEntry(entryId: ID!): Boolean!
-  approveTimesheet(submissionId: ID!): TimesheetSubmission!
-  rejectTimesheet(submissionId: ID!): TimesheetSubmission!
   updateMainDatabaseRecord(id: ID!, input: UpdateMainDBInput!): MainDatabaseRecord!
   bulkImportCSV(file: S3ObjectInput!): BulkImportResult!
   refreshDatabase(file: S3ObjectInput!): RefreshResult!

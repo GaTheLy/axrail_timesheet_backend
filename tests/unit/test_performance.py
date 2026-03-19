@@ -23,8 +23,8 @@ os.environ.setdefault("EMPLOYEE_PERFORMANCE_TABLE", "PerformanceTable")
 def _make_stream_record(
     employee_id="emp-001",
     submission_id="sub-001",
-    new_status="Approved",
-    old_status="Submitted",
+    new_status="Submitted",
+    old_status="Draft",
     chargeable_hours="20",
     total_hours="40",
     approved_at="2025-06-15T10:30:00+00:00",
@@ -40,7 +40,7 @@ def _make_stream_record(
                 "status": {"S": new_status},
                 "chargeableHours": {"N": chargeable_hours},
                 "totalHours": {"N": total_hours},
-                "approvedAt": {"S": approved_at},
+                "updatedAt": {"S": approved_at},
             },
         },
     }
@@ -359,17 +359,14 @@ class TestChargeabilityRecalculation:
 
 
 class TestShouldProcess:
-    """Only records transitioning to Approved should be processed."""
+    """Only records transitioning to Submitted should be processed."""
 
-    def test_non_approved_status_ignored(self, _mock_boto):
-        """Records with status other than Approved are skipped.
-
-        Validates: Requirements 11.1
-        """
+    def test_non_submitted_status_ignored(self, _mock_boto):
+        """Records with status other than Submitted are skipped."""
         mod = _mock_boto["perf_mod"]
         table = _mock_boto["perf_table"]
 
-        record = _make_stream_record(new_status="Locked", old_status="Draft")
+        record = _make_stream_record(new_status="Draft", old_status="Submitted")
         event = _make_stream_event(record)
 
         result = mod.handler(event, None)
@@ -377,17 +374,14 @@ class TestShouldProcess:
         assert result["processedRecords"] == 0
         table.update_item.assert_not_called()
 
-    def test_already_approved_not_reprocessed(self, _mock_boto):
-        """MODIFY events where old status was already Approved are skipped.
-
-        Validates: Requirements 11.1
-        """
+    def test_already_submitted_not_reprocessed(self, _mock_boto):
+        """MODIFY events where old status was already Submitted are skipped."""
         mod = _mock_boto["perf_mod"]
         table = _mock_boto["perf_table"]
 
         record = _make_stream_record(
-            new_status="Approved",
-            old_status="Approved",
+            new_status="Submitted",
+            old_status="Submitted",
             event_name="MODIFY",
         )
         event = _make_stream_event(record)
@@ -406,7 +400,7 @@ class TestShouldProcess:
             "eventName": "REMOVE",
             "dynamodb": {
                 "OldImage": {
-                    "status": {"S": "Approved"},
+                    "status": {"S": "Submitted"},
                 },
             },
         }
@@ -417,8 +411,8 @@ class TestShouldProcess:
         assert result["processedRecords"] == 0
         table.update_item.assert_not_called()
 
-    def test_insert_with_approved_status_processed(self, _mock_boto):
-        """INSERT events with Approved status are processed (edge case).
+    def test_insert_with_submitted_status_processed(self, _mock_boto):
+        """INSERT events with Submitted status are processed.
 
         Validates: Requirements 11.1
         """
@@ -427,7 +421,7 @@ class TestShouldProcess:
 
         record = _make_stream_record(
             event_name="INSERT",
-            new_status="Approved",
+            new_status="Submitted",
         )
         # INSERT events don't have OldImage
         record["dynamodb"].pop("OldImage", None)

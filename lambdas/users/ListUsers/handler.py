@@ -57,5 +57,7 @@ def list_users(event):
         items = [i for i in items if i.get("userType") == filter_input["userType"]]
     if "role" in filter_input:
         items = [i for i in items if i.get("role") == filter_input["role"]]
+    if "status" in filter_input:
+        items = [i for i in items if i.get("status") == filter_input["status"]]
 
     return {"items": items}

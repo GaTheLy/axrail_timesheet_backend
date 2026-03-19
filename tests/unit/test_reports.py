@@ -42,7 +42,7 @@ def _make_submission(
     submission_id="sub-001",
     period_id="period-001",
     employee_id="emp-001",
-    status="Approved",
+    status="Submitted",
     chargeable_hours=Decimal("20"),
     total_hours=Decimal("40"),
 ):
@@ -76,8 +76,8 @@ def _make_project(
 def _make_stream_record(
     employee_id="emp-001",
     period_id="period-001",
-    new_status="Approved",
-    old_status="Submitted",
+    new_status="Submitted",
+    old_status="Draft",
     event_name="MODIFY",
 ):
     record = {
@@ -177,18 +177,15 @@ def _mock_boto(monkeypatch):
 
 
 class TestTCSummaryFiltersByStatus:
-    """TC Summary should only include employees with Approved or Locked submissions."""
+    """TC Summary should only include employees with Submitted submissions."""
 
-    def test_approved_submission_included(self, _mock_boto):
-        """An Approved submission appears in the TC Summary CSV.
-
-        Validates: Requirements 9.5
-        """
+    def test_submitted_submission_included(self, _mock_boto):
+        """A Submitted submission appears in the TC Summary CSV."""
         mod = _mock_boto["mod"]
         s3 = _mock_boto["s3_client"]
 
         emp = _make_employee("emp-001", "Alice Smith", "tl-001")
-        sub = _make_submission("sub-001", "period-001", "emp-001", "Approved",
+        sub = _make_submission("sub-001", "period-001", "emp-001", "Submitted",
                                Decimal("20"), Decimal("40"))
 
         with patch.object(mod, "_get_supervised_employees", return_value=[emp]), \
@@ -203,34 +200,8 @@ class TestTCSummaryFiltersByStatus:
         assert len(rows) == 1
         assert rows[0]["Name"] == "Alice Smith"
 
-    def test_locked_submission_included(self, _mock_boto):
-        """A Locked submission appears in the TC Summary CSV.
-
-        Validates: Requirements 9.5
-        """
-        mod = _mock_boto["mod"]
-        s3 = _mock_boto["s3_client"]
-
-        emp = _make_employee("emp-002", "Bob Jones", "tl-001")
-        sub = _make_submission("sub-002", "period-001", "emp-002", "Locked",
-                               Decimal("0"), Decimal("0"))
-
-        with patch.object(mod, "_get_supervised_employees", return_value=[emp]), \
-             patch.object(mod, "_get_submissions_for_period", return_value=[sub]), \
-             patch.object(mod, "_get_ytd_chargeability", return_value=Decimal("0")):
-            result = mod._generate_tc_summary("tl-001", "period-001")
-
-        assert result is not None
-        csv_content = s3.put_object.call_args[1]["Body"].decode("utf-8")
-        rows = _parse_csv(csv_content)
-        assert len(rows) == 1
-        assert rows[0]["Name"] == "Bob Jones"
-
-    def test_no_approved_locked_returns_none(self, _mock_boto):
-        """When no Approved/Locked submissions exist, no report is generated.
-
-        Validates: Requirements 9.5
-        """
+    def test_no_submitted_returns_none(self, _mock_boto):
+        """When no Submitted submissions exist, no report is generated."""
         mod = _mock_boto["mod"]
         s3 = _mock_boto["s3_client"]
 
@@ -243,46 +214,13 @@ class TestTCSummaryFiltersByStatus:
         assert result is None
         s3.put_object.assert_not_called()
 
-    def test_mixed_statuses_only_approved_locked_included(self, _mock_boto):
-        """Only Approved and Locked submissions appear; others are excluded.
-
-        Validates: Requirements 9.5
-        """
-        mod = _mock_boto["mod"]
-        s3 = _mock_boto["s3_client"]
-
-        emp1 = _make_employee("emp-001", "Alice Smith", "tl-001")
-        emp2 = _make_employee("emp-002", "Bob Jones", "tl-001")
-        emp3 = _make_employee("emp-003", "Charlie Brown", "tl-001")
-
-        approved_sub = _make_submission("sub-001", "period-001", "emp-001",
-                                        "Approved", Decimal("30"), Decimal("40"))
-        locked_sub = _make_submission("sub-002", "period-001", "emp-002",
-                                      "Locked", Decimal("10"), Decimal("20"))
-
-        with patch.object(mod, "_get_supervised_employees",
-                          return_value=[emp1, emp2, emp3]), \
-             patch.object(mod, "_get_submissions_for_period",
-                          return_value=[approved_sub, locked_sub]), \
-             patch.object(mod, "_get_ytd_chargeability", return_value=Decimal("50.00")):
-            result = mod._generate_tc_summary("tl-001", "period-001")
-
-        csv_content = s3.put_object.call_args[1]["Body"].decode("utf-8")
-        rows = _parse_csv(csv_content)
-        names = {row["Name"] for row in rows}
-        assert names == {"Alice Smith", "Bob Jones"}
-        assert "Charlie Brown" not in names
-
     def test_non_supervised_employee_excluded(self, _mock_boto):
-        """Submissions from employees not under the tech lead are excluded.
-
-        Validates: Requirements 9.5
-        """
+        """Submissions from employees not under the tech lead are excluded."""
         mod = _mock_boto["mod"]
 
         emp = _make_employee("emp-001", "Alice Smith", "tl-001")
         other_sub = _make_submission("sub-other", "period-001", "emp-999",
-                                     "Approved", Decimal("10"), Decimal("20"))
+                                     "Submitted", Decimal("10"), Decimal("20"))
 
         with patch.object(mod, "_get_supervised_employees", return_value=[emp]), \
              patch.object(mod, "_get_submissions_for_period",
@@ -390,7 +328,7 @@ class TestTCSummaryCSVFormat:
         s3 = _mock_boto["s3_client"]
 
         emp = _make_employee("emp-001", "Alice Smith", "tl-001")
-        sub = _make_submission("sub-001", "period-001", "emp-001", "Approved",
+        sub = _make_submission("sub-001", "period-001", "emp-001", "Submitted",
                                Decimal("20"), Decimal("40"))
 
         with patch.object(mod, "_get_supervised_employees", return_value=[emp]), \
@@ -414,7 +352,7 @@ class TestTCSummaryCSVFormat:
         s3 = _mock_boto["s3_client"]
 
         emp = _make_employee("emp-001", "Alice Smith", "tl-001")
-        sub = _make_submission("sub-001", "period-001", "emp-001", "Approved",
+        sub = _make_submission("sub-001", "period-001", "emp-001", "Submitted",
                                Decimal("30"), Decimal("40"))
 
         with patch.object(mod, "_get_supervised_employees", return_value=[emp]), \
@@ -473,7 +411,7 @@ class TestProjectSummaryCSVFormat:
 
         with patch.object(mod, "_get_all_projects", return_value=projects), \
              patch.object(mod, "_get_submissions_for_period", return_value=[
-                 _make_submission("sub-001", "period-001", "emp-001", "Approved")
+                 _make_submission("sub-001", "period-001", "emp-001", "Submitted")
              ]), \
              patch.object(mod, "_aggregate_hours_by_project",
                           return_value=project_hours), \
@@ -509,7 +447,7 @@ class TestS3StorageKeyPrefix:
         s3 = _mock_boto["s3_client"]
 
         emp = _make_employee("emp-001", "Alice Smith", "tl-001")
-        sub = _make_submission("sub-001", "period-abc", "emp-001", "Approved",
+        sub = _make_submission("sub-001", "period-abc", "emp-001", "Submitted",
                                Decimal("20"), Decimal("40"))
 
         with patch.object(mod, "_get_supervised_employees", return_value=[emp]), \
@@ -556,7 +494,7 @@ class TestS3StorageKeyPrefix:
         s3 = _mock_boto["s3_client"]
 
         emp = _make_employee("emp-001", "Alice Smith", "tl-001")
-        sub = _make_submission("sub-001", "period-001", "emp-001", "Approved",
+        sub = _make_submission("sub-001", "period-001", "emp-001", "Submitted",
                                Decimal("10"), Decimal("20"))
 
         with patch.object(mod, "_get_supervised_employees", return_value=[emp]), \
@@ -575,15 +513,12 @@ class TestS3StorageKeyPrefix:
 
 
 class TestStreamEventRouting:
-    """The handler should only process stream records for Approved/Locked."""
+    """The handler should only process stream records for Submitted status."""
 
-    def test_approved_transition_triggers_reports(self, _mock_boto):
-        """A Submitted->Approved transition triggers both reports.
-
-        Validates: Requirements 9.5
-        """
+    def test_submitted_transition_triggers_reports(self, _mock_boto):
+        """A Draft->Submitted transition triggers both reports."""
         mod = _mock_boto["mod"]
-        record = _make_stream_record(new_status="Approved", old_status="Submitted")
+        record = _make_stream_record(new_status="Submitted", old_status="Draft")
 
         with patch.object(mod, "_get_employee_supervisor_id", return_value="tl-001"), \
              patch.object(mod, "_generate_tc_summary") as mock_tc, \
@@ -594,27 +529,10 @@ class TestStreamEventRouting:
         mock_tc.assert_called_once_with("tl-001", "period-001")
         mock_proj.assert_called_once_with("period-001")
 
-    def test_locked_transition_triggers_reports(self, _mock_boto):
-        """A Draft->Locked transition triggers both reports.
-
-        Validates: Requirements 9.5
-        """
-        mod = _mock_boto["mod"]
-        record = _make_stream_record(new_status="Locked", old_status="Draft")
-
-        with patch.object(mod, "_get_employee_supervisor_id", return_value="tl-001"), \
-             patch.object(mod, "_generate_tc_summary") as mock_tc, \
-             patch.object(mod, "_generate_project_summary") as mock_proj:
-            result = mod.handler({"Records": [record]}, None)
-
-        assert result["processedRecords"] == 1
-        mock_tc.assert_called_once()
-        mock_proj.assert_called_once()
-
     def test_draft_status_does_not_trigger(self, _mock_boto):
         """A transition to Draft does not trigger report generation."""
         mod = _mock_boto["mod"]
-        record = _make_stream_record(new_status="Draft", old_status="Rejected")
+        record = _make_stream_record(new_status="Draft", old_status="Submitted")
 
         with patch.object(mod, "_generate_tc_summary") as mock_tc, \
              patch.object(mod, "_generate_project_summary") as mock_proj:
@@ -625,10 +543,10 @@ class TestStreamEventRouting:
         mock_proj.assert_not_called()
 
     def test_same_status_modify_skipped(self, _mock_boto):
-        """A MODIFY where old and new status are both Approved is skipped."""
+        """A MODIFY where old and new status are both Submitted is skipped."""
         mod = _mock_boto["mod"]
         record = _make_stream_record(
-            new_status="Approved", old_status="Approved", event_name="MODIFY",
+            new_status="Submitted", old_status="Submitted", event_name="MODIFY",
         )
 
         with patch.object(mod, "_generate_tc_summary") as mock_tc, \

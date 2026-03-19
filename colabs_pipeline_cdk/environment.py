@@ -79,15 +79,22 @@ TIMESHEET_LAMBDA_TIMEOUT_SECONDS = 30
 TIMESHEET_LAMBDA_MEMORY_MB = 256
 
 # EventBridge
-TIMESHEET_DEADLINE_ENFORCEMENT_SCHEDULE = "rate(1 hour)"
-TIMESHEET_NOTIFICATION_SCHEDULE = "cron(0 8 ? * MON *)"  # Every Monday at 8am UTC
+# Auto-provisioning: Every Monday 00:05 MYT (Sunday 16:05 UTC)
+TIMESHEET_AUTO_PROVISIONING_SCHEDULE = "cron(5 16 ? * SUN *)"
+# Deadline reminder: Every Friday 1PM MYT (05:00 UTC)
+TIMESHEET_DEADLINE_REMINDER_SCHEDULE = "cron(0 5 ? * FRI *)"
+# Deadline enforcement: Every Friday 5:05PM MYT (09:05 UTC) — 5 min after deadline
+TIMESHEET_DEADLINE_ENFORCEMENT_SCHEDULE = "cron(5 9 ? * FRI *)"
+# Notification (report distribution): Every Monday at 8am UTC
+TIMESHEET_NOTIFICATION_SCHEDULE = "cron(0 8 ? * MON *)"
+# Archival: Daily
 TIMESHEET_ARCHIVAL_SCHEDULE = "rate(1 day)"
 
 # SES
 TIMESHEET_SES_FROM_EMAIL = "noreply@example.com"  # Replace with verified SES email
 
 # Submission statuses
-SUBMISSION_STATUSES = ["Draft", "Submitted", "Approved", "Rejected", "Locked"]
+SUBMISSION_STATUSES = ["Draft", "Submitted"]
 
 # Project approval statuses
 APPROVAL_STATUSES = ["Pending_Approval", "Approved", "Rejected"]

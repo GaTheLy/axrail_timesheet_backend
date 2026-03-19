@@ -16,14 +16,15 @@ from hypothesis import strategies as st
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "lambdas"))
 
-from lambdas.entries.handler import _parse_and_validate_daily_hours, DAY_FIELDS
+from lambdas.entries.shared_utils import parse_and_validate_daily_hours, DAY_FIELDS
+
 
 
 # ---------------------------------------------------------------------------
 # Strategies
 # ---------------------------------------------------------------------------
 
-# Valid daily hours: non-negative, max 2 decimal places, 0.00–24.00
+# Valid daily hours: non-negative, max 2 decimal places, 0.00-24.00
 daily_hours_decimal = st.decimals(
     min_value=Decimal("0.00"),
     max_value=Decimal("24.00"),
@@ -54,7 +55,7 @@ class TestRowTotalProperty:
 
         **Validates: Requirements 6.8, 15.5**
         """
-        result = _parse_and_validate_daily_hours(input_data)
+        result = parse_and_validate_daily_hours(input_data)
 
         expected_total = sum(result[day] for day in DAY_FIELDS)
         assert result["totalHours"] == expected_total, (
@@ -69,7 +70,7 @@ class TestRowTotalProperty:
 
         **Validates: Requirements 6.8, 15.5**
         """
-        result = _parse_and_validate_daily_hours(input_data)
+        result = parse_and_validate_daily_hours(input_data)
         assert result["totalHours"] >= Decimal("0"), (
             f"totalHours should be non-negative, got {result['totalHours']}"
         )
@@ -83,7 +84,7 @@ class TestRowTotalProperty:
 
         **Validates: Requirements 6.8, 15.5**
         """
-        result = _parse_and_validate_daily_hours(input_data)
+        result = parse_and_validate_daily_hours(input_data)
         assert result["totalHours"] == Decimal("0")
 
     @given(input_data=entry_input)
@@ -94,9 +95,8 @@ class TestRowTotalProperty:
 
         **Validates: Requirements 15.5**
         """
-        result = _parse_and_validate_daily_hours(input_data)
+        result = parse_and_validate_daily_hours(input_data)
         total = result["totalHours"]
-        # Quantize to 2 places — should be identical
         assert total == total.quantize(Decimal("0.01")), (
             f"totalHours {total} has more than 2 decimal places"
         )

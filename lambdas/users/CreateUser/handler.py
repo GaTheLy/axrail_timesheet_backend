@@ -66,6 +66,15 @@ def _check_email_unique(table, email):
         raise ValueError(f"Email '{email}' is already in use")
 
 
+ALLOWED_EMAIL_DOMAIN = "@axrail.com"
+
+
+def _validate_email_domain(email):
+    """Raise ValueError if email is not from the allowed domain."""
+    if not email.lower().endswith(ALLOWED_EMAIL_DOMAIN):
+        raise ValueError("Only @axrail.com email addresses are allowed")
+
+
 def _authorize_mutation(caller, target_user_type):
     """Validate that the caller can perform a mutation on the target user type."""
     caller_type = caller["userType"]
@@ -99,6 +108,8 @@ def create_user(event):
     _validate_enum(role, VALID_ROLES, "role")
     _authorize_mutation(caller, target_user_type)
 
+    _validate_email_domain(email)
+
     table = _get_table()
     _check_email_unique(table, email)
 
@@ -111,6 +122,7 @@ def create_user(event):
         "fullName": full_name,
         "userType": target_user_type,
         "role": role,
+        "status": "active",
         "positionId": position_id,
         "departmentId": department_id,
         "createdAt": now,

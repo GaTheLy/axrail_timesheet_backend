@@ -16,16 +16,16 @@
         }
       }
     },
-    "e3d174c66657a7c6df26bff1a265018ddee4ae47b6b159ff723e4bbf0c3158e9": {
+    "2fd0c56924ad3e80a254385b83764c7ec1426d11ee82f8be3132a94873bcccb4": {
       "displayName": "ColabsTimesheetApiStack-staging Template",
       "source": {
         "path": "ColabsTimesheetApiStack-staging.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "815254799325-ap-southeast-1-80a42246": {
+        "815254799325-ap-southeast-1-9fa789c3": {
           "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-          "objectKey": "e3d174c66657a7c6df26bff1a265018ddee4ae47b6b159ff723e4bbf0c3158e9.json",
+          "objectKey": "2fd0c56924ad3e80a254385b83764c7ec1426d11ee82f8be3132a94873bcccb4.json",
           "region": "ap-southeast-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }

@@ -43,7 +43,7 @@ def submit_timesheet(event):
             "Cannot submit an archived timesheet. Archived submissions are read-only"
         )
 
-    allowed_source_statuses = {"Draft", "Rejected"}
+    allowed_source_statuses = {"Draft"}
     if existing["status"] not in allowed_source_statuses:
         raise ValueError(
             f"Cannot submit timesheet with status '{existing['status']}'. "

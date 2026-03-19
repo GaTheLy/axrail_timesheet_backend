@@ -613,7 +613,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-deploy-role-815254799325-ap-southeast-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-cfn-exec-role-815254799325-ap-southeast-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/fb2d233215c885f4378a15158c1b1b5bccc335f61400ac858d64344f20769521.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/de86969e2e19f13e195657591a6848dc870bd47195e2cdb83349a57cca12e240.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -763,7 +763,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-deploy-role-815254799325-ap-southeast-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-cfn-exec-role-815254799325-ap-southeast-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/8e1a371e61ea5373d72a5bdc21a21e5de5c39a283aa489e2212ac5dec8c8b0f2.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/5e08283bd26d0437b31f7aacc1896c310fc37cbbf6bdc38891352220f30def8e.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -946,6 +946,54 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiQuerylistUsersResolverDDE6B485"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/DeactivateUserDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceServiceRoleA288ACEE"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/DeactivateUserDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceServiceRoleDefaultPolicy93405DAB"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/DeactivateUserDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceFA5D1347"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Mutation_deactivateUser_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiMutationdeactivateUserResolver7B96301B"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ActivateUserDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceServiceRole87906494"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ActivateUserDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceServiceRoleDefaultPolicyAE0C9048"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ActivateUserDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceA53A6139"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Mutation_activateUser_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiMutationactivateUserResolverA53C3EE8"
           }
         ],
         "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/CreateDepartmentDataSource/ServiceRole/Resource": [
@@ -1356,54 +1404,6 @@
             "data": "ImportedGraphqlApiQuerygetCurrentPeriodResolverE345951D"
           }
         ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/CreateSubmissionDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSourceServiceRoleA025FC68"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/CreateSubmissionDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSourceServiceRoleDefaultPolicyD1E06D34"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/CreateSubmissionDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSource66CB1FFD"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Mutation_createTimesheetSubmission_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationcreateTimesheetSubmissionResolverFA3C213A"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/SubmitTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSourceServiceRole6FB74E9E"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/SubmitTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSourceServiceRoleDefaultPolicy4740E259"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/SubmitTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSource98124AB5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Mutation_submitTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationsubmitTimesheetResolverFD8D3DB1"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/GetSubmissionDataSource/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -1450,6 +1450,30 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiQuerylistMySubmissionsResolverC00DD3C3"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ListAllSubmissionsDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceServiceRole14453327"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ListAllSubmissionsDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceServiceRoleDefaultPolicy37EA1DC0"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ListAllSubmissionsDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceA2E12965"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Query_listAllSubmissions_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiQuerylistAllSubmissionsResolver7FF54437"
           }
         ],
         "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/AddEntryDataSource/ServiceRole/Resource": [
@@ -1522,78 +1546,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiMutationremoveTimesheetEntryResolverD8C3A5A5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ApproveTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSourceServiceRoleDA7A7AB5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ApproveTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSourceServiceRoleDefaultPolicyC0E993FB"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ApproveTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSource2A353941"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Mutation_approveTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationapproveTimesheetResolver57794BE7"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/RejectTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSourceServiceRoleF64D0A52"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/RejectTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSourceServiceRoleDefaultPolicyBBB747DA"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/RejectTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSource92004DC0"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Mutation_rejectTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationrejectTimesheetResolverE11D173A"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ListPendingTimesheetsDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSourceServiceRole36BB38E2"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ListPendingTimesheetsDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSourceServiceRoleDefaultPolicy7922227C"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/ListPendingTimesheetsDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSource8BD98646"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/Query_listPendingTimesheets_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiQuerylistPendingTimesheetsResolver4EB90E60"
           }
         ],
         "/ColabsTimesheetLambdaStack-dev/ImportedGraphqlApi/GetTCSummaryReportDataSource/ServiceRole/Resource": [
@@ -1876,6 +1828,42 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ListUsersLambdaA3428352"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeactivateUserLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambdaServiceRole770AB323"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeactivateUserLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambdaServiceRoleDefaultPolicyA2B96634"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeactivateUserLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambda6DCD846D"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ActivateUserLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaServiceRoleD6F757E9"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ActivateUserLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaServiceRoleDefaultPolicy26506EFF"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ActivateUserLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaA729C4DE"
           }
         ],
         "/ColabsTimesheetLambdaStack-dev/CreateDepartmentLambda/ServiceRole/Resource": [
@@ -2184,42 +2172,6 @@
             "data": "GetCurrentPeriodLambda4ECD916A"
           }
         ],
-        "/ColabsTimesheetLambdaStack-dev/CreateSubmissionLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambdaServiceRole63B783D4"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/CreateSubmissionLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambdaServiceRoleDefaultPolicyB3BAB8B6"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/CreateSubmissionLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambda996278D8"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/SubmitTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaServiceRole8D115081"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/SubmitTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaServiceRoleDefaultPolicyC32980CC"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/SubmitTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaBB3B4878"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-dev/GetSubmissionLambda/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -2254,6 +2206,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ListMySubmissionsLambda36591924"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ListAllSubmissionsLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambdaServiceRole786BC9C9"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ListAllSubmissionsLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambdaServiceRoleDefaultPolicyF1E36921"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/ListAllSubmissionsLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambda9A5C4A50"
           }
         ],
         "/ColabsTimesheetLambdaStack-dev/AddEntryLambda/ServiceRole/Resource": [
@@ -2310,60 +2280,6 @@
             "data": "RemoveEntryLambda3A7F871C"
           }
         ],
-        "/ColabsTimesheetLambdaStack-dev/ApproveTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambdaServiceRole27C22BF9"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ApproveTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambdaServiceRoleDefaultPolicy8CE1BC60"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ApproveTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambda10EEA8C1"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/RejectTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambdaServiceRoleCF59C1FD"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/RejectTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambdaServiceRoleDefaultPolicy92B10597"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/RejectTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambda9F05A9AC"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ListPendingTimesheetsLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaServiceRole522F2E96"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ListPendingTimesheetsLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaServiceRoleDefaultPolicy788E2722"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-dev/ListPendingTimesheetsLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaAD3C7B19"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-dev/DeadlineEnforcementLambda/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -2392,6 +2308,66 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "DeadlineEnforcementRuleAllowEventRuleColabsTimesheetLambdaStackdevDeadlineEnforcementLambdaAE4E6A03C814E287"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/AutoProvisioningLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaServiceRole13F27295"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/AutoProvisioningLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaServiceRoleDefaultPolicy8A22C113"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/AutoProvisioningLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaEBEAED34"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/AutoProvisioningRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningRule3516B864"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/AutoProvisioningRule/AllowEventRuleColabsTimesheetLambdaStackdevAutoProvisioningLambda7A424DAB": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningRuleAllowEventRuleColabsTimesheetLambdaStackdevAutoProvisioningLambda7A424DABF38CFEFB"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeadlineReminderLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambdaServiceRole027C4DAC"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeadlineReminderLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambdaServiceRoleDefaultPolicyFBE9F2FC"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeadlineReminderLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambda79917123"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeadlineReminderRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderRule13D4BAB3"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-dev/DeadlineReminderRule/AllowEventRuleColabsTimesheetLambdaStackdevDeadlineReminderLambdaF9E32219": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderRuleAllowEventRuleColabsTimesheetLambdaStackdevDeadlineReminderLambdaF9E322197716A2D8"
           }
         ],
         "/ColabsTimesheetLambdaStack-dev/ReportGeneratorStreamLambda/ServiceRole/Resource": [
@@ -3255,7 +3231,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-deploy-role-815254799325-ap-southeast-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-cfn-exec-role-815254799325-ap-southeast-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/e3d174c66657a7c6df26bff1a265018ddee4ae47b6b159ff723e4bbf0c3158e9.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/2fd0c56924ad3e80a254385b83764c7ec1426d11ee82f8be3132a94873bcccb4.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -3399,7 +3375,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-deploy-role-815254799325-ap-southeast-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-cfn-exec-role-815254799325-ap-southeast-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/76c98f8ac7d2662d3c783f997fae45d40b398c3f6382f1b697744e852521870d.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/1ac07a836dc4b231e6ad005e4219c3004ed9ac918acbceb7a28a00511b5bf0f4.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -3582,6 +3558,54 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiQuerylistUsersResolverDDE6B485"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/DeactivateUserDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceServiceRoleA288ACEE"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/DeactivateUserDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceServiceRoleDefaultPolicy93405DAB"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/DeactivateUserDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceFA5D1347"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_deactivateUser_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiMutationdeactivateUserResolver7B96301B"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ActivateUserDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceServiceRole87906494"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ActivateUserDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceServiceRoleDefaultPolicyAE0C9048"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ActivateUserDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceA53A6139"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_activateUser_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiMutationactivateUserResolverA53C3EE8"
           }
         ],
         "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/CreateDepartmentDataSource/ServiceRole/Resource": [
@@ -3992,54 +4016,6 @@
             "data": "ImportedGraphqlApiQuerygetCurrentPeriodResolverE345951D"
           }
         ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/CreateSubmissionDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSourceServiceRoleA025FC68"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/CreateSubmissionDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSourceServiceRoleDefaultPolicyD1E06D34"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/CreateSubmissionDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSource66CB1FFD"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_createTimesheetSubmission_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationcreateTimesheetSubmissionResolverFA3C213A"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/SubmitTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSourceServiceRole6FB74E9E"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/SubmitTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSourceServiceRoleDefaultPolicy4740E259"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/SubmitTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSource98124AB5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_submitTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationsubmitTimesheetResolverFD8D3DB1"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/GetSubmissionDataSource/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -4086,6 +4062,30 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiQuerylistMySubmissionsResolverC00DD3C3"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ListAllSubmissionsDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceServiceRole14453327"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ListAllSubmissionsDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceServiceRoleDefaultPolicy37EA1DC0"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ListAllSubmissionsDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceA2E12965"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listAllSubmissions_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiQuerylistAllSubmissionsResolver7FF54437"
           }
         ],
         "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/AddEntryDataSource/ServiceRole/Resource": [
@@ -4158,78 +4158,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiMutationremoveTimesheetEntryResolverD8C3A5A5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ApproveTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSourceServiceRoleDA7A7AB5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ApproveTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSourceServiceRoleDefaultPolicyC0E993FB"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ApproveTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSource2A353941"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_approveTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationapproveTimesheetResolver57794BE7"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/RejectTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSourceServiceRoleF64D0A52"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/RejectTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSourceServiceRoleDefaultPolicyBBB747DA"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/RejectTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSource92004DC0"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Mutation_rejectTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationrejectTimesheetResolverE11D173A"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ListPendingTimesheetsDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSourceServiceRole36BB38E2"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ListPendingTimesheetsDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSourceServiceRoleDefaultPolicy7922227C"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/ListPendingTimesheetsDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSource8BD98646"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/Query_listPendingTimesheets_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiQuerylistPendingTimesheetsResolver4EB90E60"
           }
         ],
         "/ColabsTimesheetLambdaStack-staging/ImportedGraphqlApi/GetTCSummaryReportDataSource/ServiceRole/Resource": [
@@ -4512,6 +4440,42 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ListUsersLambdaA3428352"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeactivateUserLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambdaServiceRole770AB323"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeactivateUserLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambdaServiceRoleDefaultPolicyA2B96634"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeactivateUserLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambda6DCD846D"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ActivateUserLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaServiceRoleD6F757E9"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ActivateUserLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaServiceRoleDefaultPolicy26506EFF"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ActivateUserLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaA729C4DE"
           }
         ],
         "/ColabsTimesheetLambdaStack-staging/CreateDepartmentLambda/ServiceRole/Resource": [
@@ -4820,42 +4784,6 @@
             "data": "GetCurrentPeriodLambda4ECD916A"
           }
         ],
-        "/ColabsTimesheetLambdaStack-staging/CreateSubmissionLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambdaServiceRole63B783D4"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/CreateSubmissionLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambdaServiceRoleDefaultPolicyB3BAB8B6"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/CreateSubmissionLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambda996278D8"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/SubmitTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaServiceRole8D115081"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/SubmitTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaServiceRoleDefaultPolicyC32980CC"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/SubmitTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaBB3B4878"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-staging/GetSubmissionLambda/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -4890,6 +4818,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ListMySubmissionsLambda36591924"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ListAllSubmissionsLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambdaServiceRole786BC9C9"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ListAllSubmissionsLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambdaServiceRoleDefaultPolicyF1E36921"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/ListAllSubmissionsLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambda9A5C4A50"
           }
         ],
         "/ColabsTimesheetLambdaStack-staging/AddEntryLambda/ServiceRole/Resource": [
@@ -4946,60 +4892,6 @@
             "data": "RemoveEntryLambda3A7F871C"
           }
         ],
-        "/ColabsTimesheetLambdaStack-staging/ApproveTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambdaServiceRole27C22BF9"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ApproveTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambdaServiceRoleDefaultPolicy8CE1BC60"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ApproveTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambda10EEA8C1"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/RejectTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambdaServiceRoleCF59C1FD"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/RejectTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambdaServiceRoleDefaultPolicy92B10597"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/RejectTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambda9F05A9AC"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ListPendingTimesheetsLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaServiceRole522F2E96"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ListPendingTimesheetsLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaServiceRoleDefaultPolicy788E2722"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-staging/ListPendingTimesheetsLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaAD3C7B19"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-staging/DeadlineEnforcementLambda/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -5028,6 +4920,66 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "DeadlineEnforcementRuleAllowEventRuleColabsTimesheetLambdaStackstagingDeadlineEnforcementLambda6C596E7D14EE41D8"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/AutoProvisioningLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaServiceRole13F27295"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/AutoProvisioningLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaServiceRoleDefaultPolicy8A22C113"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/AutoProvisioningLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaEBEAED34"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/AutoProvisioningRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningRule3516B864"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/AutoProvisioningRule/AllowEventRuleColabsTimesheetLambdaStackstagingAutoProvisioningLambda0AD7F8C9": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningRuleAllowEventRuleColabsTimesheetLambdaStackstagingAutoProvisioningLambda0AD7F8C9306F2C3D"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeadlineReminderLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambdaServiceRole027C4DAC"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeadlineReminderLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambdaServiceRoleDefaultPolicyFBE9F2FC"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeadlineReminderLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambda79917123"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeadlineReminderRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderRule13D4BAB3"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-staging/DeadlineReminderRule/AllowEventRuleColabsTimesheetLambdaStackstagingDeadlineReminderLambda16F92232": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderRuleAllowEventRuleColabsTimesheetLambdaStackstagingDeadlineReminderLambda16F92232684C6A03"
           }
         ],
         "/ColabsTimesheetLambdaStack-staging/ReportGeneratorStreamLambda/ServiceRole/Resource": [
@@ -5891,7 +5843,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-deploy-role-815254799325-ap-southeast-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-cfn-exec-role-815254799325-ap-southeast-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/d32a05c14397940dc8112a1333d094f3ab861c4aab347258b945eeb8ed5c4e57.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/dc608fd17e773710171303d6ea33d4cebe07b2658c249b439099bb0999876029.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -6035,7 +5987,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-deploy-role-815254799325-ap-southeast-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-cfn-exec-role-815254799325-ap-southeast-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/0aeeeccd208e94b3481f074c47dc3433650b75bd6959ceb1734a58a11e1d03a0.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-815254799325-ap-southeast-1/b328822c545032426a1bb6bf6386d080e084275a281ab590d3d39f95b334bfda.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -6218,6 +6170,54 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiQuerylistUsersResolverDDE6B485"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/DeactivateUserDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceServiceRoleA288ACEE"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/DeactivateUserDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceServiceRoleDefaultPolicy93405DAB"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/DeactivateUserDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiDeactivateUserDataSourceFA5D1347"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Mutation_deactivateUser_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiMutationdeactivateUserResolver7B96301B"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ActivateUserDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceServiceRole87906494"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ActivateUserDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceServiceRoleDefaultPolicyAE0C9048"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ActivateUserDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiActivateUserDataSourceA53A6139"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Mutation_activateUser_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiMutationactivateUserResolverA53C3EE8"
           }
         ],
         "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/CreateDepartmentDataSource/ServiceRole/Resource": [
@@ -6628,54 +6628,6 @@
             "data": "ImportedGraphqlApiQuerygetCurrentPeriodResolverE345951D"
           }
         ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/CreateSubmissionDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSourceServiceRoleA025FC68"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/CreateSubmissionDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSourceServiceRoleDefaultPolicyD1E06D34"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/CreateSubmissionDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiCreateSubmissionDataSource66CB1FFD"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Mutation_createTimesheetSubmission_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationcreateTimesheetSubmissionResolverFA3C213A"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/SubmitTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSourceServiceRole6FB74E9E"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/SubmitTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSourceServiceRoleDefaultPolicy4740E259"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/SubmitTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiSubmitTimesheetDataSource98124AB5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Mutation_submitTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationsubmitTimesheetResolverFD8D3DB1"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/GetSubmissionDataSource/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -6722,6 +6674,30 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiQuerylistMySubmissionsResolverC00DD3C3"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ListAllSubmissionsDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceServiceRole14453327"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ListAllSubmissionsDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceServiceRoleDefaultPolicy37EA1DC0"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ListAllSubmissionsDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiListAllSubmissionsDataSourceA2E12965"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Query_listAllSubmissions_Resolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ImportedGraphqlApiQuerylistAllSubmissionsResolver7FF54437"
           }
         ],
         "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/AddEntryDataSource/ServiceRole/Resource": [
@@ -6794,78 +6770,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ImportedGraphqlApiMutationremoveTimesheetEntryResolverD8C3A5A5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ApproveTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSourceServiceRoleDA7A7AB5"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ApproveTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSourceServiceRoleDefaultPolicyC0E993FB"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ApproveTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiApproveTimesheetDataSource2A353941"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Mutation_approveTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationapproveTimesheetResolver57794BE7"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/RejectTimesheetDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSourceServiceRoleF64D0A52"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/RejectTimesheetDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSourceServiceRoleDefaultPolicyBBB747DA"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/RejectTimesheetDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiRejectTimesheetDataSource92004DC0"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Mutation_rejectTimesheet_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiMutationrejectTimesheetResolverE11D173A"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ListPendingTimesheetsDataSource/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSourceServiceRole36BB38E2"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ListPendingTimesheetsDataSource/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSourceServiceRoleDefaultPolicy7922227C"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/ListPendingTimesheetsDataSource/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiListPendingTimesheetsDataSource8BD98646"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/Query_listPendingTimesheets_Resolver/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ImportedGraphqlApiQuerylistPendingTimesheetsResolver4EB90E60"
           }
         ],
         "/ColabsTimesheetLambdaStack-prod/ImportedGraphqlApi/GetTCSummaryReportDataSource/ServiceRole/Resource": [
@@ -7148,6 +7052,42 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ListUsersLambdaA3428352"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeactivateUserLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambdaServiceRole770AB323"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeactivateUserLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambdaServiceRoleDefaultPolicyA2B96634"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeactivateUserLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeactivateUserLambda6DCD846D"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ActivateUserLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaServiceRoleD6F757E9"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ActivateUserLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaServiceRoleDefaultPolicy26506EFF"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ActivateUserLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ActivateUserLambdaA729C4DE"
           }
         ],
         "/ColabsTimesheetLambdaStack-prod/CreateDepartmentLambda/ServiceRole/Resource": [
@@ -7456,42 +7396,6 @@
             "data": "GetCurrentPeriodLambda4ECD916A"
           }
         ],
-        "/ColabsTimesheetLambdaStack-prod/CreateSubmissionLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambdaServiceRole63B783D4"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/CreateSubmissionLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambdaServiceRoleDefaultPolicyB3BAB8B6"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/CreateSubmissionLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CreateSubmissionLambda996278D8"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/SubmitTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaServiceRole8D115081"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/SubmitTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaServiceRoleDefaultPolicyC32980CC"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/SubmitTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "SubmitTimesheetLambdaBB3B4878"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-prod/GetSubmissionLambda/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -7526,6 +7430,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ListMySubmissionsLambda36591924"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ListAllSubmissionsLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambdaServiceRole786BC9C9"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ListAllSubmissionsLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambdaServiceRoleDefaultPolicyF1E36921"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/ListAllSubmissionsLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllSubmissionsLambda9A5C4A50"
           }
         ],
         "/ColabsTimesheetLambdaStack-prod/AddEntryLambda/ServiceRole/Resource": [
@@ -7582,60 +7504,6 @@
             "data": "RemoveEntryLambda3A7F871C"
           }
         ],
-        "/ColabsTimesheetLambdaStack-prod/ApproveTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambdaServiceRole27C22BF9"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ApproveTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambdaServiceRoleDefaultPolicy8CE1BC60"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ApproveTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ApproveTimesheetLambda10EEA8C1"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/RejectTimesheetLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambdaServiceRoleCF59C1FD"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/RejectTimesheetLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambdaServiceRoleDefaultPolicy92B10597"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/RejectTimesheetLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "RejectTimesheetLambda9F05A9AC"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ListPendingTimesheetsLambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaServiceRole522F2E96"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ListPendingTimesheetsLambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaServiceRoleDefaultPolicy788E2722"
-          }
-        ],
-        "/ColabsTimesheetLambdaStack-prod/ListPendingTimesheetsLambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ListPendingTimesheetsLambdaAD3C7B19"
-          }
-        ],
         "/ColabsTimesheetLambdaStack-prod/DeadlineEnforcementLambda/ServiceRole/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -7664,6 +7532,66 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "DeadlineEnforcementRuleAllowEventRuleColabsTimesheetLambdaStackprodDeadlineEnforcementLambda9FA9DF68DCCF3F2B"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/AutoProvisioningLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaServiceRole13F27295"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/AutoProvisioningLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaServiceRoleDefaultPolicy8A22C113"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/AutoProvisioningLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningLambdaEBEAED34"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/AutoProvisioningRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningRule3516B864"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/AutoProvisioningRule/AllowEventRuleColabsTimesheetLambdaStackprodAutoProvisioningLambda397CAF00": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AutoProvisioningRuleAllowEventRuleColabsTimesheetLambdaStackprodAutoProvisioningLambda397CAF0048368AB5"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeadlineReminderLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambdaServiceRole027C4DAC"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeadlineReminderLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambdaServiceRoleDefaultPolicyFBE9F2FC"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeadlineReminderLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderLambda79917123"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeadlineReminderRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderRule13D4BAB3"
+          }
+        ],
+        "/ColabsTimesheetLambdaStack-prod/DeadlineReminderRule/AllowEventRuleColabsTimesheetLambdaStackprodDeadlineReminderLambda24676944": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeadlineReminderRuleAllowEventRuleColabsTimesheetLambdaStackprodDeadlineReminderLambda24676944584B69CF"
           }
         ],
         "/ColabsTimesheetLambdaStack-prod/ReportGeneratorStreamLambda/ServiceRole/Resource": [

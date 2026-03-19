@@ -8,6 +8,7 @@ Environment variables:
 """
 
 import os
+from datetime import datetime, timedelta, timezone
 
 import boto3
 
@@ -52,4 +53,7 @@ def get_project_summary_report(event):
         Params={"Bucket": REPORT_BUCKET, "Key": s3_key},
         ExpiresIn=PRESIGNED_URL_EXPIRY,
     )
-    return {"url": url}
+    expires_at = (
+        datetime.now(timezone.utc) + timedelta(seconds=PRESIGNED_URL_EXPIRY)
+    ).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    return {"url": url, "expiresAt": expires_at}

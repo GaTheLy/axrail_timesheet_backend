@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from shared.auth import ForbiddenError, require_user_type
-from shared_utils import validate_period_dates, check_no_overlapping_periods
+from shared_utils import validate_period_dates, check_no_overlapping_periods, compute_submission_deadline
 
 PERIODS_TABLE = os.environ.get("PERIODS_TABLE", "")
 dynamodb = boto3.resource("dynamodb")
@@ -29,17 +29,18 @@ def handler(event, context):
 
 
 def create_timesheet_period(event):
-    """Create a new timesheet period. Validates: Requirements 5.1-5.5"""
+    """Create a new timesheet period (Mon-Fri). Deadline auto-set to Friday 5PM MYT."""
     caller = require_user_type(event, ["superadmin"])
     args = event["arguments"]["input"]
 
     start_date = args["startDate"]
     end_date = args["endDate"]
-    submission_deadline = args["submissionDeadline"]
     period_string = args["periodString"]
     biweekly_period_id = args.get("biweeklyPeriodId", "")
 
-    validate_period_dates(start_date, end_date, submission_deadline)
+    validate_period_dates(start_date, end_date)
+    submission_deadline = compute_submission_deadline(end_date)
+
     table = dynamodb.Table(PERIODS_TABLE)
     check_no_overlapping_periods(table, start_date, end_date)
 

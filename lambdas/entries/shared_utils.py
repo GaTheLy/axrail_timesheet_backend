@@ -12,8 +12,9 @@ PROJECTS_TABLE = os.environ.get("PROJECTS_TABLE", "")
 
 DAY_FIELDS = ("saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday")
 MAX_ENTRIES_PER_SUBMISSION = 27
-MAX_DAILY_HOURS = Decimal("24.0")
-EDITABLE_STATUSES = {"Draft", "Rejected"}
+MAX_DAILY_HOURS = Decimal("8.0")
+MAX_WEEKLY_HOURS = Decimal("40.0")
+EDITABLE_STATUSES = {"Draft"}
 
 dynamodb = boto3.resource("dynamodb")
 
@@ -149,3 +150,21 @@ def validate_daily_totals(existing_entries, new_hours, exclude_entry_id=None):
                 f"Total hours for {day} across all entries would be "
                 f"{day_total}, which exceeds the maximum of {MAX_DAILY_HOURS}"
             )
+
+
+def validate_weekly_total(existing_entries, new_hours, exclude_entry_id=None):
+    total = Decimal("0")
+    for day in DAY_FIELDS:
+        total += new_hours.get(day, Decimal("0"))
+    for entry in existing_entries:
+        if exclude_entry_id and entry.get("entryId") == exclude_entry_id:
+            continue
+        entry_total = entry.get("totalHours", Decimal("0"))
+        if not isinstance(entry_total, Decimal):
+            entry_total = Decimal(str(entry_total))
+        total += entry_total
+    if total > MAX_WEEKLY_HOURS:
+        raise ValueError(
+            f"Total weekly hours across all entries would be {total}, "
+            f"which exceeds the maximum of {MAX_WEEKLY_HOURS}"
+        )

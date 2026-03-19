@@ -11,24 +11,31 @@
 
 ## Table of Contents
 
-1. [Prerequisites](#1-prerequisites)
-2. [Test User Setup](#2-test-user-setup)
-3. [Accessing the AppSync Console](#3-accessing-the-appsync-console)
-4. [Test Execution Order](#4-test-execution-order)
-5. [Test Cases](#5-test-cases)
-   - 5.1 [Departments](#51-departments)
-   - 5.2 [Positions](#52-positions)
-   - 5.3 [Users](#53-users)
-   - 5.4 [Projects](#54-projects)
-   - 5.5 [Timesheet Periods](#55-timesheet-periods)
-   - 5.6 [Timesheet Submissions](#56-timesheet-submissions)
-   - 5.7 [Timesheet Entries](#57-timesheet-entries)
-   - 5.8 [Submit & Review Flow](#58-submit--review-flow)
-   - 5.9 [Reports](#59-reports)
-   - 5.10 [Main Database](#510-main-database)
-   - 5.11 [Report Distribution Config](#511-report-distribution-config)
-6. [Troubleshooting](#6-troubleshooting)
-7. [ID Tracking Sheet](#7-id-tracking-sheet)
+- [AppSync Backend Testing Guide](#appsync-backend-testing-guide)
+  - [Employee Timesheet Management System](#employee-timesheet-management-system)
+  - [Table of Contents](#table-of-contents)
+  - [1. Prerequisites](#1-prerequisites)
+  - [2. Test User Setup](#2-test-user-setup)
+  - [3. Accessing the AppSync Console](#3-accessing-the-appsync-console)
+  - [4. System Flow Overview](#4-system-flow-overview)
+  - [5. Test Execution Order](#5-test-execution-order)
+  - [6. Test Cases](#6-test-cases)
+    - [6.1 Departments](#61-departments)
+    - [6.2 Positions](#62-positions)
+    - [6.3 Users](#63-users)
+    - [6.4 Projects](#64-projects)
+    - [6.5 Timesheet Periods](#65-timesheet-periods)
+    - [6.6 Timesheet Submissions](#66-timesheet-submissions)
+    - [6.7 Timesheet Entries](#67-timesheet-entries)
+    - [6.8 Automated Flows](#68-automated-flows)
+      - [Auto-Provisioning (Monday)](#auto-provisioning-monday)
+      - [Deadline Reminder (Friday 1PM MYT)](#deadline-reminder-friday-1pm-myt)
+      - [Deadline Enforcement (Friday 5PM MYT)](#deadline-enforcement-friday-5pm-myt)
+    - [6.9 Reports](#69-reports)
+    - [6.10 Main Database](#610-main-database)
+    - [6.11 Report Distribution Config](#611-report-distribution-config)
+  - [7. Troubleshooting](#7-troubleshooting)
+  - [8. ID Tracking Sheet](#8-id-tracking-sheet)
 
 ---
 
@@ -99,7 +106,30 @@ aws cognito-idp admin-add-user-to-group \
 
 ---
 
-## 4. Test Execution Order
+## 4. System Flow Overview
+
+The timesheet system is fully automated:
+
+```
+Monday (auto)          Mon-Thu (manual)         Friday 1PM MYT        Friday 5PM MYT
+┌──────────────┐      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
+│ Auto-create  │      │ Employee     │      │ Reminder     │      │ Auto-submit  │
+│ period +     │ ──── │ fills out    │ ──── │ email sent   │ ──── │ all Draft →  │
+│ Draft subs   │      │ timesheet    │      │ to employees │      │ Submitted    │
+│ for all      │      │ entries      │      │ with Draft   │      │ + under-40h  │
+│ employees    │      │              │      │ submissions  │      │ email sent   │
+└──────────────┘      └──────────────┘      └──────────────┘      └──────────────┘
+```
+
+- **Period:** Monday to Friday (5 working days)
+- **Statuses:** Draft → Submitted (automatic only)
+- **No manual submit.** No approval/rejection flow.
+- **Deadline:** Always Friday 5:00 PM MYT (09:00 UTC)
+- **Reminder:** Friday 1:00 PM MYT (05:00 UTC) — 4 hours before deadline
+
+---
+
+## 5. Test Execution Order
 
 Tests must be run in this order because later tests depend on IDs created by earlier ones.
 
@@ -110,20 +140,20 @@ Tests must be run in this order because later tests depend on IDs created by ear
 | 3    | Users                  | Projects, Submissions         |
 | 4    | Projects               | Timesheet Entries             |
 | 5    | Timesheet Periods      | Submissions                   |
-| 6    | Timesheet Submissions  | Entries, Submit/Review        |
-| 7    | Timesheet Entries      | Submit/Review                 |
-| 8    | Submit & Review Flow   | Reports                       |
+| 6    | Timesheet Submissions  | Entries                       |
+| 7    | Timesheet Entries      | Reports                       |
+| 8    | Automated Flows        | (EventBridge — tested via AWS Console) |
 | 9    | Reports                | —                             |
 | 10   | Main Database          | —                             |
 | 11   | Report Distribution    | —                             |
 
-> **Important:** Record every ID returned from create mutations in the ID Tracking Sheet (Section 7).
+> **Important:** Record every ID returned from create mutations in the ID Tracking Sheet (Section 8).
 
 ---
 
-## 5. Test Cases
+## 6. Test Cases
 
-### 5.1 Departments
+### 6.1 Departments
 
 **Create Department**
 
@@ -202,7 +232,7 @@ mutation {
 
 ---
 
-### 5.2 Positions
+### 6.2 Positions
 
 **Create Position**
 
@@ -263,14 +293,16 @@ mutation {
 
 ---
 
-### 5.3 Users
+### 6.3 Users
 
 **Create User** (requires departmentId and positionId from previous steps)
+
+> **Note:** Email must be an `@axrail.com` address. Non-axrail emails are rejected with a validation error.
 
 ```graphql
 mutation {
   createUser(input: {
-    email: "<test-user-email>"
+    email: "<test-user-email>@axrail.com"
     fullName: "John Doe"
     userType: admin
     role: Tech_Lead
@@ -285,6 +317,29 @@ mutation {
   }
 }
 ```
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Validation: Non-axrail email should fail**
+
+```graphql
+mutation {
+  createUser(input: {
+    email: "user@gmail.com"
+    fullName: "External User"
+    userType: user
+    role: Employee
+    positionId: "<POSITION_ID>"
+    departmentId: "<DEPARTMENT_ID>"
+  }) {
+    userId
+  }
+}
+```
+
+| Expected                                              |
+|-------------------------------------------------------|
+| Error: "Only @axrail.com email addresses are allowed" |
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
@@ -350,9 +405,85 @@ mutation {
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
+**Deactivate User** (soft delete — user data remains visible)
+
+```graphql
+mutation {
+  deactivateUser(userId: "<USER_ID>") {
+    userId
+    fullName
+    status
+    updatedAt
+  }
+}
+```
+
+| Field  | Expected   |
+|--------|------------|
+| status | "inactive" |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Activate User** (re-enable a deactivated user)
+
+```graphql
+mutation {
+  activateUser(userId: "<USER_ID>") {
+    userId
+    fullName
+    status
+    updatedAt
+  }
+}
+```
+
+| Field  | Expected |
+|--------|----------|
+| status | "active" |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**List Users filtered by status**
+
+```graphql
+query {
+  listUsers(filter: { status: active }) {
+    items {
+      userId
+      fullName
+      status
+    }
+    nextToken
+  }
+}
+```
+
+| Expected                                    |
+|---------------------------------------------|
+| Returns only users with status = active     |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Validation: Deactivate already inactive user should fail**
+
+```graphql
+mutation {
+  deactivateUser(userId: "<INACTIVE_USER_ID>") {
+    userId
+    status
+  }
+}
+```
+
+| Expected                                    |
+|---------------------------------------------|
+| Error: "User '...' is already inactive"     |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
 ---
 
-### 5.4 Projects
+### 6.4 Projects
 
 **Create Project** (requires a valid userId as projectManagerId)
 
@@ -434,7 +565,9 @@ mutation {
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
-**Update Project**
+**Update Project** (non-approved project, as admin or superadmin)
+
+> **Note:** Admins cannot edit projects with `approval_status = "Approved"`. Only superadmins can edit approved projects.
 
 ```graphql
 mutation {
@@ -451,32 +584,78 @@ mutation {
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
+**Validation: Admin editing approved project should fail**
+
+> Log in as an `admin` user (not superadmin) and attempt to edit an approved project.
+
+```graphql
+mutation {
+  updateProject(
+    projectId: "<APPROVED_PROJECT_ID>"
+    input: { projectName: "Should Fail" }
+  ) {
+    projectId
+  }
+}
+```
+
+| Expected                                                                  |
+|---------------------------------------------------------------------------|
+| Error: "Only superadmins can edit projects with approval status 'Approved'" |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
 ---
 
-### 5.5 Timesheet Periods
+### 6.5 Timesheet Periods
 
-**Create Timesheet Period**
+> **Note:** In production, periods are auto-created every Monday. This manual creation is for testing only.
+
+**Create Timesheet Period** (Monday to Friday, deadline auto-calculated)
 
 ```graphql
 mutation {
   createTimesheetPeriod(input: {
-    startDate: "2026-03-14"
-    endDate: "2026-03-27"
-    submissionDeadline: "2026-03-28T23:59:59Z"
-    periodString: "Mar 14 - Mar 27, 2026"
+    startDate: "2026-03-16"
+    endDate: "2026-03-20"
+    periodString: "Mar 16 - Mar 20, 2026"
     biweeklyPeriodId: "2026-W12"
   }) {
     periodId
     startDate
     endDate
+    submissionDeadline
     isLocked
   }
 }
 ```
 
-| Field    | Expected |
-|----------|----------|
-| isLocked | false    |
+| Field              | Expected                    |
+|--------------------|-----------------------------|
+| startDate          | "2026-03-16" (Monday)       |
+| endDate            | "2026-03-20" (Friday)       |
+| submissionDeadline | "2026-03-20T09:00:00+00:00" (Fri 5PM MYT) |
+| isLocked           | false                       |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Validation: Non-Monday start date should fail**
+
+```graphql
+mutation {
+  createTimesheetPeriod(input: {
+    startDate: "2026-03-17"
+    endDate: "2026-03-21"
+    periodString: "Invalid Period"
+  }) {
+    periodId
+  }
+}
+```
+
+| Expected                                    |
+|---------------------------------------------|
+| Error: "startDate is not a Monday"          |
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
@@ -518,10 +697,10 @@ query {
 mutation {
   updateTimesheetPeriod(
     periodId: "<PERIOD_ID>"
-    input: { submissionDeadline: "2026-03-29T23:59:59Z" }
+    input: { periodString: "Week of Mar 16, 2026" }
   ) {
     periodId
-    submissionDeadline
+    periodString
   }
 }
 ```
@@ -530,27 +709,9 @@ mutation {
 
 ---
 
-### 5.6 Timesheet Submissions
+### 6.6 Timesheet Submissions
 
-**Create Submission** (requires a valid periodId)
-
-```graphql
-mutation {
-  createTimesheetSubmission(periodId: "<PERIOD_ID>") {
-    submissionId
-    periodId
-    employeeId
-    status
-    totalHours
-  }
-}
-```
-
-| Field  | Expected |
-|--------|----------|
-| status | "Draft"  |
-
-☐ Pass / ☐ Fail — Notes: _______________
+> **Note:** In production, submissions are auto-created every Monday for all employees. For testing, you can query existing submissions created by the auto-provisioning Lambda, or manually invoke it.
 
 **Get Submission**
 
@@ -587,11 +748,86 @@ query {
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
+**List All Submissions (Admin/Superadmin only)**
+
+> **Note:** This query is restricted to `admin` and `superadmin` users. Regular users will get a permissions error.
+
+```graphql
+query {
+  listAllSubmissions {
+    submissionId
+    employeeId
+    periodId
+    status
+    totalHours
+  }
+}
+```
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**List All Submissions with Status Filter**
+
+```graphql
+query {
+  listAllSubmissions(filter: { status: Submitted }) {
+    submissionId
+    employeeId
+    periodId
+    status
+    totalHours
+  }
+}
+```
+
+| Expected                                        |
+|-------------------------------------------------|
+| Returns only submissions with status "Submitted"|
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**List All Submissions with Period Filter**
+
+```graphql
+query {
+  listAllSubmissions(filter: { periodId: "<PERIOD_ID>" }) {
+    submissionId
+    employeeId
+    status
+    totalHours
+  }
+}
+```
+
+| Expected                                          |
+|---------------------------------------------------|
+| Returns only submissions for the specified period |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Validation: Regular user calling listAllSubmissions should fail**
+
+> Log in as a regular `user` (not admin/superadmin).
+
+```graphql
+query {
+  listAllSubmissions {
+    submissionId
+  }
+}
+```
+
+| Expected                    |
+|-----------------------------|
+| Error: permissions/forbidden|
+
+☐ Pass / ☐ Fail — Notes: _______________
+
 ---
 
-### 5.7 Timesheet Entries
+### 6.7 Timesheet Entries
 
-> **Prerequisite:** The project referenced by `projectCode` must have `approval_status = Approved` (see Step 5.4 Approve Project).
+> **Prerequisite:** The project referenced by `projectCode` must have `approval_status = Approved` (see Step 6.4 Approve Project). You need a Draft submission to add entries to.
 
 **Add Entry**
 
@@ -673,89 +909,87 @@ mutation {
 |----------------------------------|------------------------------------|-----------------------------------------|
 | Negative hours                   | `monday: -1`                       | "Daily hours must be non-negative"      |
 | Unapproved project               | Use a non-approved project code    | "does not have approval_status"         |
-| Exceed daily max (24h)           | `monday: 25`                       | "exceeds the maximum of 24"            |
+| Exceed daily max (8h)            | `monday: 9`                        | "exceeds the maximum of 8"             |
+| Exceed weekly max (40h)          | Multiple entries totaling >40h     | "exceeds the maximum of 40"            |
 | Max entries per submission (27)  | Add 28th entry                     | "Maximum allowed is 27"                |
 | Non-editable submission          | Add entry to Submitted submission  | "Cannot modify entries"                |
 
 ---
 
-### 5.8 Submit & Review Flow
+### 6.8 Automated Flows
 
-> **Note:** Re-add an entry before submitting if you removed it in the previous step.
+These are EventBridge-triggered Lambdas. They cannot be tested via AppSync directly. Test them via the AWS Console.
 
-**Submit Timesheet**
+#### Auto-Provisioning (Monday)
 
-```graphql
-mutation {
-  submitTimesheet(submissionId: "<SUBMISSION_ID>") {
-    submissionId
-    status
-  }
-}
-```
+**How to test:**
+1. Go to AWS Console → Lambda → `TimesheetAutoProvisioning-dev`
+2. Click **Test** → create a test event with `{}` as the payload
+3. Click **Test** to invoke
 
-| Field  | Expected    |
-|--------|-------------|
-| status | "Submitted" |
+| Expected                                                    |
+|-------------------------------------------------------------|
+| New period created for current week (Mon-Fri)               |
+| Draft submissions created for all Employee-role users       |
+| Response: `{"created": true, "periodId": "...", "submissionsCreated": N}` |
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
-**List Pending Timesheets** (for reviewers/supervisors)
+#### Deadline Reminder (Friday 1PM MYT)
+
+**How to test:**
+1. Go to AWS Console → Lambda → `TimesheetDeadlineReminder-dev`
+2. Click **Test** → create a test event with `{}` as the payload
+3. Click **Test** to invoke
+
+| Expected                                                    |
+|-------------------------------------------------------------|
+| Reminder emails sent to employees with Draft submissions    |
+| Response: `{"reminders_sent": N}`                           |
+
+> **Note:** Requires SES to be configured and email addresses verified in sandbox mode.
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+#### Deadline Enforcement (Friday 5PM MYT)
+
+**How to test:**
+1. Go to AWS Console → Lambda → `TimesheetDeadlineEnforcement-dev`
+2. Click **Test** → create a test event with `{}` as the payload
+3. Click **Test** to invoke
+
+| Expected                                                    |
+|-------------------------------------------------------------|
+| All Draft submissions auto-submitted (Draft → Submitted)    |
+| Missing submissions created as Submitted with 0 hours       |
+| Under-40-hours email sent to employees below 40h            |
+| Period marked as isLocked = true                            |
+| Response: `{"submittedPeriods": N}`                         |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Verify after deadline enforcement:**
 
 ```graphql
 query {
-  listPendingTimesheets {
+  listMySubmissions(filter: { status: Submitted }) {
     submissionId
-    employeeId
+    periodId
     status
     totalHours
   }
 }
 ```
 
-☐ Pass / ☐ Fail — Notes: _______________
-
-**Approve Timesheet**
-
-```graphql
-mutation {
-  approveTimesheet(submissionId: "<SUBMISSION_ID>") {
-    submissionId
-    status
-    approvedBy
-    approvedAt
-  }
-}
-```
-
-| Field      | Expected   |
-|------------|------------|
-| status     | "Approved" |
-| approvedBy | Your userId|
-| approvedAt | Timestamp  |
-
-☐ Pass / ☐ Fail — Notes: _______________
-
-**Reject Timesheet** (create a new submission and submit it first)
-
-```graphql
-mutation {
-  rejectTimesheet(submissionId: "<SUBMISSION_ID>") {
-    submissionId
-    status
-  }
-}
-```
-
-| Field  | Expected   |
-|--------|------------|
-| status | "Rejected" |
+| Expected                                    |
+|---------------------------------------------|
+| Previously Draft submissions now Submitted  |
 
 ☐ Pass / ☐ Fail — Notes: _______________
 
 ---
 
-### 5.9 Reports
+### 6.9 Reports
 
 **TC Summary Report**
 
@@ -789,7 +1023,7 @@ query {
 
 ---
 
-### 5.10 Main Database
+### 6.10 Main Database
 
 **List Main Database**
 
@@ -867,7 +1101,7 @@ mutation {
 
 ---
 
-### 5.11 Report Distribution Config
+### 6.11 Report Distribution Config
 
 **Get Config**
 
@@ -905,7 +1139,7 @@ mutation {
 
 ---
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
 | Error                                    | Cause                                              | Fix                                                       |
 |------------------------------------------|----------------------------------------------------|------------------------------------------------------------|
@@ -913,13 +1147,19 @@ mutation {
 | "Event is missing identity claims"       | Not authenticated in AppSync console               | Click "Login with User Pools" and re-authenticate          |
 | "not found"                              | Referenced ID doesn't exist                        | Check ID Tracking Sheet, ensure prerequisite step was run  |
 | "does not have approval_status"          | Project not approved yet                           | Run `approveProject` mutation first                        |
-| "Cannot modify entries"                  | Submission not in Draft/Rejected status            | Create a new submission or reject the current one          |
+| "Cannot modify entries"                  | Submission not in Draft status                     | Submission was already auto-submitted; create a new period |
 | "already in use"                         | Duplicate department/position name                 | Use a different name                                       |
+| "startDate is not a Monday"             | Period start date is not Monday                    | Use a Monday date for startDate                            |
+| "Only @axrail.com email addresses..."    | Email domain not allowed                           | Use an `@axrail.com` email address for user creation       |
+| "exceeds the maximum of 8"              | Single day hours exceed 8h cap                     | Reduce hours for that day to 8 or below                    |
+| "exceeds the maximum of 40"             | Weekly total hours exceed 40h cap                  | Reduce total weekly hours across all entries to 40 or below|
+| "Only superadmins can edit projects..."  | Admin trying to edit an approved project           | Log in as superadmin, or edit a non-approved project       |
 | Lambda timeout                           | Cold start or heavy operation                      | Retry — first invocation may be slow                       |
+| SES email not sent                       | SES in sandbox mode                                | Verify sender and recipient emails in SES console          |
 
 ---
 
-## 7. ID Tracking Sheet
+## 8. ID Tracking Sheet
 
 Use this table to record IDs as you test. You will need these for subsequent steps.
 
@@ -935,7 +1175,6 @@ Use this table to record IDs as you test. You will need these for subsequent ste
 | Project ID (rejected) |          | For reject test|
 | Period ID             |          |                |
 | Submission ID         |          |                |
-| Submission ID (spare) |          | For reject test|
 | Entry ID              |          |                |
 | Main DB Record ID     |          |                |
 

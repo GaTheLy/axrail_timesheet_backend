@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from shared.auth import ForbiddenError, require_user_type
-from shared_utils import validate_period_dates, check_no_overlapping_periods
+from shared_utils import validate_period_dates, check_no_overlapping_periods, compute_submission_deadline
 
 PERIODS_TABLE = os.environ.get("PERIODS_TABLE", "")
 dynamodb = boto3.resource("dynamodb")
@@ -40,16 +40,17 @@ def update_timesheet_period(event):
 
     start_date = args.get("startDate", existing["startDate"])
     end_date = args.get("endDate", existing["endDate"])
-    submission_deadline = args.get("submissionDeadline", existing["submissionDeadline"])
 
     dates_changed = (
         start_date != existing["startDate"]
         or end_date != existing["endDate"]
-        or submission_deadline != existing["submissionDeadline"]
     )
     if dates_changed:
-        validate_period_dates(start_date, end_date, submission_deadline)
+        validate_period_dates(start_date, end_date)
         check_no_overlapping_periods(table, start_date, end_date, exclude_period_id=period_id)
+
+    # Deadline is always auto-computed from endDate (Friday 5PM MYT)
+    submission_deadline = compute_submission_deadline(end_date)
 
     now = datetime.now(timezone.utc).isoformat()
     update_parts = []
