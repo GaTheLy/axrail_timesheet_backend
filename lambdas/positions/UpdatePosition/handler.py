@@ -47,7 +47,7 @@ def update_position(event):
     if not existing:
         raise ValueError(f"Position '{position_id}' not found")
 
-    if existing.get("approval_status") == "Approved":
+    if existing.get("approval_status") == "Approved" and caller["userType"] != "superadmin":
         raise ValueError("Cannot update position: approved entities cannot be edited")
 
     new_name = args.get("positionName")

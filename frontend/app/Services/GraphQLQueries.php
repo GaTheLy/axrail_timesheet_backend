@@ -726,4 +726,50 @@ class GraphQLQueries
         }
     }
     GRAPHQL;
+
+    // ---------------------------------------------------------------
+    // Project Approval / Rejection Mutations
+    // ---------------------------------------------------------------
+
+    /**
+     * Approve a pending project (superadmin only).
+     *
+     * Used by: ApprovalsController::approve
+     */
+    public const APPROVE_PROJECT = <<<'GRAPHQL'
+    mutation ApproveProject($projectId: ID!) {
+        approveProject(projectId: $projectId) {
+            projectId
+            projectCode
+            projectName
+            approval_status
+            rejectionReason
+            createdAt
+            createdBy
+            updatedAt
+            updatedBy
+        }
+    }
+    GRAPHQL;
+
+    /**
+     * Reject a pending project with a reason (superadmin only).
+     *
+     * Used by: ApprovalsController::reject
+     */
+    public const REJECT_PROJECT = <<<'GRAPHQL'
+    mutation RejectProject($projectId: ID!, $reason: String!) {
+        rejectProject(projectId: $projectId, reason: $reason) {
+            projectId
+            projectCode
+            projectName
+            approval_status
+            rejectionReason
+            createdAt
+            createdBy
+            updatedAt
+            updatedBy
+        }
+    }
+    GRAPHQL;
 }

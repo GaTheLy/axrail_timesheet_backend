@@ -122,13 +122,50 @@ class DashboardController extends Controller
                 $periodString = $start->format('M d') . ' - ' . $end->format('M d');
             }
 
-            return view('pages.dashboard-admin', [
+            // Pending approval counts for superadmin dashboard
+            $viewData = [
                 'userName' => $user['fullName'] ?? 'User',
                 'periodString' => $periodString,
                 'activeUserCount' => $activeUserCount,
                 'trends' => $trends,
                 'error' => null,
-            ]);
+            ];
+
+            if (($user['userType'] ?? '') === 'superadmin') {
+                $pendingProjects = 0;
+                $pendingDepartments = 0;
+                $pendingPositions = 0;
+
+                try {
+                    $result = $this->graphql->query(GraphQLQueries::LIST_PROJECTS);
+                    $projects = $result['listProjects']['items'] ?? [];
+                    $pendingProjects = count(array_filter($projects, fn($item) => ($item['approval_status'] ?? '') === 'Pending_Approval'));
+                } catch (Exception $e) {
+                    \Log::warning('Superadmin dashboard: failed to load projects: ' . $e->getMessage());
+                }
+
+                try {
+                    $result = $this->graphql->query(GraphQLQueries::LIST_DEPARTMENTS);
+                    $departments = $result['listDepartments'] ?? [];
+                    $pendingDepartments = count(array_filter($departments, fn($item) => ($item['approval_status'] ?? '') === 'Pending_Approval'));
+                } catch (Exception $e) {
+                    \Log::warning('Superadmin dashboard: failed to load departments: ' . $e->getMessage());
+                }
+
+                try {
+                    $result = $this->graphql->query(GraphQLQueries::LIST_POSITIONS);
+                    $positions = $result['listPositions'] ?? [];
+                    $pendingPositions = count(array_filter($positions, fn($item) => ($item['approval_status'] ?? '') === 'Pending_Approval'));
+                } catch (Exception $e) {
+                    \Log::warning('Superadmin dashboard: failed to load positions: ' . $e->getMessage());
+                }
+
+                $viewData['pendingProjects'] = $pendingProjects;
+                $viewData['pendingDepartments'] = $pendingDepartments;
+                $viewData['pendingPositions'] = $pendingPositions;
+            }
+
+            return view('pages.dashboard-admin', $viewData);
         } catch (AuthenticationException $e) {
             return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
         } catch (Exception $e) {

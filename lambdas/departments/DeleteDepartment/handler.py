@@ -48,7 +48,7 @@ def delete_department(event):
     if not existing:
         raise ValueError(f"Department '{department_id}' not found")
 
-    if existing.get("approval_status") == "Approved":
+    if existing.get("approval_status") == "Approved" and caller["userType"] != "superadmin":
         raise ValueError("Cannot delete department: approved entities cannot be deleted")
 
     if _has_associated_users(department_id):

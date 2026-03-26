@@ -205,3 +205,5 @@ class TestPositionAuthorization:
         )
         result = mod.handler(event, None)
         assert result is True
+
+

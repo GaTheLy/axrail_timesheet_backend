@@ -56,7 +56,7 @@ def update_department(event):
     if not existing:
         raise ValueError(f"Department '{department_id}' not found")
 
-    if existing.get("approval_status") == "Approved":
+    if existing.get("approval_status") == "Approved" and caller["userType"] != "superadmin":
         raise ValueError("Cannot update department: approved entities cannot be edited")
 
     new_name = args.get("departmentName")

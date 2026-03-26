@@ -115,7 +115,7 @@
                                 @endif
                             </td>
                             <td>
-                                @if($approvalStatus !== 'Approved')
+                                @if($approvalStatus !== 'Approved' || $userType === 'superadmin')
                                     <button
                                         type="button"
                                         class="btn btn-secondary btn-sm btn-edit-user"
@@ -212,18 +212,25 @@
                             >
                         </div>
 
-                        {{-- Role field — read-only, excluded from submission --}}
+                        {{-- Role field --}}
                         <div class="form-group">
                             <label for="user-form-role">Role</label>
-                            <input
-                                type="text"
-                                id="user-form-role"
-                                readonly
-                                disabled
-                                value="User"
-                                style="background-color: #e9ecef; color: #495057; cursor: not-allowed;"
-                                aria-label="User role (auto-assigned)"
-                            >
+                            @if($userType === 'superadmin')
+                                <select id="user-form-role" aria-label="User role">
+                                    <option value="admin">Admin</option>
+                                    <option value="user" selected>User</option>
+                                </select>
+                            @else
+                                <input
+                                    type="text"
+                                    id="user-form-role"
+                                    readonly
+                                    disabled
+                                    value="User"
+                                    style="background-color: #e9ecef; color: #495057; cursor: not-allowed;"
+                                    aria-label="User role (auto-assigned)"
+                                >
+                            @endif
                         </div>
 
                         <div class="form-group">
@@ -368,7 +375,11 @@
             formCode.placeholder = '';
             formName.value = userData.fullName || '';
             formEmail.value = userData.email || '';
-            formRole.value = userData.userType ? ucFirst(userData.userType) : 'User';
+            if (formRole.tagName === 'SELECT') {
+                formRole.value = userData.userType || 'user';
+            } else {
+                formRole.value = userData.userType ? ucFirst(userData.userType) : 'User';
+            }
             formDepartment.value = userData.departmentId || '';
             formPosition.value = userData.positionId || '';
         } else {
@@ -378,7 +389,11 @@
             formCode.placeholder = 'Auto-generated';
             formName.value = '';
             formEmail.value = '';
-            formRole.value = 'User';
+            if (formRole.tagName === 'SELECT') {
+                formRole.value = 'user';
+            } else {
+                formRole.value = 'User';
+            }
             formPosition.value = '';
             formDepartment.value = '';
         }
@@ -441,6 +456,11 @@
                 positionId:   formPosition ? formPosition.value : '',
                 departmentId: formDepartment ? formDepartment.value : ''
             };
+
+            // Include userType from role dropdown when creating a new user (superadmin only)
+            if (!userId && formRole && formRole.tagName === 'SELECT') {
+                body.userType = formRole.value;
+            }
 
             modalSave.disabled = true;
 

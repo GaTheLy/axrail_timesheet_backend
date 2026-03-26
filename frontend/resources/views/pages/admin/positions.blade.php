@@ -76,7 +76,7 @@
                                 @endif
                             </td>
                             <td>
-                                @if($approvalStatus !== 'Approved')
+                                @if($approvalStatus !== 'Approved' || $userType === 'superadmin')
                                     <button type="button" class="btn btn-secondary btn-sm btn-edit-pos" data-position-id="{{ $positionId }}" aria-label="Edit position {{ $pos['positionName'] ?? '' }}">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>

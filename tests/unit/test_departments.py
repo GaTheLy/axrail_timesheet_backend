@@ -246,3 +246,5 @@ class TestDepartmentAuthorization:
         )
         result = mod.handler(event, None)
         assert result["departmentName"] == "NewDept"
+
+

@@ -34,7 +34,7 @@ def delete_project(event):
     if not existing:
         raise ValueError(f"Project '{project_id}' not found")
 
-    if existing.get("approval_status") == "Approved":
+    if existing.get("approval_status") == "Approved" and caller["userType"] != "superadmin":
         raise ValueError("Cannot delete project: approved entities cannot be deleted")
 
     table.delete_item(Key={"projectId": project_id})

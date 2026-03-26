@@ -6259,7 +6259,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -6301,7 +6301,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/CreateUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -6458,7 +6458,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -6500,7 +6500,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -6643,7 +6643,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -6682,7 +6682,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ApproveUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -6825,7 +6825,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -6864,7 +6864,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/RejectUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7021,7 +7021,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -7063,7 +7063,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeleteUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7202,7 +7202,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -7241,7 +7241,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/GetUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7380,7 +7380,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -7419,7 +7419,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListUsersLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7576,7 +7576,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -7618,7 +7618,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeactivateUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7775,7 +7775,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -7817,7 +7817,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ActivateUserLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -7887,7 +7887,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Departments-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
           ]
          ]
         },
@@ -7899,7 +7899,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Departments-dev/index/*"
           ]
          ]
         }
@@ -7974,7 +7974,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -8014,7 +8014,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/CreateDepartmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -8157,7 +8157,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -8196,7 +8196,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ApproveDepartmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -8339,7 +8339,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -8378,7 +8378,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/RejectDepartmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -8521,7 +8521,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -8560,7 +8560,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateDepartmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -8630,7 +8630,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Departments-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
           ]
          ]
         },
@@ -8642,7 +8642,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Departments-dev/index/*"
           ]
          ]
         }
@@ -8763,7 +8763,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -8803,7 +8803,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeleteDepartmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -8942,7 +8942,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -8981,7 +8981,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListDepartmentsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9124,7 +9124,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -9163,7 +9163,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/CreatePositionLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9306,7 +9306,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -9345,7 +9345,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdatePositionLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9488,7 +9488,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -9527,7 +9527,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ApprovePositionLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9670,7 +9670,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -9709,7 +9709,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/RejectPositionLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -9852,7 +9852,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -9891,7 +9891,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeletePositionLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10030,7 +10030,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -10069,7 +10069,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListPositionsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10212,7 +10212,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -10251,7 +10251,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/CreateProjectLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10394,7 +10394,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -10433,7 +10433,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ApproveProjectLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10576,7 +10576,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -10615,7 +10615,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/RejectProjectLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10758,7 +10758,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -10797,7 +10797,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateProjectLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -10940,7 +10940,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -10979,7 +10979,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeleteProjectLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11118,7 +11118,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -11157,7 +11157,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListProjectsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11300,7 +11300,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -11339,7 +11339,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/CreateTimesheetPeriodLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11482,7 +11482,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -11521,7 +11521,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateTimesheetPeriodLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11660,7 +11660,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -11699,7 +11699,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListTimesheetPeriodsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -11838,7 +11838,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -11877,7 +11877,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/GetCurrentPeriodLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -12076,7 +12076,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -12116,7 +12116,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/GetSubmissionLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -12315,7 +12315,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -12355,7 +12355,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListMySubmissionsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -12612,7 +12612,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -12653,7 +12653,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListAllSubmissionsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -12723,7 +12723,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_ProjectAssignments-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
           ]
          ]
         },
@@ -12747,7 +12747,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_ProjectAssignments-dev/index/*"
           ]
          ]
         },
@@ -12759,7 +12759,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
           ]
          ]
         }
@@ -12976,7 +12976,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -13018,7 +13018,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/AddEntryLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -13088,6 +13088,18 @@
            {
             "Ref": "AWS::Partition"
            },
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
@@ -13101,18 +13113,6 @@
             "Ref": "AWS::Partition"
            },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
-          ]
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
           ]
          ]
         }
@@ -13279,7 +13279,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -13320,7 +13320,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateEntryLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -13390,6 +13390,18 @@
            {
             "Ref": "AWS::Partition"
            },
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
@@ -13403,18 +13415,6 @@
             "Ref": "AWS::Partition"
            },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
-          ]
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
           ]
          ]
         }
@@ -13535,7 +13535,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -13576,7 +13576,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/RemoveEntryLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -13646,18 +13646,6 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
-          ]
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
           ]
          ]
@@ -13670,7 +13658,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
           ]
          ]
         },
@@ -13682,7 +13670,19 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
           ]
          ]
         }
@@ -13904,7 +13904,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -13947,7 +13947,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeadlineEnforcementLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -14076,18 +14076,6 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
-          ]
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
           ]
          ]
@@ -14101,6 +14089,18 @@
             "Ref": "AWS::Partition"
            },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
         }
@@ -14271,7 +14271,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -14312,7 +14312,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/AutoProvisioningLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -14441,18 +14441,6 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
-          ]
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
           ]
          ]
@@ -14466,6 +14454,18 @@
             "Ref": "AWS::Partition"
            },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
         }
@@ -14633,7 +14633,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -14675,7 +14675,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeadlineReminderLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -14804,7 +14804,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
         },
@@ -14828,7 +14828,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
           ]
          ]
         },
@@ -14852,7 +14852,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
           ]
          ]
         },
@@ -14876,7 +14876,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
           ]
          ]
         }
@@ -15280,7 +15280,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -15326,7 +15326,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ReportGeneratorStreamLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -15427,7 +15427,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
         },
@@ -15451,7 +15451,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
           ]
          ]
         },
@@ -15475,7 +15475,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
           ]
          ]
         },
@@ -15499,7 +15499,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
           ]
          ]
         }
@@ -15887,7 +15887,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -15933,7 +15933,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/GetTCSummaryReportLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -16003,7 +16003,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
         },
@@ -16027,7 +16027,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
           ]
          ]
         },
@@ -16051,7 +16051,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
           ]
          ]
         },
@@ -16075,7 +16075,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
           ]
          ]
         }
@@ -16463,7 +16463,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -16509,7 +16509,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/GetProjectSummaryReportLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -16668,7 +16668,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -16707,7 +16707,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/PerformanceTrackingLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -16808,7 +16808,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
         },
@@ -16832,7 +16832,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_EmployeePerformance-dev/index/*"
           ]
          ]
         },
@@ -16868,7 +16868,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
           ]
          ]
         },
@@ -16892,7 +16892,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Entries-dev/index/*"
           ]
          ]
         }
@@ -17334,7 +17334,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -17382,7 +17382,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/NotificationLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -17584,7 +17584,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -17623,7 +17623,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateNotificationConfigLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -17762,7 +17762,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -17801,7 +17801,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/GetNotificationConfigLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -17871,7 +17871,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
           ]
          ]
         },
@@ -17883,7 +17883,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Periods-dev/index/*"
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Submissions-dev/index/*"
           ]
          ]
         }
@@ -18004,7 +18004,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -18044,7 +18044,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ArchivalLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -18242,7 +18242,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -18281,7 +18281,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListMainDatabaseLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -18424,7 +18424,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -18464,7 +18464,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateMainDatabaseRecordLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -18641,7 +18641,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -18681,7 +18681,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/BulkImportCSVLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -18858,7 +18858,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -18898,7 +18898,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/RefreshDatabaseLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -19057,7 +19057,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -19096,7 +19096,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/SyncFromProjectsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -19197,18 +19197,6 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_ProjectAssignments-dev/index/*"
-          ]
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
           ]
          ]
@@ -19222,6 +19210,18 @@
             "Ref": "AWS::Partition"
            },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_ProjectAssignments-dev/index/*"
           ]
          ]
         }
@@ -19388,7 +19388,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -19429,7 +19429,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/CreateProjectAssignmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -19499,18 +19499,6 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_ProjectAssignments-dev/index/*"
-          ]
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           "arn:",
-           {
-            "Ref": "AWS::Partition"
-           },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Users-dev/index/*"
           ]
          ]
@@ -19524,6 +19512,18 @@
             "Ref": "AWS::Partition"
            },
            ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_Projects-dev/index/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":dynamodb:ap-southeast-1:815254799325:table/Timesheet_ProjectAssignments-dev/index/*"
           ]
          ]
         }
@@ -19690,7 +19690,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -19731,7 +19731,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/UpdateProjectAssignmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -19874,7 +19874,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -19913,7 +19913,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/DeleteProjectAssignmentLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -20052,7 +20052,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-     "S3Key": "59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4.zip"
+     "S3Key": "e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101.zip"
     },
     "Environment": {
      "Variables": {
@@ -20091,7 +20091,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetLambdaStack-dev/ListProjectAssignmentsLambda/Resource",
-    "aws:asset:path": "asset.59cf64d38a31d2743705bb14b628f5f863297f01e3f67f30e58d7afbc7cf1da4",
+    "aws:asset:path": "asset.e181f421b029f9107e34bb5d47a5c6f02913ff9d891f8abfefe3747feda35101",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }

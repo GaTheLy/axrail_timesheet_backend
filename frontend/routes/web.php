@@ -6,6 +6,7 @@ use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\TimesheetController;
+use App\Http\Controllers\ApprovalsController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -92,5 +93,10 @@ Route::middleware('cognito.auth')->group(function () {
         Route::post('/admin/projects', [\App\Http\Controllers\ProjectController::class, 'store'])->name('admin.projects.store');
         Route::put('/admin/projects/{id}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('admin.projects.update');
         Route::delete('/admin/projects/{id}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('admin.projects.destroy');
+
+        // Approvals routes (superadmin guard enforced in controller)
+        Route::get('/admin/approvals', [ApprovalsController::class, 'index'])->name('admin.approvals');
+        Route::post('/admin/approvals/{type}/{id}/approve', [ApprovalsController::class, 'approve'])->name('admin.approvals.approve');
+        Route::post('/admin/approvals/{type}/{id}/reject', [ApprovalsController::class, 'reject'])->name('admin.approvals.reject');
     });
 });
