@@ -16,12 +16,16 @@ class RoleMiddleware
      * error flash message.
      *
      * Usage in routes: middleware('role:admin'), middleware('role:superadmin'),
-     *                  middleware('role:employee')
+     *                  middleware('role:employee'), middleware('role:pm'),
+     *                  middleware('role:admin_or_pm')
      *
-     * Role hierarchy:
-     * - 'superadmin' → only userType 'superadmin'
-     * - 'admin'      → userType 'admin' or 'superadmin'
-     * - 'employee'   → all authenticated users (any userType)
+     * Role hierarchy (userType = user | admin | superadmin;
+     *                 role/position = Employee | Tech_Lead | Project_Manager):
+     * - 'superadmin'   → only userType 'superadmin'
+     * - 'admin'        → userType 'admin' or 'superadmin'
+     * - 'employee'     → all authenticated users (any userType)
+     * - 'pm'           → userType 'user' with role 'Tech_Lead' or 'Project_Manager'
+     * - 'admin_or_pm'  → admin/superadmin OR pm-qualified users
      *
      * @param  string  $requiredRole  The role parameter passed via middleware (e.g., 'admin')
      */
@@ -30,7 +34,7 @@ class RoleMiddleware
         $user = $request->session()->get('user', []);
         $userType = $user['userType'] ?? '';
 
-        if (!$this->isAuthorized($userType, $requiredRole)) {
+        if (!$this->isAuthorized($userType, $requiredRole, $user)) {
             return redirect('/dashboard')->with('error', 'You do not have permission to access that page.');
         }
 
@@ -38,14 +42,19 @@ class RoleMiddleware
     }
 
     /**
-     * Determine if the user's type satisfies the required role.
+     * Determine if the user's type (and role, where applicable) satisfies the required role.
      */
-    protected function isAuthorized(string $userType, string $requiredRole): bool
+    protected function isAuthorized(string $userType, string $requiredRole, array $user = []): bool
     {
         return match ($requiredRole) {
             'superadmin' => $userType === 'superadmin',
             'admin' => in_array($userType, ['admin', 'superadmin'], true),
             'employee' => in_array($userType, ['user', 'admin', 'superadmin'], true),
+            'pm' => $userType === 'user'
+                    && in_array($user['role'] ?? '', ['Tech_Lead', 'Project_Manager'], true),
+            'admin_or_pm' => in_array($userType, ['admin', 'superadmin'], true)
+                    || ($userType === 'user'
+                        && in_array($user['role'] ?? '', ['Tech_Lead', 'Project_Manager'], true)),
             default => false,
         };
     }

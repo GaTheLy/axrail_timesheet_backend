@@ -51,7 +51,7 @@ class TimesheetEntryMapper
                     'date'         => $date->format('Y-m-d'),
                     'dayOfWeek'    => $day,
                     'projectCode'  => $entry['projectCode'] ?? '',
-                    'description'  => $entry['projectName'] ?? '',
+                    'description'  => $entry['projectCode'] ?? '',
                     'chargedHours' => $hours,
                     'isEditable'   => !isset($entry['submissionStatus']) || $entry['submissionStatus'] !== 'Submitted',
                 ];

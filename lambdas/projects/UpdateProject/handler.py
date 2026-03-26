@@ -59,11 +59,8 @@ def update_project(event):
     if not existing:
         raise ValueError(f"Project '{project_id}' not found")
 
-    approval_status = existing.get("approval_status", "")
-    if approval_status == "Approved" and caller["userType"] != "superadmin":
-        raise ForbiddenError(
-            "Only superadmins can edit projects with approval status 'Approved'"
-        )
+    if existing.get("approval_status") == "Approved":
+        raise ValueError("Cannot update project: approved entities cannot be edited")
 
     new_code = args.get("projectCode")
     if new_code and new_code != existing.get("projectCode"):

@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime, timezone
 
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Attr, Key
 
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -74,6 +74,40 @@ def _validate_email_domain(email):
     if not email.lower().endswith(ALLOWED_EMAIL_DOMAIN):
         raise ValueError("Only @axrail.com email addresses are allowed")
 
+def generate_next_user_code(table):
+    """Generate the next sequential user code (USR-NNN).
+
+    Scans the Users table for existing userCode values, finds the highest
+    numeric suffix, and returns the next code in sequence. Returns USR-001
+    when no existing codes are found.
+
+    Validates: Requirements 3.2
+    """
+    response = table.scan(
+        ProjectionExpression="userCode",
+        FilterExpression=Attr("userCode").exists(),
+    )
+    items = response.get("Items", [])
+
+    # Handle DynamoDB pagination for large tables
+    while "LastEvaluatedKey" in response:
+        response = table.scan(
+            ProjectionExpression="userCode",
+            FilterExpression=Attr("userCode").exists(),
+            ExclusiveStartKey=response["LastEvaluatedKey"],
+        )
+        items.extend(response.get("Items", []))
+
+    codes = [item["userCode"] for item in items if "userCode" in item]
+
+    if not codes:
+        return "USR-001"
+
+    max_num = max(int(code.split("-")[1]) for code in codes)
+    next_num = max_num + 1
+    return f"USR-{next_num:03d}"
+
+
 
 def _authorize_mutation(caller, target_user_type):
     """Validate that the caller can perform a mutation on the target user type."""
@@ -108,34 +142,23 @@ def create_user(event):
     _validate_enum(role, VALID_ROLES, "role")
     _authorize_mutation(caller, target_user_type)
 
+    # When an admin creates a user (userType: user), force role to Employee
+    if caller["userType"] == "admin" and target_user_type == "user":
+        role = "Employee"
+
     _validate_email_domain(email)
 
     table = _get_table()
     _check_email_unique(table, email)
 
+    user_code = generate_next_user_code(table)
+
     now = _now_iso()
-    user_id = str(uuid.uuid4())
 
-    item = {
-        "userId": user_id,
-        "email": email,
-        "fullName": full_name,
-        "userType": target_user_type,
-        "role": role,
-        "status": "active",
-        "positionId": position_id,
-        "departmentId": department_id,
-        "createdAt": now,
-        "createdBy": caller["userId"],
-        "updatedAt": now,
-        "updatedBy": caller["userId"],
-    }
-    if supervisor_id:
-        item["supervisorId"] = supervisor_id
+    approval_status = "Approved" if caller["userType"] == "superadmin" else "Pending_Approval"
 
-    table.put_item(Item=item)
-
-    cognito.admin_create_user(
+    # Create Cognito user first to get the sub (used as userId)
+    cognito_response = cognito.admin_create_user(
         UserPoolId=USER_POOL_ID,
         Username=email,
         UserAttributes=[
@@ -148,6 +171,35 @@ def create_user(event):
         ],
         DesiredDeliveryMediums=["EMAIL"],
     )
+
+    # Use Cognito sub as the userId so resolvers can match by token sub
+    cognito_attrs = cognito_response.get("User", {}).get("Attributes", [])
+    user_id = next(
+        (a["Value"] for a in cognito_attrs if a["Name"] == "sub"),
+        str(uuid.uuid4()),  # fallback, should not happen
+    )
+
+    item = {
+        "userId": user_id,
+        "userCode": user_code,
+        "email": email,
+        "fullName": full_name,
+        "userType": target_user_type,
+        "role": role,
+        "status": "active",
+        "approval_status": approval_status,
+        "rejectionReason": "",
+        "positionId": position_id,
+        "departmentId": department_id,
+        "createdAt": now,
+        "createdBy": caller["userId"],
+        "updatedAt": now,
+        "updatedBy": caller["userId"],
+    }
+    if supervisor_id:
+        item["supervisorId"] = supervisor_id
+
+    table.put_item(Item=item)
 
     cognito.admin_add_user_to_group(
         UserPoolId=USER_POOL_ID,

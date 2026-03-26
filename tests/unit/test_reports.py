@@ -21,6 +21,7 @@ os.environ.setdefault("PROJECTS_TABLE", "ProjectsTable")
 os.environ.setdefault("EMPLOYEE_PERFORMANCE_TABLE", "PerformanceTable")
 os.environ.setdefault("PERIODS_TABLE", "PeriodsTable")
 os.environ.setdefault("REPORT_BUCKET", "report-bucket")
+os.environ.setdefault("PROJECT_ASSIGNMENTS_TABLE", "ProjectAssignmentsTable")
 
 
 # ---------------------------------------------------------------------------
@@ -520,7 +521,7 @@ class TestStreamEventRouting:
         mod = _mock_boto["mod"]
         record = _make_stream_record(new_status="Submitted", old_status="Draft")
 
-        with patch.object(mod, "_get_employee_supervisor_id", return_value="tl-001"), \
+        with patch.object(mod, "_get_employee_supervisors", return_value=["tl-001"]), \
              patch.object(mod, "_generate_tc_summary") as mock_tc, \
              patch.object(mod, "_generate_project_summary") as mock_proj:
             result = mod.handler({"Records": [record]}, None)

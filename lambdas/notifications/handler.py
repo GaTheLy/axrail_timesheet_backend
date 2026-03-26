@@ -19,13 +19,14 @@ Environment variables:
     REPORT_DISTRIBUTION_CONFIG_TABLE: DynamoDB Report_Distribution_Config table
     REPORT_BUCKET: S3 bucket for report storage
     SES_FROM_EMAIL: Sender email address for SES
+    PROJECT_ASSIGNMENTS_TABLE: DynamoDB Timesheet_ProjectAssignments table name
 """
 
 import csv
 import io
 import logging
 import os
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, ROUND_HALF_UP
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -37,6 +38,8 @@ from boto3.dynamodb.conditions import Attr, Key
 # Add parent directory to path for shared imports
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from shared.project_assignments import get_supervised_employee_ids
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -52,6 +55,7 @@ REPORT_DISTRIBUTION_CONFIG_TABLE = os.environ.get(
 )
 REPORT_BUCKET = os.environ.get("REPORT_BUCKET", "")
 SES_FROM_EMAIL = os.environ.get("SES_FROM_EMAIL", "")
+PROJECT_ASSIGNMENTS_TABLE = os.environ.get("PROJECT_ASSIGNMENTS_TABLE", "")
 
 dynamodb = boto3.resource("dynamodb")
 ses_client = boto3.client("ses")
@@ -187,7 +191,8 @@ def _get_current_period():
         Period item dict, or None if no periods exist.
     """
     table = dynamodb.Table(PERIODS_TABLE)
-    today = date.today()
+    MYT = timezone(timedelta(hours=8))
+    today = datetime.now(MYT).date()
 
     response = table.scan()
     items = response.get("Items", [])
@@ -274,30 +279,31 @@ def _get_tech_leads():
 
 
 def _get_supervised_employees(tech_lead_id):
-    """Query employees under a Tech Lead using supervisorId-index GSI.
+    """Query employees under a Tech Lead via ProjectAssignments.
+
+    Uses the shared utility to get unique employee IDs from the
+    ProjectAssignments table, then batch-gets user details from the
+    Users table.
 
     Args:
         tech_lead_id: The Tech Lead's userId.
 
     Returns:
-        List of employee items.
+        List of employee items (dicts from Users table).
     """
-    table = _get_users_table()
-    response = table.query(
-        IndexName="supervisorId-index",
-        KeyConditionExpression=Key("supervisorId").eq(tech_lead_id),
+    employee_ids = get_supervised_employee_ids(
+        PROJECT_ASSIGNMENTS_TABLE, tech_lead_id
     )
-    items = response.get("Items", [])
+    if not employee_ids:
+        return []
 
-    while "LastEvaluatedKey" in response:
-        response = table.query(
-            IndexName="supervisorId-index",
-            KeyConditionExpression=Key("supervisorId").eq(tech_lead_id),
-            ExclusiveStartKey=response["LastEvaluatedKey"],
-        )
-        items.extend(response.get("Items", []))
-
-    return items
+    table = _get_users_table()
+    employees = []
+    for emp_id in employee_ids:
+        response = table.get_item(Key={"userId": emp_id})
+        if "Item" in response:
+            employees.append(response["Item"])
+    return employees
 
 
 def _get_submissions_for_period(period_id, statuses):

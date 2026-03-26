@@ -40,13 +40,16 @@ def _has_associated_users(department_id):
 
 def delete_department(event):
     """Delete a department. Validates: Requirements 3.5, 3.6"""
-    caller = require_user_type(event, ["superadmin"])
+    caller = require_user_type(event, ["superadmin", "admin"])
     department_id = event["arguments"]["departmentId"]
     table = dynamodb.Table(DEPARTMENTS_TABLE)
 
     existing = table.get_item(Key={"departmentId": department_id}).get("Item")
     if not existing:
         raise ValueError(f"Department '{department_id}' not found")
+
+    if existing.get("approval_status") == "Approved":
+        raise ValueError("Cannot delete department: approved entities cannot be deleted")
 
     if _has_associated_users(department_id):
         raise ValueError(

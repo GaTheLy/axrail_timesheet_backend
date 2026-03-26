@@ -5,7 +5,7 @@ Environment variables:
 """
 
 import os
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 
 import boto3
 
@@ -20,7 +20,8 @@ def handler(event, context):
 def get_current_period(event):
     """Return the period containing today's date. Validates: Requirements 5.1"""
     table = dynamodb.Table(PERIODS_TABLE)
-    today = date.today()
+    MYT = timezone(timedelta(hours=8))
+    today = datetime.now(MYT).date()
 
     response = table.scan()
     items = response.get("Items", [])

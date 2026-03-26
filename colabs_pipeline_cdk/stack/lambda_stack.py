@@ -85,6 +85,7 @@ class TimesheetLambdaStack(Stack):
         self._create_archival_lambda()
         self._create_main_database_lambdas()
         self._create_sync_from_projects_lambda()
+        self._create_project_assignment_lambdas()
 
     def _ssm_lookup(self, path: str) -> str:
         return ssm.StringParameter.value_for_string_parameter(
@@ -96,6 +97,7 @@ class TimesheetLambdaStack(Stack):
             "users", "departments", "positions", "projects", "periods",
             "submissions", "entries", "employee_performance",
             "report_distribution_config", "main_database",
+            "project_assignments",
         ]
         self._table_names = {}
         self._tables = {}
@@ -218,6 +220,22 @@ class TimesheetLambdaStack(Stack):
         ds = self._graphql_api.add_lambda_data_source("UpdateUserDataSource", fn)
         ds.create_resolver("Mutation_updateUser_Resolver", type_name="Mutation", field_name="updateUser")
 
+        # ApproveUser
+        fn = self._make_lambda("ApproveUserLambda", "TimesheetApproveUser",
+                               "users.ApproveUser.handler.handler",
+                               {"USERS_TABLE": self._table_names["users"]})
+        self._tables["users"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("ApproveUserDataSource", fn)
+        ds.create_resolver("Mutation_approveUser_Resolver", type_name="Mutation", field_name="approveUser")
+
+        # RejectUser
+        fn = self._make_lambda("RejectUserLambda", "TimesheetRejectUser",
+                               "users.RejectUser.handler.handler",
+                               {"USERS_TABLE": self._table_names["users"]})
+        self._tables["users"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("RejectUserDataSource", fn)
+        ds.create_resolver("Mutation_rejectUser_Resolver", type_name="Mutation", field_name="rejectUser")
+
         # DeleteUser
         fn = self._make_lambda("DeleteUserLambda", "TimesheetDeleteUser",
                                "users.DeleteUser.handler.handler", user_env)
@@ -272,6 +290,22 @@ class TimesheetLambdaStack(Stack):
         ds = self._graphql_api.add_lambda_data_source("CreateDepartmentDataSource", fn)
         ds.create_resolver("Mutation_createDepartment_Resolver", type_name="Mutation", field_name="createDepartment")
 
+        # ApproveDepartment
+        fn = self._make_lambda("ApproveDepartmentLambda", "TimesheetApproveDepartment",
+                               "departments.ApproveDepartment.handler.handler",
+                               {"DEPARTMENTS_TABLE": self._table_names["departments"]})
+        self._tables["departments"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("ApproveDepartmentDataSource", fn)
+        ds.create_resolver("Mutation_approveDepartment_Resolver", type_name="Mutation", field_name="approveDepartment")
+
+        # RejectDepartment
+        fn = self._make_lambda("RejectDepartmentLambda", "TimesheetRejectDepartment",
+                               "departments.RejectDepartment.handler.handler",
+                               {"DEPARTMENTS_TABLE": self._table_names["departments"]})
+        self._tables["departments"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("RejectDepartmentDataSource", fn)
+        ds.create_resolver("Mutation_rejectDepartment_Resolver", type_name="Mutation", field_name="rejectDepartment")
+
         # UpdateDepartment
         fn = self._make_lambda("UpdateDepartmentLambda", "TimesheetUpdateDepartment",
                                "departments.UpdateDepartment.handler.handler",
@@ -315,6 +349,22 @@ class TimesheetLambdaStack(Stack):
         self._tables["positions"].grant_read_write_data(fn)
         ds = self._graphql_api.add_lambda_data_source("UpdatePositionDataSource", fn)
         ds.create_resolver("Mutation_updatePosition_Resolver", type_name="Mutation", field_name="updatePosition")
+
+        # ApprovePosition
+        fn = self._make_lambda("ApprovePositionLambda", "TimesheetApprovePosition",
+                               "positions.ApprovePosition.handler.handler",
+                               {"POSITIONS_TABLE": self._table_names["positions"]})
+        self._tables["positions"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("ApprovePositionDataSource", fn)
+        ds.create_resolver("Mutation_approvePosition_Resolver", type_name="Mutation", field_name="approvePosition")
+
+        # RejectPosition
+        fn = self._make_lambda("RejectPositionLambda", "TimesheetRejectPosition",
+                               "positions.RejectPosition.handler.handler",
+                               {"POSITIONS_TABLE": self._table_names["positions"]})
+        self._tables["positions"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("RejectPositionDataSource", fn)
+        ds.create_resolver("Mutation_rejectPosition_Resolver", type_name="Mutation", field_name="rejectPosition")
 
         # DeletePosition
         fn = self._make_lambda("DeletePositionLambda", "TimesheetDeletePosition",
@@ -363,6 +413,14 @@ class TimesheetLambdaStack(Stack):
         self._tables["projects"].grant_read_write_data(fn)
         ds = self._graphql_api.add_lambda_data_source("UpdateProjectDataSource", fn)
         ds.create_resolver("Mutation_updateProject_Resolver", type_name="Mutation", field_name="updateProject")
+
+        # DeleteProject
+        fn = self._make_lambda("DeleteProjectLambda", "TimesheetDeleteProject",
+                               "projects.DeleteProject.handler.handler",
+                               {"PROJECTS_TABLE": self._table_names["projects"]})
+        self._tables["projects"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("DeleteProjectDataSource", fn)
+        ds.create_resolver("Mutation_deleteProject_Resolver", type_name="Mutation", field_name="deleteProject")
 
         # ListProjects
         fn = self._make_lambda("ListProjectsLambda", "TimesheetListProjects",
@@ -425,16 +483,22 @@ class TimesheetLambdaStack(Stack):
         # ListMySubmissions
         fn = self._make_lambda("ListMySubmissionsLambda", "TimesheetListMySubmissions",
                                "submissions.ListMySubmissions.handler.handler",
-                               {"SUBMISSIONS_TABLE": self._table_names["submissions"]})
+                               {"SUBMISSIONS_TABLE": self._table_names["submissions"],
+                                "ENTRIES_TABLE": self._table_names["entries"]})
         self._tables["submissions"].grant_read_data(fn)
+        self._tables["entries"].grant_read_data(fn)
         ds = self._graphql_api.add_lambda_data_source("ListMySubmissionsDataSource", fn)
         ds.create_resolver("Query_listMySubmissions_Resolver", type_name="Query", field_name="listMySubmissions")
 
         # ListAllSubmissions
         fn = self._make_lambda("ListAllSubmissionsLambda", "TimesheetListAllSubmissions",
                                "submissions.ListAllSubmissions.handler.handler",
-                               {"SUBMISSIONS_TABLE": self._table_names["submissions"]})
+                               {"SUBMISSIONS_TABLE": self._table_names["submissions"],
+                                "ENTRIES_TABLE": self._table_names["entries"],
+                                "PROJECT_ASSIGNMENTS_TABLE": self._table_names["project_assignments"]})
         self._tables["submissions"].grant_read_data(fn)
+        self._tables["entries"].grant_read_data(fn)
+        self._tables["project_assignments"].grant_read_data(fn)
         ds = self._graphql_api.add_lambda_data_source("ListAllSubmissionsDataSource", fn)
         ds.create_resolver("Query_listAllSubmissions_Resolver", type_name="Query", field_name="listAllSubmissions")
 
@@ -449,11 +513,16 @@ class TimesheetLambdaStack(Stack):
         }
 
         # AddTimesheetEntry
+        add_entry_env = {
+            **entry_env,
+            "PROJECT_ASSIGNMENTS_TABLE": self._table_names["project_assignments"],
+        }
         fn = self._make_lambda("AddEntryLambda", "TimesheetAddEntry",
-                               "entries.AddTimesheetEntry.handler.handler", entry_env)
+                               "entries.AddTimesheetEntry.handler.handler", add_entry_env)
         self._tables["entries"].grant_read_write_data(fn)
         self._tables["submissions"].grant_read_data(fn)
         self._tables["projects"].grant_read_data(fn)
+        self._tables["project_assignments"].grant_read_write_data(fn)
         ds = self._graphql_api.add_lambda_data_source("AddEntryDataSource", fn)
         ds.create_resolver("Mutation_addTimesheetEntry_Resolver", type_name="Mutation", field_name="addTimesheetEntry")
 
@@ -559,9 +628,10 @@ class TimesheetLambdaStack(Stack):
             "PROJECTS_TABLE": self._table_names["projects"],
             "EMPLOYEE_PERFORMANCE_TABLE": self._table_names["employee_performance"],
             "PERIODS_TABLE": self._table_names["periods"],
+            "PROJECT_ASSIGNMENTS_TABLE": self._table_names["project_assignments"],
             "REPORT_BUCKET": self._report_bucket.bucket_name,
         }
-        report_read_tables = ["submissions", "entries", "users", "projects", "employee_performance", "periods"]
+        report_read_tables = ["submissions", "entries", "users", "projects", "employee_performance", "periods", "project_assignments"]
 
         # Stream-triggered report generator (keeps original handler.py)
         fn = self._make_lambda("ReportGeneratorStreamLambda", "TimesheetReportGeneratorStream",
@@ -627,6 +697,7 @@ class TimesheetLambdaStack(Stack):
                                    "EMPLOYEE_PERFORMANCE_TABLE": self._table_names["employee_performance"],
                                    "PERIODS_TABLE": self._table_names["periods"],
                                    "REPORT_DISTRIBUTION_CONFIG_TABLE": self._table_names["report_distribution_config"],
+                                   "PROJECT_ASSIGNMENTS_TABLE": self._table_names["project_assignments"],
                                    "REPORT_BUCKET": self._report_bucket.bucket_name,
                                    "SES_FROM_EMAIL": TIMESHEET_SES_FROM_EMAIL,
                                }, timeout=300)
@@ -637,6 +708,7 @@ class TimesheetLambdaStack(Stack):
         self._tables["employee_performance"].grant_read_data(fn)
         self._tables["periods"].grant_read_data(fn)
         self._tables["report_distribution_config"].grant_read_data(fn)
+        self._tables["project_assignments"].grant_read_data(fn)
         self._report_bucket.grant_read_write(fn)
         fn.add_to_role_policy(
             iam.PolicyStatement(
@@ -747,3 +819,45 @@ class TimesheetLambdaStack(Stack):
                 retry_attempts=3,
             )
         )
+
+    def _create_project_assignment_lambdas(self) -> None:
+        pa_env = {
+            "PROJECT_ASSIGNMENTS_TABLE": self._table_names["project_assignments"],
+            "USERS_TABLE": self._table_names["users"],
+            "PROJECTS_TABLE": self._table_names["projects"],
+        }
+
+        # CreateProjectAssignment
+        fn = self._make_lambda("CreateProjectAssignmentLambda", "TimesheetCreateProjectAssignment",
+                               "project_assignments.CreateProjectAssignment.handler.handler", pa_env)
+        self._tables["project_assignments"].grant_read_write_data(fn)
+        self._tables["users"].grant_read_data(fn)
+        self._tables["projects"].grant_read_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("CreateProjectAssignmentDataSource", fn)
+        ds.create_resolver("Mutation_createProjectAssignment_Resolver", type_name="Mutation", field_name="createProjectAssignment")
+
+        # UpdateProjectAssignment
+        fn = self._make_lambda("UpdateProjectAssignmentLambda", "TimesheetUpdateProjectAssignment",
+                               "project_assignments.UpdateProjectAssignment.handler.handler", pa_env)
+        self._tables["project_assignments"].grant_read_write_data(fn)
+        self._tables["users"].grant_read_data(fn)
+        self._tables["projects"].grant_read_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("UpdateProjectAssignmentDataSource", fn)
+        ds.create_resolver("Mutation_updateProjectAssignment_Resolver", type_name="Mutation", field_name="updateProjectAssignment")
+
+        # DeleteProjectAssignment
+        fn = self._make_lambda("DeleteProjectAssignmentLambda", "TimesheetDeleteProjectAssignment",
+                               "project_assignments.DeleteProjectAssignment.handler.handler",
+                               {"PROJECT_ASSIGNMENTS_TABLE": self._table_names["project_assignments"]})
+        self._tables["project_assignments"].grant_read_write_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("DeleteProjectAssignmentDataSource", fn)
+        ds.create_resolver("Mutation_deleteProjectAssignment_Resolver", type_name="Mutation", field_name="deleteProjectAssignment")
+
+        # ListProjectAssignments
+        fn = self._make_lambda("ListProjectAssignmentsLambda", "TimesheetListProjectAssignments",
+                               "project_assignments.ListProjectAssignments.handler.handler",
+                               {"PROJECT_ASSIGNMENTS_TABLE": self._table_names["project_assignments"]})
+        self._tables["project_assignments"].grant_read_data(fn)
+        ds = self._graphql_api.add_lambda_data_source("ListProjectAssignmentsDataSource", fn)
+        ds.create_resolver("Query_listProjectAssignments_Resolver", type_name="Query", field_name="listProjectAssignments")
+

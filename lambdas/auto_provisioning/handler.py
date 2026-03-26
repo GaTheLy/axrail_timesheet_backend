@@ -37,7 +37,13 @@ def handler(event, context):
     """EventBridge scheduled event entry point (runs every Monday)."""
     logger.info("Auto-provisioning Lambda invoked: %s", event)
 
-    today = date.today()
+    # Use MYT (UTC+8) to determine "today" since EventBridge fires at
+    # Sunday 16:05 UTC which is Monday 00:05 MYT.  Without this,
+    # date.today() returns Sunday in UTC and the week calculation
+    # rolls back to the previous Monday.
+    MYT = timezone(timedelta(hours=8))
+    today = datetime.now(MYT).date()
+
     # Ensure we're creating for the current week (Mon-Fri)
     # If triggered on a non-Monday, adjust to the current week's Monday
     days_since_monday = today.weekday()

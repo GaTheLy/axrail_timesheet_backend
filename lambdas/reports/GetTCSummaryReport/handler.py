@@ -42,16 +42,13 @@ def get_tc_summary_report(event):
     tech_lead_id = args["techLeadId"]
     period_id = args["periodId"]
 
-    prefix = f"reports/tc-summary/{period_id}/"
-    s3_key = _find_latest_report(prefix)
-
+    # Always generate a fresh report
+    s3_key = _generate_tc_summary(tech_lead_id, period_id)
     if not s3_key:
-        s3_key = _generate_tc_summary(tech_lead_id, period_id)
-        if not s3_key:
-            raise ValueError(
-                f"No TC Summary data available for tech lead '{tech_lead_id}' "
-                f"and period '{period_id}'"
-            )
+        raise ValueError(
+            f"No TC Summary data available for tech lead '{tech_lead_id}' "
+            f"and period '{period_id}'"
+        )
 
     url = s3_client.generate_presigned_url(
         "get_object",

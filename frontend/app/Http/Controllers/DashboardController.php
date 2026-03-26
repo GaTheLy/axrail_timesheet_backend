@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\GraphQLClient;
+use App\Services\GraphQLQueries;
 use App\Services\TimesheetEntryMapper;
 use Carbon\Carbon;
 use Exception;
@@ -23,15 +24,128 @@ class DashboardController extends Controller
     /**
      * Render the dashboard page with summary data.
      *
-     * Fetches the current period and submission, computes countdown,
-     * prepares chart data and recent entries for the view.
+     * Admin/superadmin users see an overview dashboard with active user count
+     * and submission trends. Regular users see their personal timesheet summary.
      */
     public function index()
     {
         $user = session('user');
+        $userType = $user['userType'] ?? 'user';
 
+        if (in_array($userType, ['admin', 'superadmin'])) {
+            return $this->adminDashboard($user);
+        }
+
+        return $this->employeeDashboard($user);
+    }
+
+    /**
+     * Admin/superadmin dashboard: current period card, active users card, submission trends.
+     */
+    protected function adminDashboard(array $user)
+    {
         try {
-            // Fetch current period
+            // Current period
+            $periodData = $this->graphql->query(GraphQLQueries::GET_CURRENT_PERIOD);
+            $period = $periodData['getCurrentPeriod'] ?? null;
+
+            // Active users count — request only userId to avoid null non-nullable field errors
+            $activeUserCount = 0;
+            $employeeCount = 0;
+            try {
+                $usersData = $this->graphql->query(
+                    'query ListUsersCount($filter: UserFilterInput) { listUsers(filter: $filter) { items { userId } } }'
+                );
+                $allUsers = $usersData['listUsers']['items'] ?? [];
+                $activeUserCount = count($allUsers);
+                $employeeCount = $activeUserCount; // approximate for target calculation
+            } catch (Exception $e) {
+                \Log::warning('Admin dashboard: failed to load users: ' . $e->getMessage());
+            }
+
+            // Last 5 periods for trends
+            $recentPeriods = [];
+            try {
+                $periodsData = $this->graphql->query(GraphQLQueries::LIST_TIMESHEET_PERIODS);
+                $allPeriods = $periodsData['listTimesheetPeriods'] ?? [];
+                usort($allPeriods, fn($a, $b) => strcmp($b['startDate'], $a['startDate']));
+                $recentPeriods = array_reverse(array_slice($allPeriods, 0, 5));
+            } catch (Exception $e) {
+                \Log::warning('Admin dashboard: failed to load periods: ' . $e->getMessage());
+            }
+
+            // Fetch submissions per period — use same pattern as ReportsController
+            $hoursByPeriod = [];
+            foreach ($recentPeriods as $p) {
+                $pid = $p['periodId'] ?? '';
+                if (!$pid) continue;
+                try {
+                    $subData = $this->graphql->query(GraphQLQueries::LIST_ALL_SUBMISSIONS, [
+                        'filter' => ['periodId' => $pid],
+                    ]);
+                    $subs = $subData['listAllSubmissions'] ?? [];
+                    $total = 0;
+                    foreach ($subs as $s) {
+                        // Compute from entries like ReportsController does
+                        $entryTotal = 0;
+                        foreach ($s['entries'] ?? [] as $entry) {
+                            $entryTotal += (float)($entry['totalHours'] ?? 0);
+                        }
+                        $total += $entryTotal > 0 ? $entryTotal : (float)($s['totalHours'] ?? 0);
+                    }
+                    $hoursByPeriod[$pid] = $total;
+                } catch (Exception $e) {
+                    \Log::warning("Admin dashboard: submissions for period {$pid}: " . $e->getMessage());
+                    $hoursByPeriod[$pid] = 0;
+                }
+            }
+
+            // Build trends data
+            $trends = [];
+            $targetHours = $employeeCount * 40;
+            foreach ($recentPeriods as $p) {
+                $pid = $p['periodId'] ?? '';
+                $start = Carbon::parse($p['startDate']);
+                $end = Carbon::parse($p['endDate']);
+                $trends[] = [
+                    'label' => $start->format('M d') . ' - ' . $end->format('M d'),
+                    'actual' => $hoursByPeriod[$pid] ?? 0,
+                    'target' => $targetHours,
+                ];
+            }
+
+            // Format period string for card
+            $periodString = '';
+            if ($period) {
+                $start = Carbon::parse($period['startDate']);
+                $end = Carbon::parse($period['endDate']);
+                $periodString = $start->format('M d') . ' - ' . $end->format('M d');
+            }
+
+            return view('pages.dashboard-admin', [
+                'userName' => $user['fullName'] ?? 'User',
+                'periodString' => $periodString,
+                'activeUserCount' => $activeUserCount,
+                'trends' => $trends,
+                'error' => null,
+            ]);
+        } catch (AuthenticationException $e) {
+            return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
+        } catch (Exception $e) {
+            \Log::error('Admin dashboard load failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return view('pages.dashboard-admin', [
+                'error' => 'Unable to load dashboard data. Please try again.',
+                'userName' => $user['fullName'] ?? 'User',
+            ]);
+        }
+    }
+
+    /**
+     * Employee dashboard: personal timesheet summary.
+     */
+    protected function employeeDashboard(array $user)
+    {
+        try {
             $periodData = $this->graphql->query(
                 'query GetCurrentPeriod { getCurrentPeriod { periodId startDate endDate periodString submissionDeadline } }'
             );
@@ -44,20 +158,17 @@ class DashboardController extends Controller
                 ]);
             }
 
-            // Fetch current submission filtered by periodId
             $submissionData = $this->graphql->query(
-                'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { items { submissionId periodId status entries { entryId projectCode projectName monday tuesday wednesday thursday friday saturday sunday } } } }',
+                'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { submissionId periodId status entries { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } } }',
                 ['filter' => ['periodId' => $period['periodId']]]
             );
 
-            $submissions = $submissionData['listMySubmissions']['items'] ?? [];
+            $submissions = $submissionData['listMySubmissions'] ?? [];
             $submission = $submissions[0] ?? null;
             $entries = $submission['entries'] ?? [];
 
-            // Compute deadline countdown
             $countdown = $this->computeCountdown($period['submissionDeadline'] ?? null);
 
-            // Prepare data using TimesheetEntryMapper
             $weekStartDate = $period['startDate'] ?? Carbon::now()->startOfWeek()->format('Y-m-d');
             $recentEntries = $this->mapper->flattenEntries($entries, $weekStartDate);
             $dailyHours = $this->mapper->calculateDailyTotals($entries);
@@ -80,6 +191,7 @@ class DashboardController extends Controller
         } catch (AuthenticationException $e) {
             return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
         } catch (Exception $e) {
+            \Log::error('Dashboard load failed: ' . $e->getMessage());
             return view('pages.dashboard', [
                 'error' => 'Unable to load dashboard data. Please try again.',
                 'userName' => $user['fullName'] ?? 'User',

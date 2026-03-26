@@ -2,7 +2,7 @@
 
 Environment variables:
     SUBMISSIONS_TABLE: DynamoDB Timesheet_Submissions table name
-    USERS_TABLE: DynamoDB Users table name
+    PROJECT_ASSIGNMENTS_TABLE: DynamoDB Timesheet_ProjectAssignments table name
 """
 
 import os
@@ -14,9 +14,10 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from shared.auth import ForbiddenError, require_role
+from shared.project_assignments import get_supervised_employee_ids
 
 SUBMISSIONS_TABLE = os.environ.get("SUBMISSIONS_TABLE", "")
-USERS_TABLE = os.environ.get("USERS_TABLE", "")
+PROJECT_ASSIGNMENTS_TABLE = os.environ.get("PROJECT_ASSIGNMENTS_TABLE", "")
 REVIEWER_ROLES = ["Project_Manager", "Tech_Lead"]
 dynamodb = boto3.resource("dynamodb")
 
@@ -29,20 +30,7 @@ def handler(event, context):
 
 
 def _get_supervised_employee_ids(reviewer_id):
-    table = dynamodb.Table(USERS_TABLE)
-    response = table.query(
-        IndexName="supervisorId-index",
-        KeyConditionExpression=Key("supervisorId").eq(reviewer_id),
-    )
-    items = response.get("Items", [])
-    while "LastEvaluatedKey" in response:
-        response = table.query(
-            IndexName="supervisorId-index",
-            KeyConditionExpression=Key("supervisorId").eq(reviewer_id),
-            ExclusiveStartKey=response["LastEvaluatedKey"],
-        )
-        items.extend(response.get("Items", []))
-    return [item["userId"] for item in items]
+    return get_supervised_employee_ids(PROJECT_ASSIGNMENTS_TABLE, reviewer_id)
 
 
 def list_pending_timesheets(event):

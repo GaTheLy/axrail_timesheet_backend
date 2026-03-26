@@ -47,7 +47,7 @@ def _check_department_name_unique(table, department_name, exclude_department_id=
 
 def update_department(event):
     """Update an existing department. Validates: Requirements 3.1, 3.3, 3.6"""
-    caller = require_user_type(event, ["superadmin"])
+    caller = require_user_type(event, ["superadmin", "admin"])
     department_id = event["arguments"]["departmentId"]
     args = event["arguments"]["input"]
     table = _get_departments_table()
@@ -55,6 +55,9 @@ def update_department(event):
     existing = table.get_item(Key={"departmentId": department_id}).get("Item")
     if not existing:
         raise ValueError(f"Department '{department_id}' not found")
+
+    if existing.get("approval_status") == "Approved":
+        raise ValueError("Cannot update department: approved entities cannot be edited")
 
     new_name = args.get("departmentName")
     if new_name and new_name != existing["departmentName"]:

@@ -12,7 +12,7 @@ Environment variables:
 
 import logging
 import os
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
@@ -80,7 +80,8 @@ def handler(event, context):
 def _get_current_active_period():
     """Find the current active (unlocked) period."""
     table = dynamodb.Table(PERIODS_TABLE)
-    today = date.today()
+    MYT = timezone(timedelta(hours=8))
+    today = datetime.now(MYT).date()
 
     response = table.scan(FilterExpression=Attr("isLocked").eq(False))
     items = response.get("Items", [])

@@ -26,13 +26,16 @@ def handler(event, context):
 
 def delete_position(event):
     """Delete a position. Validates: Requirements 3.2, 3.6"""
-    caller = require_user_type(event, ["superadmin"])
+    caller = require_user_type(event, ["superadmin", "admin"])
     position_id = event["arguments"]["positionId"]
     table = dynamodb.Table(POSITIONS_TABLE)
 
     existing = table.get_item(Key={"positionId": position_id}).get("Item")
     if not existing:
         raise ValueError(f"Position '{position_id}' not found")
+
+    if existing.get("approval_status") == "Approved":
+        raise ValueError("Cannot delete position: approved entities cannot be deleted")
 
     table.delete_item(Key={"positionId": position_id})
     return True

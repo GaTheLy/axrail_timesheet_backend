@@ -39,6 +39,7 @@ class HistoryController extends Controller
         } catch (AuthenticationException $e) {
             return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
         } catch (Exception $e) {
+            \Log::error('History load failed: ' . $e->getMessage());
             return view('pages.history', [
                 'entries' => [],
                 'totalEntries' => 0,
@@ -91,7 +92,7 @@ class HistoryController extends Controller
     {
         // Fetch all submissions (no filter)
         $submissionData = $this->graphql->query(
-            'query ListMySubmissions { listMySubmissions { submissionId periodId status entries { entryId projectCode projectName monday tuesday wednesday thursday friday saturday sunday } } }'
+            'query ListMySubmissions { listMySubmissions { submissionId periodId status entries { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } } }'
         );
 
         $submissions = $submissionData['listMySubmissions'] ?? [];

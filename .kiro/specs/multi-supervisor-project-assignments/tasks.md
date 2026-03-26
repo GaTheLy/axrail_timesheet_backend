@@ -6,12 +6,12 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
 
 ## Tasks
 
-- [ ] 1. CDK infrastructure and environment config
-  - [ ] 1.1 Add `project_assignments` entry to `TIMESHEET_TABLE_NAMES` in `colabs_pipeline_cdk/environment.py`
+- [x] 1. CDK infrastructure and environment config
+  - [x] 1.1 Add `project_assignments` entry to `TIMESHEET_TABLE_NAMES` in `colabs_pipeline_cdk/environment.py`
     - Add `"project_assignments": "Timesheet_ProjectAssignments"` to the dictionary
     - _Requirements: 8.4_
 
-  - [ ] 1.2 Create ProjectAssignments DynamoDB table in `colabs_pipeline_cdk/stack/dynamodb_stack.py`
+  - [x] 1.2 Create ProjectAssignments DynamoDB table in `colabs_pipeline_cdk/stack/dynamodb_stack.py`
     - Add `project_assignments_table` with partition key `assignmentId` (String)
     - Add GSI `employeeId-index` with partition key `employeeId` (String)
     - Add GSI `supervisorId-index` with partition key `supervisorId` (String)
@@ -25,8 +25,8 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - Verify synthesized CloudFormation contains ProjectAssignments table with correct partition key, GSIs, billing mode, and SSM exports
     - _Requirements: 1.2, 1.3, 1.4, 1.5, 1.6, 8.1_
 
-- [ ] 2. GraphQL schema updates
-  - [ ] 2.1 Add ProjectAssignment type, inputs, query, and mutations to `graphql/schema.graphql`
+- [x] 2. GraphQL schema updates
+  - [x] 2.1 Add ProjectAssignment type, inputs, query, and mutations to `graphql/schema.graphql`
     - Add `ProjectAssignment` type with `assignmentId`, `employeeId`, `projectId`, `supervisorId`, `createdAt`, `createdBy`, `updatedAt`, `updatedBy`
     - Add `CreateProjectAssignmentInput`, `UpdateProjectAssignmentInput`, `ProjectAssignmentFilterInput` input types
     - Add `listProjectAssignments(filter: ProjectAssignmentFilterInput): [ProjectAssignment!]!` to Query type
@@ -34,11 +34,11 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - Verify existing `supervisorId` field on `User`, `CreateUserInput`, `UpdateUserInput` remains as optional
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 7.3_
 
-- [ ] 3. Checkpoint - Ensure CDK synth passes
+- [x] 3. Checkpoint - Ensure CDK synth passes
   - Ensure `cdk synth` succeeds with the new table definition, ask the user if questions arise.
 
-- [ ] 4. Shared utility for supervisor employee lookups
-  - [ ] 4.1 Create `lambdas/shared/project_assignments.py` with `get_supervised_employee_ids()` function
+- [x] 4. Shared utility for supervisor employee lookups
+  - [x] 4.1 Create `lambdas/shared/project_assignments.py` with `get_supervised_employee_ids()` function
     - Accept `project_assignments_table_name` and `supervisor_id` parameters
     - Query `supervisorId-index` GSI on ProjectAssignments table
     - Handle pagination with `LastEvaluatedKey`
@@ -49,11 +49,11 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - **Property 8: Supervised employee lookup returns correct unique set**
     - **Validates: Requirements 3.1, 3.3, 4.1, 4.3, 5.1**
 
-- [ ] 5. Implement CreateProjectAssignment Lambda
-  - [ ] 5.1 Create `lambdas/project_assignments/__init__.py` and `lambdas/project_assignments/CreateProjectAssignment/__init__.py`
+- [x] 5. Implement CreateProjectAssignment Lambda
+  - [x] 5.1 Create `lambdas/project_assignments/__init__.py` and `lambdas/project_assignments/CreateProjectAssignment/__init__.py`
     - _Requirements: 2.1_
 
-  - [ ] 5.2 Create `lambdas/project_assignments/CreateProjectAssignment/handler.py`
+  - [x] 5.2 Create `lambdas/project_assignments/CreateProjectAssignment/handler.py`
     - Implement `handler(event, context)` as AppSync resolver
     - Use `require_user_type(event, ["superadmin", "admin"])` for authorization
     - Validate `employeeId` exists in Users table
@@ -82,11 +82,11 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - **Property 7: Non-admin users rejected from mutations**
     - **Validates: Requirements 2.7**
 
-- [ ] 6. Implement UpdateProjectAssignment Lambda
-  - [ ] 6.1 Create `lambdas/project_assignments/UpdateProjectAssignment/__init__.py`
+- [x] 6. Implement UpdateProjectAssignment Lambda
+  - [x] 6.1 Create `lambdas/project_assignments/UpdateProjectAssignment/__init__.py`
     - _Requirements: 2.2_
 
-  - [ ] 6.2 Create `lambdas/project_assignments/UpdateProjectAssignment/handler.py`
+  - [x] 6.2 Create `lambdas/project_assignments/UpdateProjectAssignment/handler.py`
     - Implement `handler(event, context)` as AppSync resolver
     - Use `require_user_type(event, ["superadmin", "admin"])` for authorization
     - Get existing assignment by `assignmentId`, return error if not found
@@ -101,11 +101,11 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - **Property 2: Update preserves unchanged fields**
     - **Validates: Requirements 2.2**
 
-- [ ] 7. Implement DeleteProjectAssignment Lambda
-  - [ ] 7.1 Create `lambdas/project_assignments/DeleteProjectAssignment/__init__.py`
+- [x] 7. Implement DeleteProjectAssignment Lambda
+  - [x] 7.1 Create `lambdas/project_assignments/DeleteProjectAssignment/__init__.py`
     - _Requirements: 2.3_
 
-  - [ ] 7.2 Create `lambdas/project_assignments/DeleteProjectAssignment/handler.py`
+  - [x] 7.2 Create `lambdas/project_assignments/DeleteProjectAssignment/handler.py`
     - Implement `handler(event, context)` as AppSync resolver
     - Use `require_user_type(event, ["superadmin", "admin"])` for authorization
     - Delete item from ProjectAssignments table by `assignmentId`
@@ -117,11 +117,11 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - **Property 3: Delete removes assignment**
     - **Validates: Requirements 2.3**
 
-- [ ] 8. Implement ListProjectAssignments Lambda
-  - [ ] 8.1 Create `lambdas/project_assignments/ListProjectAssignments/__init__.py`
+- [x] 8. Implement ListProjectAssignments Lambda
+  - [x] 8.1 Create `lambdas/project_assignments/ListProjectAssignments/__init__.py`
     - _Requirements: 2.4_
 
-  - [ ] 8.2 Create `lambdas/project_assignments/ListProjectAssignments/handler.py`
+  - [x] 8.2 Create `lambdas/project_assignments/ListProjectAssignments/handler.py`
     - Implement `handler(event, context)` as AppSync resolver
     - Any authenticated user can access (read-only)
     - If `employeeId` filter → query `employeeId-index`
@@ -137,12 +137,12 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - **Property 4: Filter returns only matching records**
     - **Validates: Requirements 2.4**
 
-- [ ] 9. Wire CRUD Lambdas in CDK Lambda stack
-  - [ ] 9.1 Update `colabs_pipeline_cdk/stack/lambda_stack.py` to import ProjectAssignments table
+- [x] 9. Wire CRUD Lambdas in CDK Lambda stack
+  - [x] 9.1 Update `colabs_pipeline_cdk/stack/lambda_stack.py` to import ProjectAssignments table
     - Import table reference in `_import_resources()` using SSM parameter
     - _Requirements: 8.2, 8.3_
 
-  - [ ] 9.2 Create 4 new Lambda functions for CRUD operations in `_create_project_assignment_lambdas()`
+  - [x] 9.2 Create 4 new Lambda functions for CRUD operations in `_create_project_assignment_lambdas()`
     - CreateProjectAssignment, UpdateProjectAssignment, DeleteProjectAssignment, ListProjectAssignments
     - Pass `PROJECT_ASSIGNMENTS_TABLE`, `USERS_TABLE`, `PROJECTS_TABLE` env vars
     - Grant read/write on ProjectAssignments table to all CRUD Lambdas
@@ -150,11 +150,11 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - Create AppSync data sources and resolvers for each
     - _Requirements: 8.2, 8.3_
 
-- [ ] 10. Checkpoint - Ensure CRUD Lambdas work
+- [x] 10. Checkpoint - Ensure CRUD Lambdas work
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 11. Update Reports handler to use ProjectAssignments
-  - [ ] 11.1 Modify `lambdas/reports/handler.py` — replace `_get_supervised_employees()` to use shared utility
+- [x] 11. Update Reports handler to use ProjectAssignments
+  - [x] 11.1 Modify `lambdas/reports/handler.py` — replace `_get_supervised_employees()` to use shared utility
     - Import `get_supervised_employee_ids` from `shared.project_assignments`
     - Replace `supervisorId-index` query on Users table with `get_supervised_employee_ids()` call
     - After getting employee IDs, batch-get user details from Users table for names/emails
@@ -162,7 +162,7 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - Use `PROJECT_ASSIGNMENTS_TABLE` env var
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-  - [ ] 11.2 Modify `lambdas/reports/handler.py` — replace `_get_employee_supervisor_id()` with `_get_employee_supervisors()`
+  - [x] 11.2 Modify `lambdas/reports/handler.py` — replace `_get_employee_supervisor_id()` with `_get_employee_supervisors()`
     - Query `employeeId-index` on ProjectAssignments table to find all supervisors for the submitting employee
     - Return list of distinct `supervisorId` values
     - Loop over distinct supervisors to generate TC Summary for each
@@ -179,8 +179,8 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - Test stream trigger generates reports for each distinct supervisor
     - _Requirements: 3.1, 3.3, 3.4, 6.1, 6.2_
 
-- [ ] 12. Update ListPendingTimesheets to use ProjectAssignments
-  - [ ] 12.1 Modify `lambdas/reviews/ListPendingTimesheets/handler.py`
+- [x] 12. Update ListPendingTimesheets to use ProjectAssignments
+  - [x] 12.1 Modify `lambdas/reviews/ListPendingTimesheets/handler.py`
     - Import `get_supervised_employee_ids` from `shared.project_assignments`
     - Replace `_get_supervised_employee_ids()` to use shared utility instead of Users table `supervisorId-index`
     - Deduplicate employee IDs (handled by shared utility)
@@ -192,8 +192,8 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - Test employee appearing in multiple assignments is included only once
     - _Requirements: 4.1, 4.3_
 
-- [ ] 13. Update Notification Service to use ProjectAssignments
-  - [ ] 13.1 Modify `lambdas/notifications/handler.py`
+- [x] 13. Update Notification Service to use ProjectAssignments
+  - [x] 13.1 Modify `lambdas/notifications/handler.py`
     - Import `get_supervised_employee_ids` from `shared.project_assignments`
     - Replace `_get_supervised_employees()` to use shared utility instead of Users table `supervisorId-index`
     - After getting employee IDs, batch-get user details from Users table for names/emails
@@ -206,16 +206,16 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - Test supervised employees are correctly resolved from ProjectAssignments
     - _Requirements: 5.1, 5.3_
 
-- [ ] 14. Update CDK Lambda stack for modified Lambdas
-  - [ ] 14.1 Add `PROJECT_ASSIGNMENTS_TABLE` env var and read permissions to existing Lambdas
+- [x] 14. Update CDK Lambda stack for modified Lambdas
+  - [x] 14.1 Add `PROJECT_ASSIGNMENTS_TABLE` env var and read permissions to existing Lambdas
     - Add env var and read permissions to: reports stream handler, GetTCSummaryReport, GetProjectSummaryReport, ListPendingTimesheets, notification service
     - _Requirements: 8.2, 8.3_
 
-- [ ] 15. Checkpoint - Ensure all modified Lambdas work
+- [x] 15. Checkpoint - Ensure all modified Lambdas work
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 16. Backward compatibility verification
-  - [ ] 16.1 Verify `supervisorId` field remains on User type and input types in GraphQL schema
+- [x] 16. Backward compatibility verification
+  - [x] 16.1 Verify `supervisorId` field remains on User type and input types in GraphQL schema
     - Confirm `supervisorId` is optional on `User`, `CreateUserInput`, `UpdateUserInput`
     - Confirm `createUser` and `updateUser` mutations continue to accept `supervisorId` without error
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
@@ -224,7 +224,7 @@ Replace the single `supervisorId` field on the Users table with a many-to-many r
     - **Property 10: Backward compatibility — supervisorId accepted on user mutations**
     - **Validates: Requirements 7.4**
 
-- [ ] 17. Final checkpoint - Ensure all tests pass
+- [x] 17. Final checkpoint - Ensure all tests pass
   - Run full test suite with `pytest`
   - Ensure all property tests and unit tests pass
   - Ensure no regressions in existing tests

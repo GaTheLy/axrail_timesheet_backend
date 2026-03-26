@@ -40,13 +40,10 @@ def get_project_summary_report(event):
     args = event["arguments"]
     period_id = args["periodId"]
 
-    prefix = f"reports/project-summary/{period_id}/"
-    s3_key = _find_latest_report(prefix)
-
+    # Always generate a fresh report
+    s3_key = _generate_project_summary(period_id)
     if not s3_key:
-        s3_key = _generate_project_summary(period_id)
-        if not s3_key:
-            raise ValueError(f"No Project Summary data available for period '{period_id}'")
+        raise ValueError(f"No Project Summary data available for period '{period_id}'")
 
     url = s3_client.generate_presigned_url(
         "get_object",

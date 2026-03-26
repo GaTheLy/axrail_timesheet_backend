@@ -34,6 +34,7 @@
     - [6.9 Reports](#69-reports)
     - [6.10 Main Database](#610-main-database)
     - [6.11 Report Distribution Config](#611-report-distribution-config)
+    - [6.12 Project Assignments](#612-project-assignments)
   - [7. Troubleshooting](#7-troubleshooting)
   - [8. ID Tracking Sheet](#8-id-tracking-sheet)
 
@@ -146,6 +147,7 @@ Tests must be run in this order because later tests depend on IDs created by ear
 | 9    | Reports                | —                             |
 | 10   | Main Database          | —                             |
 | 11   | Report Distribution    | —                             |
+| 12   | Project Assignments    | Reports (supervisor lookup)   |
 
 > **Important:** Record every ID returned from create mutations in the ID Tracking Sheet (Section 8).
 
@@ -1139,6 +1141,172 @@ mutation {
 
 ---
 
+### 6.12 Project Assignments
+
+> **Prerequisite:** Requires valid User IDs (employee, supervisor) and a Project ID from previous steps.
+
+**Create Project Assignment** (admin/superadmin only)
+
+```graphql
+mutation {
+  createProjectAssignment(input: {
+    employeeId: "<EMPLOYEE_USER_ID>"
+    projectId: "<PROJECT_ID>"
+    supervisorId: "<TECH_LEAD_USER_ID>"
+  }) {
+    assignmentId
+    employeeId
+    projectId
+    supervisorId
+    createdAt
+  }
+}
+```
+
+| Field        | Expected                    |
+|--------------|-----------------------------|
+| assignmentId | UUID generated              |
+| employeeId   | Matches input               |
+| projectId    | Matches input               |
+| supervisorId | Matches input               |
+| createdAt    | Current timestamp           |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**List Project Assignments (by supervisor)**
+
+```graphql
+query {
+  listProjectAssignments(filter: { supervisorId: "<TECH_LEAD_USER_ID>" }) {
+    assignmentId
+    employeeId
+    projectId
+    supervisorId
+  }
+}
+```
+
+| Expected                                              |
+|-------------------------------------------------------|
+| Returns assignments for the specified supervisor      |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**List Project Assignments (by employee)**
+
+```graphql
+query {
+  listProjectAssignments(filter: { employeeId: "<EMPLOYEE_USER_ID>" }) {
+    assignmentId
+    employeeId
+    projectId
+    supervisorId
+  }
+}
+```
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Update Project Assignment**
+
+```graphql
+mutation {
+  updateProjectAssignment(
+    assignmentId: "<ASSIGNMENT_ID>"
+    input: { supervisorId: "<NEW_TECH_LEAD_USER_ID>" }
+  ) {
+    assignmentId
+    supervisorId
+    updatedAt
+  }
+}
+```
+
+| Field        | Expected                    |
+|--------------|-----------------------------|
+| supervisorId | New supervisor ID           |
+| updatedAt    | Current timestamp           |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Delete Project Assignment**
+
+```graphql
+mutation {
+  deleteProjectAssignment(assignmentId: "<ASSIGNMENT_ID>")
+}
+```
+
+| Expected       |
+|----------------|
+| Returns `true` |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Validation: Duplicate employee+project should fail**
+
+```graphql
+mutation {
+  createProjectAssignment(input: {
+    employeeId: "<EMPLOYEE_USER_ID>"
+    projectId: "<PROJECT_ID>"
+    supervisorId: "<DIFFERENT_SUPERVISOR_ID>"
+  }) {
+    assignmentId
+  }
+}
+```
+
+| Expected                                                          |
+|-------------------------------------------------------------------|
+| Error: "Assignment already exists for employee '...' on project '...'" |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Validation: Non-existent employee should fail**
+
+```graphql
+mutation {
+  createProjectAssignment(input: {
+    employeeId: "non-existent-id"
+    projectId: "<PROJECT_ID>"
+    supervisorId: "<TECH_LEAD_USER_ID>"
+  }) {
+    assignmentId
+  }
+}
+```
+
+| Expected                                |
+|-----------------------------------------|
+| Error: "Employee '...' not found"       |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+**Validation: Non-admin user should fail**
+
+> Log in as a regular `user` (not admin/superadmin).
+
+```graphql
+mutation {
+  createProjectAssignment(input: {
+    employeeId: "<EMPLOYEE_USER_ID>"
+    projectId: "<PROJECT_ID>"
+    supervisorId: "<TECH_LEAD_USER_ID>"
+  }) {
+    assignmentId
+  }
+}
+```
+
+| Expected                     |
+|------------------------------|
+| Error: permissions/forbidden |
+
+☐ Pass / ☐ Fail — Notes: _______________
+
+---
+
 ## 7. Troubleshooting
 
 | Error                                    | Cause                                              | Fix                                                       |
@@ -1156,6 +1324,9 @@ mutation {
 | "Only superadmins can edit projects..."  | Admin trying to edit an approved project           | Log in as superadmin, or edit a non-approved project       |
 | Lambda timeout                           | Cold start or heavy operation                      | Retry — first invocation may be slow                       |
 | SES email not sent                       | SES in sandbox mode                                | Verify sender and recipient emails in SES console          |
+| "Assignment already exists..."           | Duplicate employee+project assignment              | Delete existing assignment first, or use a different project |
+| "Employee '...' not found"               | Non-existent employeeId in assignment              | Verify the employee userId exists in Users table           |
+| "Supervisor '...' not found"             | Non-existent supervisorId in assignment            | Verify the supervisor userId exists in Users table         |
 
 ---
 
@@ -1177,6 +1348,8 @@ Use this table to record IDs as you test. You will need these for subsequent ste
 | Submission ID         |          |                |
 | Entry ID              |          |                |
 | Main DB Record ID     |          |                |
+| Assignment ID         |          |                |
+| Assignment ID (spare) |          | For delete test|
 
 ---
 

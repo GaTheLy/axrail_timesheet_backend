@@ -29,39 +29,130 @@ class CognitoAuthService
      * @return array{accessToken: string, idToken: string, refreshToken: string, tokenExpiry: int, user: array}
      * @throws Exception
      */
-    public function authenticate(string $email, string $password, bool $rememberDevice = false): array
-    {
-        try {
-            $result = $this->client->initiateAuth([
-                'AuthFlow'       => 'USER_PASSWORD_AUTH',
-                'ClientId'       => $this->clientId,
-                'AuthParameters' => [
-                    'USERNAME' => $email,
-                    'PASSWORD' => $password,
-                ],
-            ]);
+    
+        /**
+         * Authenticate a user with email and password using Cognito USER_PASSWORD_AUTH flow.
+         *
+         * @param string $email
+         * @param string $password
+         * @param bool $rememberDevice
+         * @return array
+         * @throws Exception
+         */
+        public function authenticate(string $email, string $password, bool $rememberDevice = false): array
+        {
+            try {
+                $result = $this->client->initiateAuth([
+                    'AuthFlow'       => 'USER_PASSWORD_AUTH',
+                    'ClientId'       => $this->clientId,
+                    'AuthParameters' => [
+                        'USERNAME' => $email,
+                        'PASSWORD' => $password,
+                    ],
+                ]);
 
-            $authResult = $result->get('AuthenticationResult');
+                // Handle NEW_PASSWORD_REQUIRED challenge
+                $challengeName = $result->get('ChallengeName');
+                if ($challengeName === 'NEW_PASSWORD_REQUIRED') {
+                    return [
+                        'challenge'        => 'NEW_PASSWORD_REQUIRED',
+                        'session'          => $result->get('Session'),
+                        'challengeParams'  => $result->get('ChallengeParameters') ?? [],
+                    ];
+                }
 
-            $idTokenClaims = $this->parseIdToken($authResult['IdToken']);
+                $authResult = $result->get('AuthenticationResult');
 
-            return [
-                'accessToken'  => $authResult['AccessToken'],
-                'idToken'      => $authResult['IdToken'],
-                'refreshToken' => $authResult['RefreshToken'] ?? null,
-                'tokenExpiry'  => time() + ($authResult['ExpiresIn'] ?? 3600),
-                'user'         => [
-                    'userId'   => $idTokenClaims['sub'] ?? '',
-                    'email'    => $idTokenClaims['email'] ?? '',
-                    'fullName' => $idTokenClaims['name'] ?? '',
-                    'userType' => $idTokenClaims['custom:userType'] ?? '',
-                    'role'     => $idTokenClaims['custom:role'] ?? '',
-                ],
-            ];
-        } catch (AwsException $e) {
-            throw new Exception($this->mapCognitoError($e));
+                $idTokenClaims = $this->parseIdToken($authResult['IdToken']);
+
+                return [
+                    'accessToken'  => $authResult['AccessToken'],
+                    'idToken'      => $authResult['IdToken'],
+                    'refreshToken' => $authResult['RefreshToken'] ?? null,
+                    'tokenExpiry'  => time() + ($authResult['ExpiresIn'] ?? 3600),
+                    'user'         => [
+                        'userId'   => $idTokenClaims['sub'] ?? '',
+                        'email'    => $idTokenClaims['email'] ?? '',
+                        'fullName' => $idTokenClaims['name'] ?? '',
+                        'userType' => $idTokenClaims['custom:userType'] ?? '',
+                        'role'     => $idTokenClaims['custom:role'] ?? '',
+                    ],
+                ];
+            } catch (AwsException $e) {
+                throw new Exception($this->mapCognitoError($e));
+            }
         }
-    }
+
+        /**
+         * Respond to the NEW_PASSWORD_REQUIRED challenge.
+         *
+         * @param string $email
+         * @param string $newPassword
+         * @param string $session
+         * @return array
+         * @throws Exception
+         */
+        public function respondToNewPasswordChallenge(string $email, string $newPassword, string $session, array $challengeParams = [], ?string $name = null): array
+        {
+            try {
+                $challengeResponses = [
+                    'USERNAME'     => $email,
+                    'NEW_PASSWORD' => $newPassword,
+                ];
+
+                // Non-mutable attributes that must NOT be sent back in challenge response
+                $immutableAttrs = ['sub', 'email_verified', 'phone_number_verified', 'identities'];
+
+                // Cognito returns userAttributes as a JSON string with existing values.
+                // Only pass back mutable attributes.
+                $userAttrsJson = $challengeParams['userAttributes'] ?? '{}';
+                $userAttrs = json_decode($userAttrsJson, true) ?? [];
+
+                foreach ($userAttrs as $key => $value) {
+                    if ($value !== null && $value !== '' && !in_array($key, $immutableAttrs, true)) {
+                        $challengeResponses['userAttributes.' . $key] = $value;
+                    }
+                }
+
+                // Ensure email is always included
+                if (!isset($challengeResponses['userAttributes.email'])) {
+                    $challengeResponses['userAttributes.email'] = $email;
+                }
+
+                // Set name from form input (required attribute that may be missing)
+                if ($name !== null) {
+                    $challengeResponses['userAttributes.name'] = $name;
+                }
+
+                $result = $this->client->respondToAuthChallenge([
+                    'ClientId'             => $this->clientId,
+                    'ChallengeName'        => 'NEW_PASSWORD_REQUIRED',
+                    'Session'              => $session,
+                    'ChallengeResponses'   => $challengeResponses,
+                ]);
+
+                $authResult = $result->get('AuthenticationResult');
+                $idTokenClaims = $this->parseIdToken($authResult['IdToken']);
+
+                return [
+                    'accessToken'  => $authResult['AccessToken'],
+                    'idToken'      => $authResult['IdToken'],
+                    'refreshToken' => $authResult['RefreshToken'] ?? null,
+                    'tokenExpiry'  => time() + ($authResult['ExpiresIn'] ?? 3600),
+                    'user'         => [
+                        'userId'   => $idTokenClaims['sub'] ?? '',
+                        'email'    => $idTokenClaims['email'] ?? '',
+                        'fullName' => $idTokenClaims['name'] ?? '',
+                        'userType' => $idTokenClaims['custom:userType'] ?? '',
+                        'role'     => $idTokenClaims['custom:role'] ?? '',
+                    ],
+                ];
+            } catch (AwsException $e) {
+                throw new Exception($this->mapCognitoError($e));
+            }
+        }
+
+
 
     /**
      * Refresh tokens using the Cognito REFRESH_TOKEN_AUTH flow.
@@ -233,17 +324,26 @@ class CognitoAuthService
      */
     protected function mapCognitoError(AwsException $e): string
     {
-        return match ($e->getAwsErrorCode()) {
-            'NotAuthorizedException'       => 'Invalid credentials. Please check your email and password.',
-            'UserNotFoundException'         => 'Invalid credentials. Please check your email and password.',
-            'UserNotConfirmedException'     => 'Your account has not been confirmed. Please check your email for a confirmation link.',
+        $code = $e->getAwsErrorCode();
+        $message = $e->getAwsErrorMessage() ?? '';
+
+        // Session expired during challenge flow
+        if ($code === 'NotAuthorizedException' && str_contains($message, 'Invalid session')) {
+            return 'Your session has expired. Please sign in again to restart the password change.';
+        }
+
+        return match ($code) {
+            'NotAuthorizedException'        => 'Invalid credentials. Please check your email and password.',
+            'UserNotFoundException'          => 'Invalid credentials. Please check your email and password.',
+            'UserNotConfirmedException'      => 'Your account has not been confirmed. Please check your email for a confirmation link.',
             'PasswordResetRequiredException' => 'You must reset your password before signing in.',
-            'CodeMismatchException'         => 'The verification code is incorrect. Please try again.',
-            'ExpiredCodeException'          => 'The verification code has expired. Please request a new one.',
-            'InvalidPasswordException'      => 'The password does not meet the required policy. It must be at least 8 characters with uppercase, lowercase, number, and symbol.',
-            'LimitExceededException'        => 'Too many attempts. Please try again later.',
-            'TooManyRequestsException'      => 'Too many requests. Please try again later.',
-            default                         => 'An authentication error occurred. Please try again.',
+            'CodeMismatchException'          => 'The verification code is incorrect. Please try again.',
+            'ExpiredCodeException'           => 'The verification code has expired. Please request a new one.',
+            'InvalidPasswordException'       => 'The password does not meet the required policy. It must be at least 8 characters with uppercase, lowercase, number, and symbol.',
+            'InvalidParameterException'      => 'The password does not meet the required policy. It must be at least 8 characters with uppercase, lowercase, number, and symbol.',
+            'LimitExceededException'         => 'Too many attempts. Please try again later.',
+            'TooManyRequestsException'       => 'Too many requests. Please try again later.',
+            default                          => 'An authentication error occurred: ' . ($message ?: 'Please try again.'),
         };
     }
 }

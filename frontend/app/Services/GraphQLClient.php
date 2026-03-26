@@ -67,7 +67,7 @@ class GraphQLClient
                 $response = $this->httpClient->post($this->endpoint, [
                     'headers' => [
                         'Content-Type'  => 'application/json',
-                        'Authorization' => session('accessToken', ''),
+                        'Authorization' => session('idToken', ''),
                     ],
                     'json' => [
                         'query'     => $query,

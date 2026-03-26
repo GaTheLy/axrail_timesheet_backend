@@ -35,6 +35,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from shared.auth import ForbiddenError, require_role
+from shared.project_assignments import get_supervised_employee_ids, get_employee_supervisor_ids
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -45,6 +46,7 @@ USERS_TABLE = os.environ.get("USERS_TABLE", "")
 PROJECTS_TABLE = os.environ.get("PROJECTS_TABLE", "")
 EMPLOYEE_PERFORMANCE_TABLE = os.environ.get("EMPLOYEE_PERFORMANCE_TABLE", "")
 REPORT_BUCKET = os.environ.get("REPORT_BUCKET", "")
+PROJECT_ASSIGNMENTS_TABLE = os.environ.get("PROJECT_ASSIGNMENTS_TABLE", "")
 
 PRESIGNED_URL_EXPIRY = 3600  # 1 hour
 
@@ -116,12 +118,18 @@ def _handle_stream_event(event):
                 logger.warning("Stream record missing periodId, skipping")
                 continue
 
-            # Find the tech lead (supervisor) for this employee
-            supervisor_id = _get_employee_supervisor_id(employee_id)
+            # Find all supervisors for this employee via ProjectAssignments
+            supervisor_ids = _get_employee_supervisors(employee_id)
 
-            # Generate TC Summary for the supervisor/period if supervisor exists
-            if supervisor_id:
-                _generate_tc_summary(supervisor_id, period_id)
+            # Generate TC Summary for each distinct supervisor
+            if supervisor_ids:
+                for supervisor_id in supervisor_ids:
+                    _generate_tc_summary(supervisor_id, period_id)
+            else:
+                logger.info(
+                    "Employee %s has no project assignments, skipping TC Summary",
+                    employee_id,
+                )
 
             # Generate Project Summary for the period
             _generate_project_summary(period_id)
@@ -167,26 +175,22 @@ def _should_process_stream_record(record):
     return True
 
 
-def _get_employee_supervisor_id(employee_id):
-    """Look up the supervisorId for an employee.
+def _get_employee_supervisors(employee_id):
+    """Look up all supervisor IDs for an employee via ProjectAssignments.
+
+    Queries the ProjectAssignments table ``employeeId-index`` GSI to find
+    all supervisors assigned to the given employee.
 
     Args:
         employee_id: The employee's userId.
 
     Returns:
-        The supervisorId string, or None if not found.
+        List of distinct supervisorId strings.
     """
     if not employee_id:
-        return None
+        return []
 
-    table = _get_users_table()
-    response = table.get_item(Key={"userId": employee_id})
-    item = response.get("Item")
-    if not item:
-        logger.warning("Employee %s not found in Users table", employee_id)
-        return None
-
-    return item.get("supervisorId")
+    return get_employee_supervisor_ids(PROJECT_ASSIGNMENTS_TABLE, employee_id)
 
 
 # ---------------------------------------------------------------------------
@@ -199,49 +203,55 @@ def _generate_tc_summary(tech_lead_id, period_id):
     Columns: Name, Chargable Hours, Total Hours, Current Period Chargability,
              YTD Chargability
 
-    Includes only employees with Submitted submissions for the period.
+    Includes all employees with submissions for the period.
 
     Validates: Requirements 9.2, 9.3, 9.4, 9.5, 9.6
     """
     logger.info("Generating TC Summary for tech_lead=%s, period=%s",
                 tech_lead_id, period_id)
 
-    # Get employees under this tech lead
-    employees = _get_supervised_employees(tech_lead_id)
-    if not employees:
-        logger.info("No employees found under tech lead %s", tech_lead_id)
+    # Get all submissions for this period (Draft and Submitted)
+    submissions = _get_submissions_for_period(period_id, ["Draft", "Submitted"])
+
+    if not submissions:
+        logger.info("No submissions found for period %s", period_id)
         return None
 
-    # Build employee lookup by userId
-    employee_map = {emp["userId"]: emp for emp in employees}
+    # Get all users to resolve names
+    users_table = _get_users_table()
+    user_cache = {}
 
-    # Get Submitted submissions for this period
-    submissions = _get_submissions_for_period(period_id, ["Submitted"])
-
-    # Filter to only submissions from supervised employees
-    supervised_ids = set(employee_map.keys())
-    relevant_submissions = [
-        sub for sub in submissions
-        if sub.get("employeeId") in supervised_ids
-    ]
-
-    if not relevant_submissions:
-        logger.info("No Submitted submissions for tech lead %s in period %s",
-                     tech_lead_id, period_id)
-        return None
+    def get_user_name(emp_id):
+        if emp_id not in user_cache:
+            resp = users_table.get_item(Key={"userId": emp_id})
+            item = resp.get("Item", {})
+            user_cache[emp_id] = item.get("fullName", emp_id)
+        return user_cache[emp_id]
 
     # Determine year for YTD lookup
     year = datetime.now(timezone.utc).year
 
     # Build CSV rows
     rows = []
-    for submission in relevant_submissions:
-        emp_id = submission["employeeId"]
-        emp = employee_map.get(emp_id, {})
-        name = emp.get("fullName", "Unknown")
+    entries_table = _get_entries_table()
+    for submission in submissions:
+        emp_id = submission.get("employeeId", "")
+        name = get_user_name(emp_id)
 
-        chargeable_hours = _to_decimal(submission.get("chargeableHours", 0))
-        total_hours = _to_decimal(submission.get("totalHours", 0))
+        # Compute hours from entries since submission-level totals may be 0
+        submission_id = submission["submissionId"]
+        entry_resp = entries_table.query(
+            IndexName="submissionId-index",
+            KeyConditionExpression=Key("submissionId").eq(submission_id),
+        )
+        entries = entry_resp.get("Items", [])
+        total_hours = sum(_to_decimal(e.get("totalHours", 0)) for e in entries)
+        chargeable_hours = total_hours  # All hours treated as chargeable
+
+        # Fall back to submission-level if entries are empty
+        if total_hours == 0:
+            chargeable_hours = _to_decimal(submission.get("chargeableHours", 0))
+            total_hours = _to_decimal(submission.get("totalHours", 0))
 
         # Current period chargeability
         current_chargeability = calculate_current_period_chargeability(
@@ -258,6 +268,10 @@ def _generate_tc_summary(tech_lead_id, period_id):
             "Current Period Chargability": str(current_chargeability),
             "YTD Chargability": str(ytd_chargeability),
         })
+
+    if not rows:
+        logger.info("No data rows generated for TC Summary")
+        return None
 
     # Write CSV and upload to S3
     csv_content = _build_csv(
@@ -296,8 +310,8 @@ def _generate_project_summary(period_id):
         logger.info("No projects found")
         return None
 
-    # Get all Submitted submissions for this period
-    submissions = _get_submissions_for_period(period_id, ["Submitted"])
+    # Get all submissions for this period (Draft and Submitted)
+    submissions = _get_submissions_for_period(period_id, ["Draft", "Submitted"])
     submission_ids = [sub["submissionId"] for sub in submissions]
 
     # Get all entries for these submissions, grouped by projectCode
@@ -442,30 +456,33 @@ def get_project_summary_report(event):
 # ---------------------------------------------------------------------------
 
 def _get_supervised_employees(tech_lead_id):
-    """Query employees under a Tech Lead using supervisorId-index GSI.
+    """Query employees under a Tech Lead via ProjectAssignments.
+
+    Uses the shared utility to get unique employee IDs from the
+    ProjectAssignments table, then batch-gets user details from the
+    Users table so that downstream code still receives full employee
+    items (with ``userId``, ``fullName``, etc.).
 
     Args:
         tech_lead_id: The Tech Lead's userId.
 
     Returns:
-        List of employee items.
+        List of employee items (dicts from Users table).
     """
-    table = _get_users_table()
-    response = table.query(
-        IndexName="supervisorId-index",
-        KeyConditionExpression=Key("supervisorId").eq(tech_lead_id),
+    employee_ids = get_supervised_employee_ids(
+        PROJECT_ASSIGNMENTS_TABLE, tech_lead_id
     )
-    items = response.get("Items", [])
+    if not employee_ids:
+        return []
 
-    while "LastEvaluatedKey" in response:
-        response = table.query(
-            IndexName="supervisorId-index",
-            KeyConditionExpression=Key("supervisorId").eq(tech_lead_id),
-            ExclusiveStartKey=response["LastEvaluatedKey"],
-        )
-        items.extend(response.get("Items", []))
+    table = _get_users_table()
+    employees = []
+    for emp_id in employee_ids:
+        response = table.get_item(Key={"userId": emp_id})
+        if "Item" in response:
+            employees.append(response["Item"])
 
-    return items
+    return employees
 
 
 def _get_submissions_for_period(period_id, statuses):
@@ -508,10 +525,10 @@ def _get_submissions_for_period(period_id, statuses):
 
 
 def _get_all_projects():
-    """Scan the Projects table for all projects regardless of status.
+    """Scan the Projects table for all Approved projects.
 
     Returns:
-        List of all project items.
+        List of approved project items.
 
     Validates: Requirements 10.6
     """
@@ -523,7 +540,8 @@ def _get_all_projects():
         response = table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
         items.extend(response.get("Items", []))
 
-    return items
+    # Filter to only Approved projects
+    return [p for p in items if p.get("approval_status") == "Approved"]
 
 
 def _aggregate_hours_by_project(submission_ids):

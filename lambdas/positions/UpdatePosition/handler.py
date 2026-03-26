@@ -38,7 +38,7 @@ def _check_position_name_unique(table, position_name, exclude_position_id=None):
 
 def update_position(event):
     """Update an existing position. Validates: Requirements 3.2, 3.4, 3.6"""
-    caller = require_user_type(event, ["superadmin"])
+    caller = require_user_type(event, ["superadmin", "admin"])
     position_id = event["arguments"]["positionId"]
     args = event["arguments"]["input"]
     table = dynamodb.Table(POSITIONS_TABLE)
@@ -46,6 +46,9 @@ def update_position(event):
     existing = table.get_item(Key={"positionId": position_id}).get("Item")
     if not existing:
         raise ValueError(f"Position '{position_id}' not found")
+
+    if existing.get("approval_status") == "Approved":
+        raise ValueError("Cannot update position: approved entities cannot be edited")
 
     new_name = args.get("positionName")
     if new_name and new_name != existing["positionName"]:

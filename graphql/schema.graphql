@@ -38,11 +38,14 @@ enum ApprovalStatus {
 
 type User @aws_api_key @aws_cognito_user_pools {
   userId: ID!
+  userCode: String
   email: String!
   fullName: String!
   userType: UserType!
   role: Role!
   status: UserStatus!
+  approval_status: ApprovalStatus!
+  rejectionReason: String
   positionId: ID!
   departmentId: ID!
   supervisorId: ID
@@ -55,6 +58,8 @@ type User @aws_api_key @aws_cognito_user_pools {
 type Department @aws_api_key @aws_cognito_user_pools {
   departmentId: ID!
   departmentName: String!
+  approval_status: ApprovalStatus!
+  rejectionReason: String
   createdAt: AWSDateTime!
   createdBy: ID
   updatedAt: AWSDateTime
@@ -65,6 +70,8 @@ type Position @aws_api_key @aws_cognito_user_pools {
   positionId: ID!
   positionName: String!
   description: String
+  approval_status: ApprovalStatus!
+  rejectionReason: String
   createdAt: AWSDateTime!
   createdBy: ID
   updatedAt: AWSDateTime
@@ -329,6 +336,38 @@ input AdminSubmissionFilterInput {
 }
 
 # ---------------------------------------------------------------
+# Project Assignment Types
+# ---------------------------------------------------------------
+
+type ProjectAssignment @aws_api_key @aws_cognito_user_pools {
+  assignmentId: ID!
+  employeeId: ID!
+  projectId: ID!
+  supervisorId: ID!
+  createdAt: AWSDateTime!
+  createdBy: ID
+  updatedAt: AWSDateTime
+  updatedBy: ID
+}
+
+input CreateProjectAssignmentInput {
+  employeeId: ID!
+  projectId: ID!
+  supervisorId: ID!
+}
+
+input UpdateProjectAssignmentInput {
+  supervisorId: ID
+  projectId: ID
+}
+
+input ProjectAssignmentFilterInput {
+  employeeId: ID
+  supervisorId: ID
+  projectId: ID
+}
+
+# ---------------------------------------------------------------
 # Queries
 # ---------------------------------------------------------------
 
@@ -347,6 +386,7 @@ type Query @aws_api_key @aws_cognito_user_pools {
   getProjectSummaryReport(periodId: ID!): ReportDownloadUrl!
   listMainDatabase: [MainDatabaseRecord!]!
   getReportDistributionConfig: ReportDistributionConfig
+  listProjectAssignments(filter: ProjectAssignmentFilterInput): [ProjectAssignment!]!
 }
 
 # ---------------------------------------------------------------
@@ -366,9 +406,16 @@ type Mutation @aws_api_key @aws_cognito_user_pools {
   updatePosition(positionId: ID!, input: UpdatePositionInput!): Position!
   deletePosition(positionId: ID!): Boolean!
   createProject(input: CreateProjectInput!): Project!
+  approveDepartment(departmentId: ID!): Department!
+  rejectDepartment(departmentId: ID!, reason: String!): Department!
+  approvePosition(positionId: ID!): Position!
+  rejectPosition(positionId: ID!, reason: String!): Position!
+  approveUser(userId: ID!): User!
+  rejectUser(userId: ID!, reason: String!): User!
   approveProject(projectId: ID!): Project!
   rejectProject(projectId: ID!, reason: String!): Project!
   updateProject(projectId: ID!, input: UpdateProjectInput!): Project!
+  deleteProject(projectId: ID!): Boolean!
   createTimesheetPeriod(input: CreateTimesheetPeriodInput!): TimesheetPeriod!
   updateTimesheetPeriod(periodId: ID!, input: UpdateTimesheetPeriodInput!): TimesheetPeriod!
   addTimesheetEntry(submissionId: ID!, input: TimesheetEntryInput!): TimesheetEntry!
@@ -378,4 +425,7 @@ type Mutation @aws_api_key @aws_cognito_user_pools {
   bulkImportCSV(file: S3ObjectInput!): BulkImportResult!
   refreshDatabase(file: S3ObjectInput!): RefreshResult!
   updateReportDistributionConfig(input: UpdateReportDistributionConfigInput!): ReportDistributionConfig!
+  createProjectAssignment(input: CreateProjectAssignmentInput!): ProjectAssignment!
+  updateProjectAssignment(assignmentId: ID!, input: UpdateProjectAssignmentInput!): ProjectAssignment!
+  deleteProjectAssignment(assignmentId: ID!): Boolean!
 }

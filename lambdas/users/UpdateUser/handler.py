@@ -87,6 +87,9 @@ def update_user(event):
     if not existing:
         raise ValueError(f"User '{user_id}' not found")
 
+    if existing.get("approval_status") == "Approved":
+        raise ValueError("Cannot update user: approved entities cannot be edited")
+
     _authorize_mutation(caller, existing["userType"])
 
     if "userType" in args:

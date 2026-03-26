@@ -1,5 +1,5 @@
 {
-  "version": "50.0.0",
+  "version": "52.0.0",
   "files": {
     "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d": {
       "displayName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code",
@@ -16,16 +16,16 @@
         }
       }
     },
-    "2fd0c56924ad3e80a254385b83764c7ec1426d11ee82f8be3132a94873bcccb4": {
+    "dc6f8e4f13e29576f3450515f3bd3cb7ca9a672d0e8c8b8b4ded9ede54a9aae3": {
       "displayName": "ColabsTimesheetApiStack-staging Template",
       "source": {
         "path": "ColabsTimesheetApiStack-staging.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "815254799325-ap-southeast-1-9fa789c3": {
+        "815254799325-ap-southeast-1-713d1418": {
           "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-          "objectKey": "2fd0c56924ad3e80a254385b83764c7ec1426d11ee82f8be3132a94873bcccb4.json",
+          "objectKey": "dc6f8e4f13e29576f3450515f3bd3cb7ca9a672d0e8c8b8b4ded9ede54a9aae3.json",
           "region": "ap-southeast-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }

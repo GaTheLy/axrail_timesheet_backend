@@ -97,7 +97,7 @@
                         value="{{ $dept['departmentId'] }}"
                         {{ ($profile['departmentId'] ?? '') === $dept['departmentId'] ? 'selected' : '' }}
                     >
-                        {{ $dept['name'] }}
+                        {{ $dept['departmentName'] }}
                     </option>
                 @endforeach
             </select>

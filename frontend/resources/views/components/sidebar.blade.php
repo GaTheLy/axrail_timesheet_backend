@@ -43,6 +43,38 @@
                     Timesheet
                 </a>
             </li>
+
+            {{-- Reports menu: visible only to Tech_Lead/Project_Manager with userType user --}}
+            @if(in_array($role, ['Tech_Lead', 'Project_Manager']) && $userType === 'user')
+                <li class="nav-group {{ request()->is('reports*') ? 'active open' : '' }}">
+                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('reports*') ? 'true' : 'false' }}" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.nav-group').classList.toggle('open');">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>Reports</span>
+                        <svg class="nav-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <ul class="nav-group-items">
+                        <li>
+                            <a href="/reports/project-summary" class="{{ request()->is('reports/project-summary') ? 'active' : '' }}" aria-current="{{ request()->is('reports/project-summary') ? 'page' : 'false' }}">
+                                Project Summary
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/reports/submission-summary" class="{{ request()->is('reports/submission-summary') ? 'active' : '' }}" aria-current="{{ request()->is('reports/submission-summary') ? 'page' : 'false' }}">
+                                Submission Summary
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
             <li>
                 <a href="/settings" class="{{ request()->is('settings*') ? 'active' : '' }}" aria-current="{{ request()->is('settings*') ? 'page' : 'false' }}">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -60,7 +92,72 @@
 
             {{-- Admin nav items --}}
             @if(in_array($userType, ['admin', 'superadmin']))
-                {{-- TODO: Add User Management, Project Management, Reports nav items for Admin role --}}
+                {{-- Master Data group --}}
+                <li class="nav-group {{ request()->is('admin/*') ? 'active open' : '' }}">
+                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('admin/*') ? 'true' : 'false' }}" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.nav-group').classList.toggle('open');">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M20 7h-9"></path>
+                            <path d="M14 17H5"></path>
+                            <circle cx="17" cy="17" r="3"></circle>
+                            <circle cx="7" cy="7" r="3"></circle>
+                        </svg>
+                        <span>Master Data</span>
+                        <svg class="nav-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <ul class="nav-group-items">
+                        <li>
+                            <a href="/admin/users" class="{{ request()->is('admin/users*') ? 'active' : '' }}" aria-current="{{ request()->is('admin/users*') ? 'page' : 'false' }}">
+                                Users
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/departments" class="{{ request()->is('admin/departments*') ? 'active' : '' }}" aria-current="{{ request()->is('admin/departments*') ? 'page' : 'false' }}">
+                                Departments
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/positions" class="{{ request()->is('admin/positions*') ? 'active' : '' }}" aria-current="{{ request()->is('admin/positions*') ? 'page' : 'false' }}">
+                                Positions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/projects" class="{{ request()->is('admin/projects*') ? 'active' : '' }}" aria-current="{{ request()->is('admin/projects*') ? 'page' : 'false' }}">
+                                Projects
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- Reports group for admin --}}
+                <li class="nav-group {{ request()->is('reports*') ? 'active open' : '' }}">
+                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('reports*') ? 'true' : 'false' }}" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.nav-group').classList.toggle('open');">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>Reports</span>
+                        <svg class="nav-group-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <ul class="nav-group-items">
+                        <li>
+                            <a href="/reports/project-summary" class="{{ request()->is('reports/project-summary') ? 'active' : '' }}" aria-current="{{ request()->is('reports/project-summary') ? 'page' : 'false' }}">
+                                Project Summary
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/reports/submission-summary" class="{{ request()->is('reports/submission-summary') ? 'active' : '' }}" aria-current="{{ request()->is('reports/submission-summary') ? 'page' : 'false' }}">
+                                Submission Summary
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             @endif
 
             {{-- Super Admin nav items --}}

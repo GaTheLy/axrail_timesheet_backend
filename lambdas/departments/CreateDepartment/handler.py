@@ -47,8 +47,8 @@ def _check_department_name_unique(table, department_name):
 
 
 def create_department(event):
-    """Create a new department. Validates: Requirements 3.1, 3.3, 3.6"""
-    caller = require_user_type(event, ["superadmin"])
+    """Create a new department. Validates: Requirements 2.1, 2.5, 2.9, 3.1"""
+    caller = require_user_type(event, ["superadmin", "admin"])
     args = event["arguments"]["input"]
     department_name = args["departmentName"]
     table = _get_departments_table()
@@ -57,9 +57,13 @@ def create_department(event):
     now = _now_iso()
     department_id = str(uuid.uuid4())
 
+    approval_status = "Approved" if caller["userType"] == "superadmin" else "Pending_Approval"
+
     item = {
         "departmentId": department_id,
         "departmentName": department_name,
+        "approval_status": approval_status,
+        "rejectionReason": "",
         "createdAt": now,
         "createdBy": caller["userId"],
         "updatedAt": now,

@@ -47,11 +47,11 @@ class TimesheetController extends Controller
             }
 
             $submissionData = $this->graphql->query(
-                'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { items { submissionId periodId status entries { entryId projectCode projectName monday tuesday wednesday thursday friday saturday sunday } } } }',
+                'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { submissionId periodId status entries { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } } }',
                 ['filter' => ['periodId' => $period['periodId']]]
             );
 
-            $submissions = $submissionData['listMySubmissions']['items'] ?? [];
+            $submissions = $submissionData['listMySubmissions'] ?? [];
             $submission = $submissions[0] ?? null;
             $entries = $submission['entries'] ?? [];
 
@@ -76,8 +76,8 @@ class TimesheetController extends Controller
         } catch (AuthenticationException $e) {
             return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
         } catch (Exception $e) {
+            \Log::error('Timesheet load failed: ' . $e->getMessage());
             return view('pages.timesheet', [
-                'error' => 'Unable to load timesheet data. Please try again.',
                 'entries' => [],
                 'weeklyTotal' => 0,
                 'period' => null,
@@ -100,6 +100,10 @@ class TimesheetController extends Controller
 
         try {
             $submission = $this->getCurrentSubmission();
+
+            if (!$submission) {
+                return response()->json(['error' => 'No active submission found for the current period.'], 404);
+            }
 
             if ($this->isSubmitted($submission)) {
                 return response()->json(['error' => 'Cannot add entries to a submitted timesheet.'], 403);
@@ -153,6 +157,10 @@ class TimesheetController extends Controller
         try {
             $submission = $this->getCurrentSubmission();
 
+            if (!$submission) {
+                return response()->json(['error' => 'No active submission found for the current period.'], 404);
+            }
+
             if ($this->isSubmitted($submission)) {
                 return response()->json(['error' => 'Cannot edit entries on a submitted timesheet.'], 403);
             }
@@ -191,6 +199,10 @@ class TimesheetController extends Controller
     {
         try {
             $submission = $this->getCurrentSubmission();
+
+            if (!$submission) {
+                return response()->json(['error' => 'No active submission found for the current period.'], 404);
+            }
 
             if ($this->isSubmitted($submission)) {
                 return response()->json(['error' => 'Cannot delete entries from a submitted timesheet.'], 403);
@@ -270,11 +282,11 @@ class TimesheetController extends Controller
         }
 
         $submissionData = $this->graphql->query(
-            'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { items { submissionId periodId status entries { entryId projectCode projectName monday tuesday wednesday thursday friday saturday sunday } } } }',
+            'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { submissionId periodId status entries { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } } }',
             ['filter' => ['periodId' => $period['periodId']]]
         );
 
-        $submissions = $submissionData['listMySubmissions']['items'] ?? [];
+        $submissions = $submissionData['listMySubmissions'] ?? [];
 
         return $submissions[0] ?? null;
     }

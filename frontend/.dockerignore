@@ -1,0 +1,9 @@
+vendor/
+node_modules/
+.env
+.git
+.kiro
+storage/logs/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/cache/*

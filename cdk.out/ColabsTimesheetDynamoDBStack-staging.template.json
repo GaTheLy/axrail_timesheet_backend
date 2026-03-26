@@ -266,6 +266,9 @@
       "KeyType": "HASH"
      }
     ],
+    "StreamSpecification": {
+     "StreamViewType": "NEW_AND_OLD_IMAGES"
+    },
     "TableName": "Timesheet_Projects-staging",
     "Tags": [
      {
@@ -635,6 +638,94 @@
    "DeletionPolicy": "Retain",
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/MainDatabaseTable/Resource"
+   }
+  },
+  "ProjectAssignmentsTableB02AA754": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "assignmentId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "employeeId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "supervisorId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "projectId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "employeeId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "employeeId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "supervisorId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "supervisorId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "projectId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "projectId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "assignmentId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_ProjectAssignments-staging",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/ProjectAssignmentsTable/Resource"
    }
   },
   "SSMuserstablename3B6BBDBD": {
@@ -1027,6 +1118,45 @@
     "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-main_database-table-arn/Resource"
    }
   },
+  "SSMprojectassignmentstablename518211D4": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/dynamodb/project_assignments/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "ProjectAssignmentsTableB02AA754"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-project_assignments-table-name/Resource"
+   }
+  },
+  "SSMprojectassignmentstablearn4B70482A": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/dynamodb/project_assignments/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "ProjectAssignmentsTableB02AA754",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-project_assignments-table-arn/Resource"
+   }
+  },
   "SSMsubmissionsstreamarnD0A8CEE2": {
    "Type": "AWS::SSM::Parameter",
    "Properties": {
@@ -1048,10 +1178,31 @@
     "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-submissions-stream-arn/Resource"
    }
   },
+  "SSMprojectsstreamarn704B83EE": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/dynamodb/projects/stream-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "ProjectsTableAA0A2089",
+      "StreamArn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-projects-stream-arn/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2KQQ6DIBBFz+IepmK9QS9gbPfNANOWKpAwGGMIdzfapKv/Xt7voOtbaBtcWRo7ydlpKPeMZhK48rPYLaCPVkN5oJ5J3F7hhCqY/fFMLrwHTOgpUzryX2oVI3FckqEqhi1/YrhcQSlQffNl52RaQnaeYPztDoaimziLAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2KQQ6DIBBFz+IephV7Ay9gbPdmgKmlCiQMxhjC3RvbpKv/Xt5XoG4dXBvcWRq7yNVpKPeMZhG481TsEdBHq6E8UK8k+mf4QhXM/nwmF+YBE3rKlM78l1rFSBy3ZKiK4civGC4dtApa1bzZOZm2kJ0nGH/7Af6ghbiLAAAA"
    },
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/CDKMetadata/Default"

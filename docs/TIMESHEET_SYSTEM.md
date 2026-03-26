@@ -26,7 +26,7 @@ Key design decisions:
                     │                              │                  │
               ┌─────▼─────┐              ┌────────▼───────┐   ┌─────▼─────┐
               │  DynamoDB  │              │   S3 (Reports) │   │  Cognito  │
-              │ (10 tables)│              │                │   │ User Pool │
+              │ (11 tables)│              │                │   │ User Pool │
               └─────┬──────┘              └────────────────┘   └───────────┘
                     │ Streams
           ┌─────────┼─────────┐
@@ -56,7 +56,7 @@ Key design decisions:
 | Stack | File | Purpose |
 |---|---|---|
 | TimesheetAuthStack | `colabs_pipeline_cdk/stack/auth_stack.py` | Cognito User Pool, groups, client |
-| TimesheetDynamoDBStack | `colabs_pipeline_cdk/stack/dynamodb_stack.py` | All 10 DynamoDB tables with GSIs |
+| TimesheetDynamoDBStack | `colabs_pipeline_cdk/stack/dynamodb_stack.py` | All 11 DynamoDB tables with GSIs |
 | TimesheetStorageStack | `colabs_pipeline_cdk/stack/storage_stack.py` | S3 report bucket |
 | TimesheetApiStack | `colabs_pipeline_cdk/stack/api_stack.py` | AppSync GraphQL API |
 | TimesheetLambdaStack | `colabs_pipeline_cdk/stack/lambda_stack.py` | All Lambda functions, resolvers, EventBridge rules, stream triggers |
@@ -110,7 +110,7 @@ Two authorization helpers are used across all resolvers:
 
 ## Data Model
 
-### DynamoDB Tables (10 total)
+### DynamoDB Tables (11 total)
 
 All tables use PAY_PER_REQUEST billing. Table names follow the pattern `{TableName}-{env}`.
 
@@ -135,9 +135,17 @@ All tables use PAY_PER_REQUEST billing. Table names follow the pattern `{TableNa
 - GSIs: `email-index`, `departmentId-index`, `supervisorId-index`
 - Fields: email, fullName, userType (superadmin|admin|user), role (Project_Manager|Tech_Lead|Employee), status (active|inactive), positionId, departmentId, supervisorId, createdAt, createdBy, updatedAt, updatedBy
 - The `status` field supports soft delete: deactivated users (status=inactive) remain visible for historical queries but are excluded from auto-provisioning, deadline enforcement, and reminders
+- The `supervisorId` field is deprecated — supervisor relationships are now managed via the `Timesheet_ProjectAssignments` table, which supports many-to-many employee-project-supervisor mappings
 
 #### Other Tables
 - Departments, Positions, Projects, Employee_Performance, Report_Distribution_Config, Main_Database (unchanged from original design)
+
+#### Timesheet_ProjectAssignments
+- PK: `assignmentId` (UUID)
+- GSIs: `employeeId-index`, `supervisorId-index`, `projectId-index`
+- Fields: employeeId, projectId, supervisorId, createdAt, createdBy, updatedAt, updatedBy
+- Stores many-to-many mappings between employees, projects, and supervisors
+- Uniqueness constraint on `(employeeId, projectId)` enforced at application layer
 
 ---
 
@@ -219,7 +227,8 @@ Friday 5:05PM MYT (deadline enforcement)
 
 Triggered by DynamoDB Streams when a submission transitions to Submitted:
 
-- Generates TC Summary CSV (per Tech Lead)
+- Queries ProjectAssignments table to find all supervisors for the submitting employee
+- Generates TC Summary CSV for each distinct supervisor
 - Generates Project Summary CSV (per period)
 - Uploads CSVs to S3
 
@@ -227,12 +236,45 @@ Triggered by DynamoDB Streams when a submission transitions to Submitted:
 
 - Schedule: Configurable (default Monday 8AM UTC)
 - Sends Project Summary CSV to configured recipients
-- Sends TC Summary CSV to each Tech Lead
+- Sends TC Summary CSV to each Tech Lead (using ProjectAssignments to determine supervised employees)
+- Skips TC Summary email for Tech Leads with no project assignments
 
 ### 6. Archival (`lambdas/archival/handler.py`)
 
 - Schedule: Daily
 - Archives submissions from ended biweekly periods
+
+---
+
+## Project Assignments
+
+The system supports many-to-many relationships between employees, projects, and supervisors via the `Timesheet_ProjectAssignments` table. This replaces the single `supervisorId` field on the Users table (which is retained as deprecated for backward compatibility).
+
+### GraphQL API
+
+- `createProjectAssignment(input)` — Assign an employee to a project with a supervisor (admin/superadmin only)
+- `updateProjectAssignment(assignmentId, input)` — Update supervisor or project on an assignment (admin/superadmin only)
+- `deleteProjectAssignment(assignmentId)` — Remove an assignment (admin/superadmin only)
+- `listProjectAssignments(filter)` — Query assignments by employeeId, supervisorId, or projectId (any authenticated user)
+
+### Validation Rules
+
+- Each `(employeeId, projectId)` combination must be unique
+- Referenced `employeeId`, `projectId`, and `supervisorId` must exist in their respective tables
+- Only `superadmin` and `admin` users can create, update, or delete assignments
+
+### Impact on Existing Features
+
+- TC Summary reports now include all employees assigned to a Tech Lead via ProjectAssignments (deduplicated)
+- ListPendingTimesheets uses ProjectAssignments to determine supervised employees
+- Stream-triggered report generation fans out to all supervisors for the submitting employee
+- Notification service uses ProjectAssignments for TC Summary email distribution
+
+### Shared Utility
+
+`lambdas/shared/project_assignments.py` provides two reusable functions:
+- `get_supervised_employee_ids(table_name, supervisor_id)` — Returns deduplicated employee IDs for a supervisor
+- `get_employee_supervisor_ids(table_name, employee_id)` — Returns deduplicated supervisor IDs for an employee
 
 ---
 

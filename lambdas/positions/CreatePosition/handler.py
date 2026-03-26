@@ -37,8 +37,8 @@ def _check_position_name_unique(table, position_name):
 
 
 def create_position(event):
-    """Create a new position. Validates: Requirements 3.2, 3.4, 3.6"""
-    caller = require_user_type(event, ["superadmin"])
+    """Create a new position. Validates: Requirements 2.2, 2.6, 2.9, 3.2"""
+    caller = require_user_type(event, ["superadmin", "admin"])
     args = event["arguments"]["input"]
     position_name = args["positionName"]
     description = args.get("description", "")
@@ -47,10 +47,15 @@ def create_position(event):
 
     now = datetime.now(timezone.utc).isoformat()
     position_id = str(uuid.uuid4())
+
+    approval_status = "Approved" if caller["userType"] == "superadmin" else "Pending_Approval"
+
     item = {
         "positionId": position_id,
         "positionName": position_name,
         "description": description,
+        "approval_status": approval_status,
+        "rejectionReason": "",
         "createdAt": now,
         "createdBy": caller["userId"],
         "updatedAt": now,

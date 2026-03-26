@@ -1,7 +1,7 @@
 """
 Timesheet DynamoDB Stack
 
-All 10 DynamoDB tables with GSIs for the Employee Timesheet Management System.
+All 11 DynamoDB tables with GSIs for the Employee Timesheet Management System.
 Exports table names and ARNs to SSM Parameter Store for cross-stack lookups.
 """
 
@@ -61,6 +61,7 @@ class TimesheetDynamoDBStack(Stack):
             "employee_performance": self.employee_performance_table,
             "report_distribution_config": self.report_distribution_config_table,
             "main_database": self.main_database_table,
+            "project_assignments": self.project_assignments_table,
         }
         for key, table in tables.items():
             ssm.StringParameter(
@@ -306,4 +307,34 @@ class TimesheetDynamoDBStack(Stack):
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             removal_policy=removal_policy,
+        )
+
+        # --- ProjectAssignments table ---
+        self.project_assignments_table = dynamodb.Table(
+            self,
+            "ProjectAssignmentsTable",
+            table_name=self._table_name("project_assignments"),
+            partition_key=dynamodb.Attribute(
+                name="assignmentId", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            removal_policy=removal_policy,
+        )
+        self.project_assignments_table.add_global_secondary_index(
+            index_name="employeeId-index",
+            partition_key=dynamodb.Attribute(
+                name="employeeId", type=dynamodb.AttributeType.STRING
+            ),
+        )
+        self.project_assignments_table.add_global_secondary_index(
+            index_name="supervisorId-index",
+            partition_key=dynamodb.Attribute(
+                name="supervisorId", type=dynamodb.AttributeType.STRING
+            ),
+        )
+        self.project_assignments_table.add_global_secondary_index(
+            index_name="projectId-index",
+            partition_key=dynamodb.Attribute(
+                name="projectId", type=dynamodb.AttributeType.STRING
+            ),
         )

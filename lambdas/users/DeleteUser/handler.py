@@ -63,6 +63,9 @@ def delete_user(event):
 
     _authorize_mutation(caller, existing["userType"])
 
+    if existing.get("approval_status") == "Approved":
+        raise ValueError("Cannot delete user: approved entities cannot be deleted")
+
     table.delete_item(Key={"userId": user_id})
 
     try:

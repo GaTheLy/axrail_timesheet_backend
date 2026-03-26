@@ -2,6 +2,7 @@
 
 Environment variables:
     SUBMISSIONS_TABLE: DynamoDB Timesheet_Submissions table name
+    ENTRIES_TABLE: DynamoDB Timesheet_Entries table name
 """
 
 import os
@@ -15,6 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from shared.auth import ForbiddenError, get_caller_identity
 
 SUBMISSIONS_TABLE = os.environ.get("SUBMISSIONS_TABLE", "")
+ENTRIES_TABLE = os.environ.get("ENTRIES_TABLE", "")
 dynamodb = boto3.resource("dynamodb")
 
 
@@ -57,5 +59,15 @@ def list_my_submissions(event):
 
     if "status" in filter_input:
         items = [i for i in items if i.get("status") == filter_input["status"]]
+
+    # Fetch entries for each submission
+    entries_table = dynamodb.Table(ENTRIES_TABLE)
+    for item in items:
+        submission_id = item["submissionId"]
+        entry_resp = entries_table.query(
+            IndexName="submissionId-index",
+            KeyConditionExpression=Key("submissionId").eq(submission_id),
+        )
+        item["entries"] = entry_resp.get("Items", [])
 
     return items

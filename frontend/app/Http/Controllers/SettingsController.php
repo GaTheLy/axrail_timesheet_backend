@@ -31,14 +31,14 @@ class SettingsController extends Controller
         try {
             // Fetch user profile
             $userData = $this->graphql->query(
-                'query GetUser($userId: ID!) { getUser(userId: $userId) { userId email fullName departmentId avatarUrl } }',
+                'query GetUser($userId: ID!) { getUser(userId: $userId) { userId email fullName departmentId } }',
                 ['userId' => $user['userId'] ?? '']
             );
             $profile = $userData['getUser'] ?? [];
 
             // Fetch departments for dropdown
             $deptData = $this->graphql->query(
-                'query ListDepartments { listDepartments { departmentId name } }'
+                'query ListDepartments { listDepartments { departmentId departmentName } }'
             );
             $departments = $deptData['listDepartments'] ?? [];
 
@@ -50,6 +50,7 @@ class SettingsController extends Controller
         } catch (AuthenticationException $e) {
             return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
         } catch (Exception $e) {
+            \Log::error('Settings load failed: ' . $e->getMessage());
             return view('pages.settings', [
                 'profile' => [
                     'userId' => $user['userId'] ?? '',

@@ -12,7 +12,7 @@ Environment variables:
 
 import logging
 import os
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
@@ -36,7 +36,8 @@ def handler(event, context):
     """
     logger.info("Archival Lambda invoked: %s", event)
 
-    today = date.today()
+    MYT = timezone(timedelta(hours=8))
+    today = datetime.now(MYT).date()
 
     # Find the most recently ended biweekly period
     biweekly_period_id = _find_ended_biweekly_period(today)

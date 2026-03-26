@@ -42,6 +42,15 @@ class AuthController extends Controller
                 $request->boolean('remember')
             );
 
+            // Handle NEW_PASSWORD_REQUIRED challenge
+            if (isset($result['challenge']) && $result['challenge'] === 'NEW_PASSWORD_REQUIRED') {
+                $request->session()->put('cognito_session', $result['session']);
+                $request->session()->put('cognito_email', $request->input('email'));
+                $request->session()->put('cognito_challenge_params', $result['challengeParams'] ?? []);
+
+                return redirect('/force-change-password');
+            }
+
             // Store tokens in session
             $request->session()->put('accessToken', $result['accessToken']);
             $request->session()->put('idToken', $result['idToken']);
@@ -104,7 +113,6 @@ class AuthController extends Controller
                 ->with('email', $request->input('email'))
                 ->with('status', 'We have sent a verification code to your email address.');
         } catch (Exception $e) {
-            // Use a generic message to avoid revealing whether the email exists
             return back()->withErrors([
                 'auth' => 'Unable to process your request. Please try again.',
             ])->withInput();
@@ -143,6 +151,65 @@ class AuthController extends Controller
             return back()->withErrors([
                 'auth' => 'Unable to reset your password. Please check your verification code and try again.',
             ])->withInput($request->only('email'));
+        }
+    }
+
+    /**
+     * Show the force change password form.
+     */
+    public function showForceChangePassword(Request $request)
+    {
+        if (!$request->session()->has('cognito_session')) {
+            return redirect('/login');
+        }
+
+        return view('pages.force-change-password');
+    }
+
+    /**
+     * Handle force change password submission.
+     */
+    public function forceChangePassword(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|min:1',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $session = $request->session()->get('cognito_session');
+        $email = $request->session()->get('cognito_email');
+        $challengeParams = $request->session()->get('cognito_challenge_params', []);
+
+        if (!$session || !$email) {
+            return redirect('/login')->withErrors([
+                'auth' => 'Your session has expired. Please sign in again.',
+            ]);
+        }
+
+        try {
+            $result = $this->cognitoAuth->respondToNewPasswordChallenge(
+                $email,
+                $request->input('password'),
+                $session,
+                $challengeParams,
+                $request->input('name')
+            );
+
+            // Clean up challenge session data
+            $request->session()->forget(['cognito_session', 'cognito_email', 'cognito_challenge_params']);
+
+            // Store tokens in session
+            $request->session()->put('accessToken', $result['accessToken']);
+            $request->session()->put('idToken', $result['idToken']);
+            $request->session()->put('refreshToken', $result['refreshToken']);
+            $request->session()->put('tokenExpiry', $result['tokenExpiry']);
+            $request->session()->put('user', $result['user']);
+
+            return redirect('/dashboard');
+        } catch (Exception $e) {
+            return back()->withErrors([
+                'auth' => $e->getMessage(),
+            ]);
         }
     }
 }
