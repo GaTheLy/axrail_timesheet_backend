@@ -20,7 +20,7 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1')->name('password.email');
 Route::get('/reset-password', [AuthController::class, 'showResetPassword'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 Route::get('/force-change-password', [AuthController::class, 'showForceChangePassword'])->name('password.force');
@@ -47,6 +47,7 @@ Route::middleware('cognito.auth')->group(function () {
 
     // Timesheet routes
     Route::get('/timesheet', [TimesheetController::class, 'index'])->name('timesheet');
+    Route::get('/timesheet/submissions/{submissionId}', [TimesheetController::class, 'showSubmission'])->name('timesheet.submission');
     Route::post('/timesheet/entry', [TimesheetController::class, 'storeEntry'])->name('timesheet.store');
     Route::put('/timesheet/entry/{entryId}', [TimesheetController::class, 'updateEntry'])->name('timesheet.update');
     Route::delete('/timesheet/entry/{entryId}', [TimesheetController::class, 'destroyEntry'])->name('timesheet.destroy');
@@ -77,6 +78,8 @@ Route::middleware('cognito.auth')->group(function () {
         Route::delete('/admin/users/{userId}', [UserManagementController::class, 'destroy'])->name('admin.users.destroy');
         Route::post('/admin/users/{userId}/approve', [UserManagementController::class, 'approve'])->name('admin.users.approve');
         Route::post('/admin/users/{userId}/reject', [UserManagementController::class, 'reject'])->name('admin.users.reject');
+        Route::post('/admin/users/{userId}/activate', [UserManagementController::class, 'activate'])->name('admin.users.activate');
+        Route::post('/admin/users/{userId}/deactivate', [UserManagementController::class, 'deactivate'])->name('admin.users.deactivate');
         Route::get('/admin/departments', [\App\Http\Controllers\DepartmentController::class, 'index'])->name('admin.departments');
         Route::post('/admin/departments', [\App\Http\Controllers\DepartmentController::class, 'store'])->name('admin.departments.store');
         Route::put('/admin/departments/{id}', [\App\Http\Controllers\DepartmentController::class, 'update'])->name('admin.departments.update');

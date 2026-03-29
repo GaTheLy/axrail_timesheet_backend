@@ -5,6 +5,11 @@ and provides role/user-type authorization helpers.
 """
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class ForbiddenError(Exception):
     """Raised when a caller lacks the required role or user type."""
 
@@ -56,10 +61,11 @@ def require_role(event: dict, allowed_roles: list[str]) -> dict:
     """
     identity = get_caller_identity(event)
     if identity["role"] not in allowed_roles:
-        raise ForbiddenError(
-            f"Role '{identity['role']}' is not authorized. "
-            f"Allowed roles: {allowed_roles}"
+        logger.warning(
+            "Authorization failed: role '%s' not in allowed roles %s (user: %s)",
+            identity["role"], allowed_roles, identity.get("email", identity["userId"])
         )
+        raise ForbiddenError("Access denied")
     return identity
 
 
@@ -79,8 +85,9 @@ def require_user_type(event: dict, allowed_types: list[str]) -> dict:
     """
     identity = get_caller_identity(event)
     if identity["userType"] not in allowed_types:
-        raise ForbiddenError(
-            f"User type '{identity['userType']}' is not authorized. "
-            f"Allowed types: {allowed_types}"
+        logger.warning(
+            "Authorization failed: user type '%s' not in allowed types %s (user: %s)",
+            identity["userType"], allowed_types, identity.get("email", identity["userId"])
         )
+        raise ForbiddenError("Access denied")
     return identity

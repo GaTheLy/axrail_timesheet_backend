@@ -46,4 +46,16 @@ return [
 
     'cognito_client_id' => env('COGNITO_CLIENT_ID'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Session Tracker DynamoDB Table
+    |--------------------------------------------------------------------------
+    |
+    | The name of the DynamoDB table used for single-device login session
+    | tracking. Follows the pattern: Timesheet_SessionTracker_{env}
+    |
+    */
+
+    'session_tracker_table' => env('SESSION_TRACKER_TABLE'),
+
 ];

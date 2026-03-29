@@ -88,14 +88,7 @@
                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                         </svg>
                                     </button>
-                                    @if($approvalStatus === 'Pending_Approval' && $userType === 'superadmin')
-                                        <button type="button" class="btn btn-sm btn-approve-dept" data-department-id="{{ $departmentId }}" aria-label="Approve department {{ $dept['departmentName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✓ Approve
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-reject-dept" data-department-id="{{ $departmentId }}" data-department-name="{{ $dept['departmentName'] ?? '' }}" aria-label="Reject department {{ $dept['departmentName'] ?? '' }}" style="background-color: #dc2626; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✗ Reject
-                                        </button>
-                                    @endif
+
                                 @else
                                     <span style="color: #64748b; font-size: 0.75rem;">—</span>
                                 @endif
@@ -138,28 +131,7 @@
         </div>
     </div>
 
-    {{-- Rejection Reason Modal --}}
-    <div class="modal-overlay" id="reject-modal-overlay">
-        <div class="modal" role="dialog" aria-labelledby="reject-modal-title" aria-modal="true">
-            <div class="modal-header">
-                <h3 id="reject-modal-title">Reject Department</h3>
-                <button type="button" class="modal-close" id="reject-modal-close" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="reject-form" novalidate>
-                    <input type="hidden" id="reject-department-id" value="">
-                    <div class="form-group">
-                        <label for="reject-reason">Rejection Reason</label>
-                        <textarea id="reject-reason" placeholder="Enter reason for rejection" required aria-label="Rejection reason" rows="4" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="reject-modal-cancel">Cancel</button>
-                <button type="button" class="btn btn-danger" id="reject-modal-submit">Reject</button>
-            </div>
-        </div>
-    </div>
+
 @endsection
 
 @push('scripts')
@@ -172,13 +144,6 @@
     var saveBtn = document.getElementById('dept-modal-save');
     var addBtn = document.getElementById('btn-add-department');
     var nameInput = document.getElementById('dept-form-name');
-
-    var rejectOverlay = document.getElementById('reject-modal-overlay');
-    var rejectCloseBtn = document.getElementById('reject-modal-close');
-    var rejectCancelBtn = document.getElementById('reject-modal-cancel');
-    var rejectSubmitBtn = document.getElementById('reject-modal-submit');
-    var rejectDeptIdInput = document.getElementById('reject-department-id');
-    var rejectReasonInput = document.getElementById('reject-reason');
 
     var approvalFilter = document.getElementById('approval-status-filter');
     var searchInput = document.getElementById('search-input');
@@ -262,77 +227,20 @@
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
                 saveBtn.disabled = false;
-                if (result.data.success) { closeModal(); window.location.reload(); }
-                else { closeModal(); showToast(result.data.error || 'Failed to create department.', 'error'); }
+                if (result.data.success) {
+                    closeModal();
+                    var action = editingDeptId ? 'updated' : 'created';
+                    showToast('Department ' + action + ' successfully.', 'success');
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                } else {
+                    closeModal();
+                    var defaultMsg = editingDeptId ? 'Failed to update department.' : 'Failed to create department.';
+                    showToast(result.data.error || defaultMsg, 'error');
+                }
             })
             .catch(function () { saveBtn.disabled = false; closeModal(); showToast('Network error. Please try again.', 'error'); });
         });
     }
-
-    // ── Rejection Modal ─────────────────────────────────────────────
-    function openRejectModal(departmentId) {
-        if (rejectOverlay) {
-            rejectDeptIdInput.value = departmentId;
-            rejectReasonInput.value = '';
-            rejectOverlay.classList.add('active');
-        }
-    }
-    function closeRejectModal() { if (rejectOverlay) rejectOverlay.classList.remove('active'); }
-
-    if (rejectCloseBtn) rejectCloseBtn.addEventListener('click', closeRejectModal);
-    if (rejectCancelBtn) rejectCancelBtn.addEventListener('click', closeRejectModal);
-    if (rejectOverlay) rejectOverlay.addEventListener('click', function (e) { if (e.target === rejectOverlay) closeRejectModal(); });
-
-    if (rejectSubmitBtn) {
-        rejectSubmitBtn.addEventListener('click', function () {
-            var departmentId = rejectDeptIdInput ? rejectDeptIdInput.value : '';
-            var reason = rejectReasonInput ? rejectReasonInput.value.trim() : '';
-            if (!reason) { rejectReasonInput.focus(); return; }
-
-            rejectSubmitBtn.disabled = true;
-            fetch('/admin/departments/' + encodeURIComponent(departmentId) + '/reject', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                body: JSON.stringify({ reason: reason })
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                rejectSubmitBtn.disabled = false;
-                if (result.data.success) { closeRejectModal(); showToast('Department rejected successfully.', 'success'); window.location.reload(); }
-                else { closeRejectModal(); showToast(result.data.error || 'Failed to reject department.', 'error'); }
-            })
-            .catch(function () { rejectSubmitBtn.disabled = false; closeRejectModal(); showToast('Network error. Please try again.', 'error'); });
-        });
-    }
-
-    // ── Approve action ──────────────────────────────────────────────
-    document.querySelectorAll('.btn-approve-dept').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var departmentId = this.getAttribute('data-department-id');
-            if (!confirm('Are you sure you want to approve this department?')) return;
-
-            btn.disabled = true;
-            fetch('/admin/departments/' + encodeURIComponent(departmentId) + '/approve', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() }
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                btn.disabled = false;
-                if (result.data.success) { showToast('Department approved successfully.', 'success'); window.location.reload(); }
-                else { showToast(result.data.error || 'Failed to approve department.', 'error'); }
-            })
-            .catch(function () { btn.disabled = false; showToast('Network error. Please try again.', 'error'); });
-        });
-    });
-
-    // ── Reject action (opens modal) ─────────────────────────────────
-    document.querySelectorAll('.btn-reject-dept').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var departmentId = this.getAttribute('data-department-id');
-            openRejectModal(departmentId);
-        });
-    });
 
     // ── Delete action ───────────────────────────────────────────────
     document.querySelectorAll('.btn-delete-dept').forEach(function (btn) {
@@ -348,8 +256,12 @@
             })
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
-                if (result.data.success) { window.location.reload(); }
-                else { showToast(result.data.error || 'Failed to delete department.', 'error'); }
+                if (result.data.success) {
+                    showToast('Department deleted successfully.', 'success');
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                } else {
+                    showToast(result.data.error || 'Failed to delete department.', 'error');
+                }
             })
             .catch(function () { showToast('Network error. Please try again.', 'error'); });
         });
@@ -377,7 +289,6 @@
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closeModal();
-            closeRejectModal();
         }
     });
 })();

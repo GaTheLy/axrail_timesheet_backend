@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\GraphQLClient;
+use App\Services\GraphQLQueries;
 use App\Services\TimesheetEntryMapper;
 use Carbon\Carbon;
 use Exception;
@@ -23,9 +24,160 @@ class TimesheetController extends Controller
     }
 
     /**
-     * Render the timesheet page with current period entries.
+     * Render the timesheet page.
+     *
+     * Admin/superadmin users see the Submissions View with all employee submissions.
+     * Regular users see the employee timesheet entry form.
      */
     public function index()
+    {
+        $userType = session('user.userType', 'user');
+
+        if (in_array($userType, ['admin', 'superadmin'])) {
+            return $this->renderSubmissionsView();
+        }
+
+        return $this->renderEmployeeTimesheet();
+    }
+
+    /**
+     * Render the admin/superadmin Submissions View.
+     *
+     * Fetches all submissions via listAllSubmissions and resolves employee
+     * names via listUsers, then renders the timesheet-submissions template.
+     */
+    protected function renderSubmissionsView()
+    {
+        try {
+            // Fetch all submissions
+            $submissionsData = $this->graphql->query(GraphQLQueries::LIST_ALL_SUBMISSIONS);
+            $submissions = $submissionsData['listAllSubmissions'] ?? [];
+
+            // Fetch users to resolve employeeId → fullName
+            $usersData = $this->graphql->query(GraphQLQueries::LIST_USERS);
+            $users = $usersData['listUsers']['items'] ?? [];
+            $userMap = [];
+            foreach ($users as $user) {
+                $userMap[$user['userId']] = $user['fullName'] ?? $user['userId'];
+            }
+
+            // Fetch all periods to resolve periodId → periodString
+            $periodsData = $this->graphql->query(GraphQLQueries::LIST_TIMESHEET_PERIODS);
+            $periods = $periodsData['listTimesheetPeriods'] ?? [];
+            $periodMap = [];
+            foreach ($periods as $period) {
+                $periodMap[$period['periodId']] = $period['periodString'] ?? $period['periodId'];
+            }
+
+            return view('pages.timesheet-submissions', [
+                'submissions' => $submissions,
+                'userMap' => $userMap,
+                'users' => $users,
+                'periodMap' => $periodMap,
+                'periods' => $periods,
+                'error' => null,
+            ]);
+        } catch (AuthenticationException $e) {
+            return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
+        } catch (Exception $e) {
+            \Log::error('Timesheet submissions load failed: ' . $e->getMessage());
+            return view('pages.timesheet-submissions', [
+                'submissions' => [],
+                'userMap' => [],
+                'users' => [],
+                'periodMap' => [],
+                'periods' => [],
+                'error' => 'Unable to load submissions: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Show a specific submission's detail view (admin/superadmin only).
+     *
+     * Fetches the submission via getTimesheetSubmission, resolves the
+     * employee name and period string, then renders the detail template.
+     */
+    public function showSubmission(string $submissionId)
+    {
+        $userType = session('user.userType', 'user');
+
+        if (!in_array($userType, ['admin', 'superadmin'])) {
+            return redirect('/timesheet');
+        }
+
+        try {
+            // Fetch the submission with entries
+            $submissionData = $this->graphql->query(
+                GraphQLQueries::GET_TIMESHEET_SUBMISSION,
+                ['submissionId' => $submissionId]
+            );
+            $submission = $submissionData['getTimesheetSubmission'] ?? null;
+
+            if (!$submission) {
+                return view('pages.submission-detail', [
+                    'submission' => null,
+                    'employeeName' => '',
+                    'periodString' => '',
+                    'entries' => [],
+                    'error' => 'Submission not found.',
+                ]);
+            }
+
+            $entries = $submission['entries'] ?? [];
+
+            // Resolve employee name
+            $employeeName = $submission['employeeId'] ?? 'Unknown';
+            try {
+                $userData = $this->graphql->query(
+                    GraphQLQueries::GET_USER,
+                    ['userId' => $submission['employeeId']]
+                );
+                $employeeName = $userData['getUser']['fullName'] ?? $employeeName;
+            } catch (Exception $e) {
+                \Log::warning('Could not resolve employee name: ' . $e->getMessage());
+            }
+
+            // Resolve period string
+            $periodString = $submission['periodId'] ?? '';
+            try {
+                $periodsData = $this->graphql->query(GraphQLQueries::LIST_TIMESHEET_PERIODS);
+                $periods = $periodsData['listTimesheetPeriods'] ?? [];
+                foreach ($periods as $period) {
+                    if (($period['periodId'] ?? '') === $submission['periodId']) {
+                        $periodString = $period['periodString'] ?? $periodString;
+                        break;
+                    }
+                }
+            } catch (Exception $e) {
+                \Log::warning('Could not resolve period string: ' . $e->getMessage());
+            }
+
+            return view('pages.submission-detail', [
+                'submission' => $submission,
+                'employeeName' => $employeeName,
+                'periodString' => $periodString,
+                'entries' => $entries,
+                'error' => null,
+            ]);
+        } catch (AuthenticationException $e) {
+            return redirect('/login')->withErrors(['auth' => $e->getMessage()]);
+        } catch (Exception $e) {
+            \Log::error('Submission detail load failed: ' . $e->getMessage());
+            return view('pages.submission-detail', [
+                'submission' => null,
+                'employeeName' => '',
+                'periodString' => '',
+                'entries' => [],
+                'error' => 'Unable to load submission: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Render the employee timesheet entry form (existing behavior).
+     */
+    protected function renderEmployeeTimesheet()
     {
         $user = session('user');
 

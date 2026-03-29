@@ -200,6 +200,12 @@
         <div class="login-card">
             <h2>Sign in to your account</h2>
 
+            @if (session('stale_session'))
+                <div class="alert alert-error" role="alert">
+                    {{ session('stale_session') }}
+                </div>
+            @endif
+
             @if ($errors->has('auth'))
                 <div class="alert alert-error" role="alert">
                     {{ $errors->first('auth') }}

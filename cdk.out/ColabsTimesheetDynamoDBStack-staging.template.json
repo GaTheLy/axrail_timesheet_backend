@@ -728,6 +728,48 @@
     "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/ProjectAssignmentsTable/Resource"
    }
   },
+  "SessionTrackerTableBDDB8BD9": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "Timesheet_SessionTracker-staging",
+    "Tags": [
+     {
+      "Key": "Component",
+      "Value": "Timesheet-DynamoDB"
+     },
+     {
+      "Key": "Environment",
+      "Value": "staging"
+     },
+     {
+      "Key": "Project",
+      "Value": "Colabs"
+     }
+    ],
+    "TimeToLiveSpecification": {
+     "AttributeName": "ttl",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SessionTrackerTable/Resource"
+   }
+  },
   "SSMuserstablename3B6BBDBD": {
    "Type": "AWS::SSM::Parameter",
    "Properties": {
@@ -1155,6 +1197,45 @@
    },
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-project_assignments-table-arn/Resource"
+   }
+  },
+  "SSMsessiontrackertablename09B6E11A": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/dynamodb/session_tracker/table-name",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Ref": "SessionTrackerTableBDDB8BD9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-session_tracker-table-name/Resource"
+   }
+  },
+  "SSMsessiontrackertablearnCDA163DE": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Name": "/timesheet/staging/dynamodb/session_tracker/table-arn",
+    "Tags": {
+     "Component": "Timesheet-DynamoDB",
+     "Environment": "staging",
+     "Project": "Colabs"
+    },
+    "Type": "String",
+    "Value": {
+     "Fn::GetAtt": [
+      "SessionTrackerTableBDDB8BD9",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/SSM-session_tracker-table-arn/Resource"
    }
   },
   "SSMsubmissionsstreamarnD0A8CEE2": {

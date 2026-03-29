@@ -110,7 +110,7 @@ Backend-first approach: start with Lambda handler changes (superadmin bypass + a
     - For admin callers, keep existing read-only input
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [x] 10. Final checkpoint - Ensure all tests pass
+- [-] 10. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

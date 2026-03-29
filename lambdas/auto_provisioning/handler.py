@@ -124,9 +124,12 @@ def _create_period(table, start_date, end_date, monday, friday):
 
 
 def _get_all_employees():
-    """Get all active users (Employee, Project_Manager, Tech_Lead)."""
+    """Get all active users with userType 'user' (excludes admin/superadmin)."""
     table = dynamodb.Table(USERS_TABLE)
-    filter_expr = Attr("status").eq("active")
+    filter_expr = (
+        Attr("status").eq("active")
+        & Attr("userType").eq("user")
+    )
     response = table.scan(FilterExpression=filter_expr)
     items = response.get("Items", [])
     while "LastEvaluatedKey" in response:

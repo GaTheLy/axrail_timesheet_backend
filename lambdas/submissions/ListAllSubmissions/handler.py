@@ -10,6 +10,7 @@ Environment variables:
     PROJECT_ASSIGNMENTS_TABLE: DynamoDB ProjectAssignments table name
 """
 
+import logging
 import os
 
 import boto3
@@ -20,6 +21,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from shared.auth import ForbiddenError, get_caller_identity
 from shared.project_assignments import get_supervised_employee_ids
+
+logger = logging.getLogger(__name__)
 
 SUBMISSIONS_TABLE = os.environ.get("SUBMISSIONS_TABLE", "")
 ENTRIES_TABLE = os.environ.get("ENTRIES_TABLE", "")
@@ -51,10 +54,11 @@ def list_all_submissions(event):
     is_pm = user_type == "user" and role in ("Tech_Lead", "Project_Manager")
 
     if not is_admin and not is_pm:
-        raise ForbiddenError(
-            f"User type '{user_type}' with role '{role}' is not authorized. "
-            f"Allowed: admin/superadmin or Tech_Lead/Project_Manager."
+        logger.warning(
+            "Authorization failed: user type '%s' with role '%s' not authorized for listAllSubmissions (user: %s)",
+            user_type, role, identity.get("email", identity["userId"])
         )
+        raise ForbiddenError("Access denied")
 
     table = dynamodb.Table(SUBMISSIONS_TABLE)
     args = event.get("arguments") or {}

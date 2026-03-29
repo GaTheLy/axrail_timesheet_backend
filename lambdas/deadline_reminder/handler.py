@@ -63,6 +63,12 @@ def handler(event, context):
             logger.info("Skipping reminder for inactive user %s", employee_id)
             continue
 
+        # Skip admin and superadmin users
+        user_type = user.get("userType", "")
+        if user_type in ("admin", "superadmin"):
+            logger.info("Skipping reminder for %s user %s", user_type, employee_id)
+            continue
+
         email = user.get("email", "")
         full_name = user.get("fullName", "Employee")
         if not email:

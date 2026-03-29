@@ -207,8 +207,8 @@ input CreateUserInput {
   email: String!
   fullName: String!
   userType: UserType!
-  role: Role!
-  positionId: ID!
+  role: Role
+  positionId: ID
   departmentId: ID!
   supervisorId: ID
 }

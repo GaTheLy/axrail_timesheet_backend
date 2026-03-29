@@ -73,7 +73,7 @@ class TestRequireRole:
 
     def test_raises_forbidden_when_role_not_allowed(self):
         event = _make_event(role="Employee")
-        with pytest.raises(ForbiddenError, match="not authorized"):
+        with pytest.raises(ForbiddenError, match="Access denied"):
             require_role(event, ["Tech_Lead", "Project_Manager"])
 
     def test_single_allowed_role(self):
@@ -81,10 +81,11 @@ class TestRequireRole:
         identity = require_role(event, ["Project_Manager"])
         assert identity["role"] == "Project_Manager"
 
-    def test_forbidden_message_includes_role(self):
+    def test_forbidden_message_is_generic(self):
         event = _make_event(role="Employee")
-        with pytest.raises(ForbiddenError, match="Employee"):
+        with pytest.raises(ForbiddenError, match="Access denied") as exc_info:
             require_role(event, ["Tech_Lead"])
+        assert "Employee" not in exc_info.value.message
 
 
 # --- require_user_type ---
@@ -99,7 +100,7 @@ class TestRequireUserType:
 
     def test_raises_forbidden_when_type_not_allowed(self):
         event = _make_event(user_type="user")
-        with pytest.raises(ForbiddenError, match="not authorized"):
+        with pytest.raises(ForbiddenError, match="Access denied"):
             require_user_type(event, ["superadmin", "admin"])
 
     def test_multiple_allowed_types(self):
@@ -107,7 +108,8 @@ class TestRequireUserType:
         identity = require_user_type(event, ["superadmin", "admin"])
         assert identity["userType"] == "admin"
 
-    def test_forbidden_message_includes_user_type(self):
+    def test_forbidden_message_is_generic(self):
         event = _make_event(user_type="user")
-        with pytest.raises(ForbiddenError, match="user"):
+        with pytest.raises(ForbiddenError, match="Access denied") as exc_info:
             require_user_type(event, ["superadmin"])
+        assert "user" not in exc_info.value.message

@@ -89,14 +89,7 @@
                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                         </svg>
                                     </button>
-                                    @if($approvalStatus === 'Pending_Approval' && $userType === 'superadmin')
-                                        <button type="button" class="btn btn-sm btn-approve-pos" data-position-id="{{ $positionId }}" aria-label="Approve position {{ $pos['positionName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✓ Approve
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-reject-pos" data-position-id="{{ $positionId }}" data-position-name="{{ $pos['positionName'] ?? '' }}" aria-label="Reject position {{ $pos['positionName'] ?? '' }}" style="background-color: #dc2626; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✗ Reject
-                                        </button>
-                                    @endif
+
                                 @else
                                     <span style="color: #64748b; font-size: 0.75rem;">—</span>
                                 @endif
@@ -144,28 +137,7 @@
         </div>
     </div>
 
-    {{-- Rejection Reason Modal --}}
-    <div class="modal-overlay" id="pos-reject-modal-overlay">
-        <div class="modal" role="dialog" aria-labelledby="pos-reject-modal-title" aria-modal="true">
-            <div class="modal-header">
-                <h3 id="pos-reject-modal-title">Reject Position</h3>
-                <button type="button" class="modal-close" id="pos-reject-modal-close" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="pos-reject-form" novalidate>
-                    <input type="hidden" id="reject-position-id" value="">
-                    <div class="form-group">
-                        <label for="pos-reject-reason">Rejection Reason</label>
-                        <textarea id="pos-reject-reason" placeholder="Enter reason for rejection" required aria-label="Rejection reason" rows="4" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="pos-reject-modal-cancel">Cancel</button>
-                <button type="button" class="btn btn-danger" id="pos-reject-modal-submit">Reject</button>
-            </div>
-        </div>
-    </div>
+
 @endsection
 
 
@@ -180,13 +152,6 @@
     var addBtn = document.getElementById('btn-add-position');
     var nameInput = document.getElementById('pos-form-name');
     var descInput = document.getElementById('pos-form-desc');
-
-    var rejectOverlay = document.getElementById('pos-reject-modal-overlay');
-    var rejectCloseBtn = document.getElementById('pos-reject-modal-close');
-    var rejectCancelBtn = document.getElementById('pos-reject-modal-cancel');
-    var rejectSubmitBtn = document.getElementById('pos-reject-modal-submit');
-    var rejectPosIdInput = document.getElementById('reject-position-id');
-    var rejectReasonInput = document.getElementById('pos-reject-reason');
 
     var approvalFilter = document.getElementById('approval-status-filter');
     var searchInput = document.getElementById('search-input');
@@ -278,78 +243,20 @@
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
                 saveBtn.disabled = false;
-                if (result.data.success) { closeModal(); window.location.reload(); }
-                else { closeModal(); showToast(result.data.error || 'Failed to create position.', 'error'); }
+                if (result.data.success) {
+                    closeModal();
+                    var action = editingPosId ? 'updated' : 'created';
+                    showToast('Position ' + action + ' successfully.', 'success');
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                } else {
+                    closeModal();
+                    var defaultMsg = editingPosId ? 'Failed to update position.' : 'Failed to create position.';
+                    showToast(result.data.error || defaultMsg, 'error');
+                }
             })
             .catch(function () { saveBtn.disabled = false; closeModal(); showToast('Network error. Please try again.', 'error'); });
         });
     }
-
-    // ── Rejection Modal ─────────────────────────────────────────────
-    function openRejectModal(positionId) {
-        if (rejectOverlay) {
-            rejectPosIdInput.value = positionId;
-            rejectReasonInput.value = '';
-            rejectOverlay.classList.add('active');
-        }
-    }
-    function closeRejectModal() { if (rejectOverlay) rejectOverlay.classList.remove('active'); }
-
-    if (rejectCloseBtn) rejectCloseBtn.addEventListener('click', closeRejectModal);
-    if (rejectCancelBtn) rejectCancelBtn.addEventListener('click', closeRejectModal);
-    if (rejectOverlay) rejectOverlay.addEventListener('click', function (e) { if (e.target === rejectOverlay) closeRejectModal(); });
-
-    if (rejectSubmitBtn) {
-        rejectSubmitBtn.addEventListener('click', function () {
-            var positionId = rejectPosIdInput ? rejectPosIdInput.value : '';
-            var reason = rejectReasonInput ? rejectReasonInput.value.trim() : '';
-            if (!reason) { rejectReasonInput.focus(); return; }
-
-            rejectSubmitBtn.disabled = true;
-            fetch('/admin/positions/' + encodeURIComponent(positionId) + '/reject', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                body: JSON.stringify({ reason: reason })
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                rejectSubmitBtn.disabled = false;
-                if (result.data.success) { closeRejectModal(); showToast('Position rejected successfully.', 'success'); window.location.reload(); }
-                else { closeRejectModal(); showToast(result.data.error || 'Failed to reject position.', 'error'); }
-            })
-            .catch(function () { rejectSubmitBtn.disabled = false; closeRejectModal(); showToast('Network error. Please try again.', 'error'); });
-        });
-    }
-
-
-    // ── Approve action ──────────────────────────────────────────────
-    document.querySelectorAll('.btn-approve-pos').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var positionId = this.getAttribute('data-position-id');
-            if (!confirm('Are you sure you want to approve this position?')) return;
-
-            btn.disabled = true;
-            fetch('/admin/positions/' + encodeURIComponent(positionId) + '/approve', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() }
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                btn.disabled = false;
-                if (result.data.success) { showToast('Position approved successfully.', 'success'); window.location.reload(); }
-                else { showToast(result.data.error || 'Failed to approve position.', 'error'); }
-            })
-            .catch(function () { btn.disabled = false; showToast('Network error. Please try again.', 'error'); });
-        });
-    });
-
-    // ── Reject action (opens modal) ─────────────────────────────────
-    document.querySelectorAll('.btn-reject-pos').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var positionId = this.getAttribute('data-position-id');
-            openRejectModal(positionId);
-        });
-    });
 
     // ── Delete action ───────────────────────────────────────────────
     document.querySelectorAll('.btn-delete-pos').forEach(function (btn) {
@@ -365,8 +272,12 @@
             })
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
-                if (result.data.success) { window.location.reload(); }
-                else { showToast(result.data.error || 'Failed to delete position.', 'error'); }
+                if (result.data.success) {
+                    showToast('Position deleted successfully.', 'success');
+                    setTimeout(function () { window.location.reload(); }, 1500);
+                } else {
+                    showToast(result.data.error || 'Failed to delete position.', 'error');
+                }
             })
             .catch(function () { showToast('Network error. Please try again.', 'error'); });
         });
@@ -394,7 +305,6 @@
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closeModal();
-            closeRejectModal();
         }
     });
 })();

@@ -1,7 +1,7 @@
 """
 Timesheet DynamoDB Stack
 
-All 11 DynamoDB tables with GSIs for the Employee Timesheet Management System.
+All 12 DynamoDB tables with GSIs for the Employee Timesheet Management System.
 Exports table names and ARNs to SSM Parameter Store for cross-stack lookups.
 """
 
@@ -62,6 +62,7 @@ class TimesheetDynamoDBStack(Stack):
             "report_distribution_config": self.report_distribution_config_table,
             "main_database": self.main_database_table,
             "project_assignments": self.project_assignments_table,
+            "session_tracker": self.session_tracker_table,
         }
         for key, table in tables.items():
             ssm.StringParameter(
@@ -337,4 +338,17 @@ class TimesheetDynamoDBStack(Stack):
             partition_key=dynamodb.Attribute(
                 name="projectId", type=dynamodb.AttributeType.STRING
             ),
+        )
+
+        # --- Session_Tracker table (single-device login enforcement) ---
+        self.session_tracker_table = dynamodb.Table(
+            self,
+            "SessionTrackerTable",
+            table_name=self._table_name("session_tracker"),
+            partition_key=dynamodb.Attribute(
+                name="userId", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            removal_policy=removal_policy,
+            time_to_live_attribute="ttl",
         )

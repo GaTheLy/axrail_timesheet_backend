@@ -5,6 +5,54 @@
 @section('content')
     @php $userType = session('user.userType', 'user'); @endphp
 
+    <style>
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            border-radius: 20px;
+            transition: background-color 0.25s;
+        }
+        .toggle-slider::before {
+            content: "";
+            position: absolute;
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #fff;
+            border-radius: 50%;
+            transition: transform 0.25s;
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #22c55e;
+        }
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(16px);
+        }
+        .toggle-switch input:disabled + .toggle-slider {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .toggle-switch:has(input:disabled) {
+            cursor: not-allowed;
+        }
+    </style>
+
     {{-- Breadcrumb --}}
     <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="/admin/users">Master Data</a>
@@ -75,7 +123,7 @@
                             $rejectionReason = $user['rejectionReason'] ?? '';
                             $userId = $user['userId'] ?? '';
                         @endphp
-                        <tr data-user-id="{{ $userId }}" data-user-status="{{ $user['status'] ?? '' }}" data-approval-status="{{ $approvalStatus }}">
+                        <tr data-user-id="{{ $userId }}" data-user-status="{{ $user['status'] ?? '' }}" data-approval-status="{{ $approvalStatus }}" data-department="{{ $user['departmentId'] ?? '' }}" data-position="{{ $user['positionId'] ?? '' }}">
                             <td style="color: #3b82f6;">{{ $user['userCode'] ?? '—' }}</td>
                             <td><strong>{{ $user['fullName'] ?? '' }}</strong></td>
                             <td>{{ $user['email'] ?? '' }}</td>
@@ -115,6 +163,10 @@
                                 @endif
                             </td>
                             <td>
+                                <label class="toggle-switch" title="Toggle user active/inactive">
+                                    <input type="checkbox" class="toggle-status" data-user-id="{{ $userId }}" {{ ($user['status'] ?? '') === 'active' ? 'checked' : '' }} {{ $approvalStatus === 'Pending_Approval' ? 'disabled' : '' }}>
+                                    <span class="toggle-slider"></span>
+                                </label>
                                 @if($approvalStatus !== 'Approved' || $userType === 'superadmin')
                                     <button
                                         type="button"
@@ -138,14 +190,7 @@
                                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                         </svg>
                                     </button>
-                                    @if($approvalStatus === 'Pending_Approval' && $userType === 'superadmin')
-                                        <button type="button" class="btn btn-sm btn-approve-user" data-user-id="{{ $userId }}" aria-label="Approve user {{ $user['fullName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✓ Approve
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-reject-user" data-user-id="{{ $userId }}" data-user-name="{{ $user['fullName'] ?? '' }}" aria-label="Reject user {{ $user['fullName'] ?? '' }}" style="background-color: #dc2626; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✗ Reject
-                                        </button>
-                                    @endif
+
                                 @else
                                     <span style="color: #64748b; font-size: 0.75rem;">—</span>
                                 @endif
@@ -164,6 +209,25 @@
                 <p style="font-size: 0.9rem;">No users found.</p>
             </div>
         @endif
+
+        {{-- Toggle Confirmation Modal --}}
+        <div class="modal-overlay" id="toggle-modal-overlay">
+            <div class="modal" role="dialog" aria-labelledby="toggle-modal-title" aria-modal="true">
+                <div class="modal-header">
+                    <h3 id="toggle-modal-title">Confirm Status Change</h3>
+                    <button type="button" class="modal-close" id="toggle-modal-close" aria-label="Close modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="toggle-modal-message">Are you sure you want to change this user's status?</p>
+                    <input type="hidden" id="toggle-user-id" value="">
+                    <input type="hidden" id="toggle-action" value="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="toggle-modal-cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="toggle-modal-confirm" style="padding: 0.5rem 1rem; border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem;">Confirm</button>
+                </div>
+            </div>
+        </div>
 
         {{-- User Form Modal --}}
         <div class="modal-overlay" id="user-modal-overlay">
@@ -213,7 +277,7 @@
                         </div>
 
                         {{-- Role field --}}
-                        <div class="form-group">
+                        <div class="form-group" id="form-group-role">
                             <label for="user-form-role">Role</label>
                             @if($userType === 'superadmin')
                                 <select id="user-form-role" aria-label="User role">
@@ -246,7 +310,7 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="form-group-position">
                             <label for="user-form-position">Position</label>
                             <select
                                 id="user-form-position"
@@ -267,28 +331,6 @@
             </div>
         </div>
 
-        {{-- Rejection Reason Modal --}}
-        <div class="modal-overlay" id="user-reject-modal-overlay">
-            <div class="modal" role="dialog" aria-labelledby="user-reject-modal-title" aria-modal="true">
-                <div class="modal-header">
-                    <h3 id="user-reject-modal-title">Reject User</h3>
-                    <button type="button" class="modal-close" id="user-reject-modal-close" aria-label="Close modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form id="user-reject-form" novalidate>
-                        <input type="hidden" id="user-reject-user-id" value="">
-                        <div class="form-group">
-                            <label for="user-reject-reason">Rejection Reason</label>
-                            <textarea id="user-reject-reason" placeholder="Enter reason for rejection" required aria-label="Rejection reason" rows="4" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="user-reject-modal-cancel">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="user-reject-modal-submit">Reject</button>
-                </div>
-            </div>
-        </div>
     @endif
 @endsection
 
@@ -308,13 +350,6 @@
     var formPosition = document.getElementById('user-form-position');
     var formDepartment = document.getElementById('user-form-department');
     var addBtn = document.getElementById('btn-add-user');
-
-    var rejectOverlay = document.getElementById('user-reject-modal-overlay');
-    var rejectCloseBtn = document.getElementById('user-reject-modal-close');
-    var rejectCancelBtn = document.getElementById('user-reject-modal-cancel');
-    var rejectSubmitBtn = document.getElementById('user-reject-modal-submit');
-    var rejectUserIdInput = document.getElementById('user-reject-user-id');
-    var rejectReasonInput = document.getElementById('user-reject-reason');
 
     var approvalFilter = document.getElementById('user-approval-status-filter');
     var searchInput = document.getElementById('search-input');
@@ -399,26 +434,13 @@
         }
 
         modalOverlay.classList.add('active');
+        toggleUserTypeFields();
     }
 
     function closeModal() {
         if (modalOverlay) {
             modalOverlay.classList.remove('active');
         }
-    }
-
-    // ── Rejection Modal helpers ─────────────────────────────────────
-
-    function openRejectModal(userId) {
-        if (rejectOverlay) {
-            rejectUserIdInput.value = userId;
-            rejectReasonInput.value = '';
-            rejectOverlay.classList.add('active');
-        }
-    }
-
-    function closeRejectModal() {
-        if (rejectOverlay) rejectOverlay.classList.remove('active');
     }
 
     // ── Add User button ─────────────────────────────────────────────
@@ -487,10 +509,13 @@
                 modalSave.disabled = false;
                 if (result.data.success) {
                     closeModal();
-                    window.location.reload();
+                    var action = userId ? 'updated' : 'created';
+                    showToast('User ' + action + ' successfully.', 'success');
+                    setTimeout(function() { window.location.reload(); }, 1500);
                 } else {
                     closeModal();
-                    showToast(result.data.error || 'Failed to save user.', 'error');
+                    var failAction = userId ? 'update' : 'create';
+                    showToast(result.data.error || 'Failed to ' + failAction + ' user.', 'error');
                 }
             })
             .catch(function () {
@@ -524,7 +549,8 @@
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
                 if (result.data.success) {
-                    window.location.reload();
+                    showToast('User deleted successfully.', 'success');
+                    setTimeout(function() { window.location.reload(); }, 1500);
                 } else {
                     showToast(result.data.error || 'Failed to delete user.', 'error');
                 }
@@ -534,65 +560,6 @@
             });
         });
     });
-
-    // ── Approve User action ─────────────────────────────────────────
-
-    document.querySelectorAll('.btn-approve-user').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var userId = this.getAttribute('data-user-id');
-            if (!confirm('Are you sure you want to approve this user?')) return;
-
-            btn.disabled = true;
-            fetch('/admin/users/' + encodeURIComponent(userId) + '/approve', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() }
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                btn.disabled = false;
-                if (result.data.success) { showToast('User approved successfully.', 'success'); window.location.reload(); }
-                else { showToast(result.data.error || 'Failed to approve user.', 'error'); }
-            })
-            .catch(function () { btn.disabled = false; showToast('Network error. Please try again.', 'error'); });
-        });
-    });
-
-    // ── Reject User action (opens modal) ────────────────────────────
-
-    document.querySelectorAll('.btn-reject-user').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var userId = this.getAttribute('data-user-id');
-            openRejectModal(userId);
-        });
-    });
-
-    // ── Rejection Modal event handlers ──────────────────────────────
-
-    if (rejectCloseBtn) rejectCloseBtn.addEventListener('click', closeRejectModal);
-    if (rejectCancelBtn) rejectCancelBtn.addEventListener('click', closeRejectModal);
-    if (rejectOverlay) rejectOverlay.addEventListener('click', function (e) { if (e.target === rejectOverlay) closeRejectModal(); });
-
-    if (rejectSubmitBtn) {
-        rejectSubmitBtn.addEventListener('click', function () {
-            var userId = rejectUserIdInput ? rejectUserIdInput.value : '';
-            var reason = rejectReasonInput ? rejectReasonInput.value.trim() : '';
-            if (!reason) { rejectReasonInput.focus(); return; }
-
-            rejectSubmitBtn.disabled = true;
-            fetch('/admin/users/' + encodeURIComponent(userId) + '/reject', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                body: JSON.stringify({ reason: reason })
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                rejectSubmitBtn.disabled = false;
-                if (result.data.success) { closeRejectModal(); showToast('User rejected successfully.', 'success'); window.location.reload(); }
-                else { closeRejectModal(); showToast(result.data.error || 'Failed to reject user.', 'error'); }
-            })
-            .catch(function () { rejectSubmitBtn.disabled = false; closeRejectModal(); showToast('Network error. Please try again.', 'error'); });
-        });
-    }
 
     // ── Close modals ────────────────────────────────────────────────
 
@@ -608,28 +575,244 @@
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closeModal();
-            closeRejectModal();
         }
     });
 
-    // ── Client-side approval status filter ──────────────────────────
+    var departmentFilter = document.getElementById('department-filter');
+    var positionFilter = document.getElementById('position-filter');
+
+    // ── Populate department and position filter dropdowns ────────────
+
+    function populateFilterDropdowns() {
+        var departments = {};
+        var positions = {};
+
+        for (var i = 0; i < usersData.length; i++) {
+            var u = usersData[i];
+            if (u.departmentId) departments[u.departmentId] = true;
+            if (u.positionId) positions[u.positionId] = true;
+        }
+
+        if (departmentFilter) {
+            var deptKeys = Object.keys(departments).sort();
+            for (var d = 0; d < deptKeys.length; d++) {
+                var opt = document.createElement('option');
+                opt.value = deptKeys[d];
+                opt.textContent = deptKeys[d];
+                departmentFilter.appendChild(opt);
+            }
+        }
+
+        if (positionFilter) {
+            var posKeys = Object.keys(positions).sort();
+            for (var p = 0; p < posKeys.length; p++) {
+                var opt = document.createElement('option');
+                opt.value = posKeys[p];
+                opt.textContent = posKeys[p];
+                positionFilter.appendChild(opt);
+            }
+        }
+    }
+
+    populateFilterDropdowns();
+
+    // ── Client-side filters (search, department, position, approval status) ──
 
     function applyFilters() {
         var filterValue = approvalFilter ? approvalFilter.value : '';
         var searchValue = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        var deptValue = departmentFilter ? departmentFilter.value : '';
+        var posValue = positionFilter ? positionFilter.value : '';
         var rows = document.querySelectorAll('#users-table tbody tr');
 
         rows.forEach(function (row) {
             var rowApprovalStatus = row.getAttribute('data-approval-status') || '';
+            var rowDepartment = row.getAttribute('data-department') || '';
+            var rowPosition = row.getAttribute('data-position') || '';
             var rowText = row.textContent.toLowerCase();
-            var matchesFilter = !filterValue || rowApprovalStatus === filterValue;
+
+            var matchesApproval = !filterValue || rowApprovalStatus === filterValue;
             var matchesSearch = !searchValue || rowText.indexOf(searchValue) !== -1;
-            row.style.display = (matchesFilter && matchesSearch) ? '' : 'none';
+            var matchesDept = !deptValue || rowDepartment === deptValue;
+            var matchesPos = !posValue || rowPosition === posValue;
+
+            row.style.display = (matchesApproval && matchesSearch && matchesDept && matchesPos) ? '' : 'none';
         });
     }
 
     if (approvalFilter) approvalFilter.addEventListener('change', applyFilters);
     if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (departmentFilter) departmentFilter.addEventListener('change', applyFilters);
+    if (positionFilter) positionFilter.addEventListener('change', applyFilters);
+
+    // ── Toggle Status Confirmation Modal ────────────────────────────
+
+    var toggleOverlay = document.getElementById('toggle-modal-overlay');
+    var toggleModalTitle = document.getElementById('toggle-modal-title');
+    var toggleModalMessage = document.getElementById('toggle-modal-message');
+    var toggleModalClose = document.getElementById('toggle-modal-close');
+    var toggleModalCancel = document.getElementById('toggle-modal-cancel');
+    var toggleModalConfirm = document.getElementById('toggle-modal-confirm');
+    var toggleUserId = document.getElementById('toggle-user-id');
+    var toggleAction = document.getElementById('toggle-action');
+    var pendingToggleCheckbox = null;
+
+    function openToggleModal(userId, userName, newAction) {
+        if (!toggleOverlay) return;
+        toggleUserId.value = userId;
+        toggleAction.value = newAction;
+        var actionLabel = newAction === 'activate' ? 'activate' : 'deactivate';
+        toggleModalTitle.textContent = ucFirst(actionLabel) + ' User';
+        toggleModalMessage.textContent = 'Are you sure you want to ' + actionLabel + ' user "' + userName + '"?';
+        toggleOverlay.classList.add('active');
+    }
+
+    function closeToggleModal() {
+        if (toggleOverlay) toggleOverlay.classList.remove('active');
+        pendingToggleCheckbox = null;
+    }
+
+    if (toggleModalClose) toggleModalClose.addEventListener('click', function () {
+        revertPendingToggle();
+        closeToggleModal();
+    });
+    if (toggleModalCancel) toggleModalCancel.addEventListener('click', function () {
+        revertPendingToggle();
+        closeToggleModal();
+    });
+    if (toggleOverlay) toggleOverlay.addEventListener('click', function (e) {
+        if (e.target === toggleOverlay) {
+            revertPendingToggle();
+            closeToggleModal();
+        }
+    });
+
+    function revertPendingToggle() {
+        if (pendingToggleCheckbox) {
+            pendingToggleCheckbox.checked = !pendingToggleCheckbox.checked;
+        }
+    }
+
+    // ── Toggle click handler ────────────────────────────────────────
+
+    document.querySelectorAll('.toggle-status').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            var userId = this.getAttribute('data-user-id');
+            var row = this.closest('tr');
+            var userName = row ? row.querySelector('td:nth-child(2)').textContent.trim() : 'this user';
+            var newAction = this.checked ? 'activate' : 'deactivate';
+
+            pendingToggleCheckbox = this;
+            openToggleModal(userId, userName, newAction);
+        });
+    });
+
+    // ── Toggle confirm handler ──────────────────────────────────────
+
+    if (toggleModalConfirm) {
+        toggleModalConfirm.addEventListener('click', function () {
+            var userId = toggleUserId ? toggleUserId.value : '';
+            var action = toggleAction ? toggleAction.value : '';
+            var checkbox = pendingToggleCheckbox;
+
+            if (!userId || !action || !checkbox) {
+                closeToggleModal();
+                return;
+            }
+
+            toggleModalConfirm.disabled = true;
+
+            var url = '/admin/users/' + encodeURIComponent(userId) + '/' + action;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken()
+                }
+            })
+            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
+            .then(function (result) {
+                toggleModalConfirm.disabled = false;
+                closeToggleModal();
+
+                if (result.data.success) {
+                    // Update row data-user-status attribute
+                    var row = checkbox.closest('tr');
+                    var newStatus = action === 'activate' ? 'active' : 'inactive';
+                    if (row) {
+                        row.setAttribute('data-user-status', newStatus);
+
+                        // Update status badge
+                        var statusCell = row.querySelector('td:nth-child(8)');
+                        if (statusCell) {
+                            var badge = statusCell.querySelector('.badge');
+                            if (badge) {
+                                if (newStatus === 'active') {
+                                    badge.className = 'badge badge-success';
+                                    badge.textContent = 'Active';
+                                } else {
+                                    badge.className = 'badge badge-warning';
+                                    badge.textContent = 'Inactive';
+                                }
+                            }
+                        }
+                    }
+
+                    var statusLabel = action === 'activate' ? 'activated' : 'deactivated';
+                    showToast('User ' + statusLabel + ' successfully.', 'success');
+                } else {
+                    // Revert toggle on failure
+                    checkbox.checked = !checkbox.checked;
+                    showToast(result.data.error || 'Failed to ' + action + ' user.', 'error');
+                }
+                pendingToggleCheckbox = null;
+            })
+            .catch(function () {
+                toggleModalConfirm.disabled = false;
+                closeToggleModal();
+                // Revert toggle on network error
+                checkbox.checked = !checkbox.checked;
+                pendingToggleCheckbox = null;
+                showToast('Network error. Please try again.', 'error');
+            });
+        });
+    }
+
+    // Also close toggle modal on Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && toggleOverlay && toggleOverlay.classList.contains('active')) {
+            revertPendingToggle();
+            closeToggleModal();
+        }
+    });
+
+    // ── Toggle Position/Role fields based on userType selection ──────
+
+    var positionGroup = document.getElementById('form-group-position');
+
+    function toggleUserTypeFields() {
+        if (!formRole || formRole.tagName !== 'SELECT') return;
+
+        var selectedType = formRole.value;
+        var isAdmin = (selectedType === 'admin' || selectedType === 'superadmin');
+
+        if (positionGroup) {
+            positionGroup.style.display = isAdmin ? 'none' : '';
+        }
+
+        // Clear position value when hidden
+        if (isAdmin && formPosition) {
+            formPosition.value = '';
+        }
+    }
+
+    if (formRole && formRole.tagName === 'SELECT') {
+        formRole.addEventListener('change', toggleUserTypeFields);
+        // Set initial state on page load
+        toggleUserTypeFields();
+    }
 })();
 </script>
 @endpush

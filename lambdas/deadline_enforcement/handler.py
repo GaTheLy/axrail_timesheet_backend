@@ -159,9 +159,9 @@ def _query_submissions_by_status(period_id, status):
 
 
 def _get_all_employees():
-    """Scan the Users table for all active users with role Employee."""
+    """Scan the Users table for all active users with role Employee and userType 'user'."""
     table = _get_users_table()
-    filter_expr = Attr("role").eq("Employee") & Attr("status").eq("active")
+    filter_expr = Attr("role").eq("Employee") & Attr("status").eq("active") & Attr("userType").eq("user")
     response = table.scan(FilterExpression=filter_expr)
     items = response.get("Items", [])
     while "LastEvaluatedKey" in response:
@@ -268,6 +268,11 @@ def _send_under_40_hours_notifications(period_id, period_string):
         user = _get_user_by_id(employee_id)
         if not user:
             logger.warning("User %s not found, skipping notification", employee_id)
+            continue
+
+        user_type = user.get("userType", "user")
+        if user_type in ("admin", "superadmin"):
+            logger.info("Skipping under-40-hours notification for %s user %s", user_type, employee_id)
             continue
 
         email = user.get("email", "")

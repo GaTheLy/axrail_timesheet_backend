@@ -354,6 +354,42 @@ class GraphQLQueries
     GRAPHQL;
 
     /**
+     * Fetch a single timesheet submission with its entries.
+     *
+     * Used by: TimesheetController::showSubmission
+     */
+    public const GET_TIMESHEET_SUBMISSION = <<<'GRAPHQL'
+    query GetTimesheetSubmission($submissionId: ID!) {
+        getTimesheetSubmission(submissionId: $submissionId) {
+            submissionId
+            periodId
+            employeeId
+            status
+            archived
+            entries {
+                entryId
+                submissionId
+                projectCode
+                saturday
+                sunday
+                monday
+                tuesday
+                wednesday
+                thursday
+                friday
+                totalHours
+                createdAt
+                updatedAt
+            }
+            totalHours
+            chargeableHours
+            createdAt
+            updatedAt
+        }
+    }
+    GRAPHQL;
+
+    /**
      * List users with optional filter and pagination.
      *
      * Used to resolve employeeId → fullName in submission summary.
@@ -723,6 +759,36 @@ class GraphQLQueries
             createdBy
             updatedAt
             updatedBy
+        }
+    }
+    GRAPHQL;
+
+    /**
+     * Deactivate a user (set status to inactive).
+     *
+     * Used by: UserManagementController::deactivate
+     */
+    public const DEACTIVATE_USER = <<<'GRAPHQL'
+    mutation DeactivateUser($userId: ID!) {
+        deactivateUser(userId: $userId) {
+            userId
+            fullName
+            status
+        }
+    }
+    GRAPHQL;
+
+    /**
+     * Activate a user (set status to active).
+     *
+     * Used by: UserManagementController::activate
+     */
+    public const ACTIVATE_USER = <<<'GRAPHQL'
+    mutation ActivateUser($userId: ID!) {
+        activateUser(userId: $userId) {
+            userId
+            fullName
+            status
         }
     }
     GRAPHQL;

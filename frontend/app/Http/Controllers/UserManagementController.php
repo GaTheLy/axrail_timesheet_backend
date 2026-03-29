@@ -163,4 +163,41 @@ class UserManagementController extends Controller
         }
     }
 
+    /**
+     * Activate a user via GraphQL mutation.
+     */
+    public function activate(string $userId)
+    {
+        $graphql = new GraphQLClient();
+
+        try {
+            $result = $graphql->mutate(GraphQLQueries::ACTIVATE_USER, [
+                'userId' => $userId,
+            ]);
+
+            return response()->json(['success' => true, 'data' => $result['activateUser'] ?? []]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 422);
+        }
+    }
+
+    /**
+     * Deactivate a user via GraphQL mutation.
+     */
+    public function deactivate(string $userId)
+    {
+        $graphql = new GraphQLClient();
+
+        try {
+            $result = $graphql->mutate(GraphQLQueries::DEACTIVATE_USER, [
+                'userId' => $userId,
+            ]);
+
+            return response()->json(['success' => true, 'data' => $result['deactivateUser'] ?? []]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 422);
+        }
+    }
+
+
 }

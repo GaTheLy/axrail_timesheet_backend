@@ -131,16 +131,26 @@ def create_user(event):
     args = event["arguments"]["input"]
 
     target_user_type = args["userType"]
-    role = args["role"]
     email = args["email"]
     full_name = args["fullName"]
-    position_id = args.get("positionId", "")
     department_id = args.get("departmentId", "")
     supervisor_id = args.get("supervisorId") or None
 
     _validate_enum(target_user_type, VALID_USER_TYPES, "userType")
-    _validate_enum(role, VALID_ROLES, "role")
     _authorize_mutation(caller, target_user_type)
+
+    # role and positionId are only required for regular users
+    if target_user_type == "user":
+        role = args.get("role", "")
+        position_id = args.get("positionId", "")
+        if not role:
+            raise ValueError("role is required for userType 'user'")
+        if not position_id:
+            raise ValueError("positionId is required for userType 'user'")
+        _validate_enum(role, VALID_ROLES, "role")
+    else:
+        role = args.get("role", "")
+        position_id = args.get("positionId", "")
 
     # When an admin creates a user (userType: user), force role to Employee
     if caller["userType"] == "admin" and target_user_type == "user":

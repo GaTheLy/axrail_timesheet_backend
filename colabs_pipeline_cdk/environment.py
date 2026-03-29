@@ -59,6 +59,7 @@ TIMESHEET_TABLE_NAMES = {
     "report_distribution_config": "Timesheet_ReportDistributionConfig",
     "main_database": "Timesheet_MainDatabase",
     "project_assignments": "Timesheet_ProjectAssignments",
+    "session_tracker": "Timesheet_SessionTracker",
 }
 
 # Cognito

@@ -47,7 +47,7 @@
                             <td>{{ isset($project['createdAt']) ? \Carbon\Carbon::parse($project['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>{{ $project['createdBy'] ?? '—' }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-approve" data-type="project" data-id="{{ $project['projectId'] ?? '' }}" aria-label="Approve project {{ $project['projectName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
+                                <button type="button" class="btn btn-sm btn-approve" data-type="project" data-id="{{ $project['projectId'] ?? '' }}" data-name="{{ $project['projectName'] ?? '' }}" aria-label="Approve project {{ $project['projectName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
                                     ✓ Approve
                                 </button>
                                 <button type="button" class="btn btn-sm btn-reject" data-type="project" data-id="{{ $project['projectId'] ?? '' }}" data-name="{{ $project['projectName'] ?? '' }}" aria-label="Reject project {{ $project['projectName'] ?? '' }}" style="background-color: #dc2626; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
@@ -86,7 +86,7 @@
                             <td>{{ isset($dept['createdAt']) ? \Carbon\Carbon::parse($dept['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>{{ $dept['createdBy'] ?? '—' }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-approve" data-type="department" data-id="{{ $dept['departmentId'] ?? '' }}" aria-label="Approve department {{ $dept['departmentName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
+                                <button type="button" class="btn btn-sm btn-approve" data-type="department" data-id="{{ $dept['departmentId'] ?? '' }}" data-name="{{ $dept['departmentName'] ?? '' }}" aria-label="Approve department {{ $dept['departmentName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
                                     ✓ Approve
                                 </button>
                                 <button type="button" class="btn btn-sm btn-reject" data-type="department" data-id="{{ $dept['departmentId'] ?? '' }}" data-name="{{ $dept['departmentName'] ?? '' }}" aria-label="Reject department {{ $dept['departmentName'] ?? '' }}" style="background-color: #dc2626; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
@@ -125,7 +125,7 @@
                             <td>{{ isset($pos['createdAt']) ? \Carbon\Carbon::parse($pos['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>{{ $pos['createdBy'] ?? '—' }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-approve" data-type="position" data-id="{{ $pos['positionId'] ?? '' }}" aria-label="Approve position {{ $pos['positionName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
+                                <button type="button" class="btn btn-sm btn-approve" data-type="position" data-id="{{ $pos['positionId'] ?? '' }}" data-name="{{ $pos['positionName'] ?? '' }}" aria-label="Approve position {{ $pos['positionName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
                                     ✓ Approve
                                 </button>
                                 <button type="button" class="btn btn-sm btn-reject" data-type="position" data-id="{{ $pos['positionId'] ?? '' }}" data-name="{{ $pos['positionName'] ?? '' }}" aria-label="Reject position {{ $pos['positionName'] ?? '' }}" style="background-color: #dc2626; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
@@ -141,6 +141,25 @@
                 <p>No pending positions.</p>
             </div>
         @endif
+    </div>
+
+    {{-- Approval Confirmation Modal --}}
+    <div class="modal-overlay" id="approve-modal-overlay">
+        <div class="modal" role="dialog" aria-labelledby="approve-modal-title" aria-modal="true">
+            <div class="modal-header">
+                <h3 id="approve-modal-title">Approve Entity</h3>
+                <button type="button" class="modal-close" id="approve-modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="approve-modal-message">Are you sure you want to approve this entity?</p>
+                <input type="hidden" id="approve-entity-type" value="">
+                <input type="hidden" id="approve-entity-id" value="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="approve-modal-cancel">Cancel</button>
+                <button type="button" class="btn btn-success" id="approve-modal-submit" style="background-color: #16a34a; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem;">Approve</button>
+            </div>
+        </div>
     </div>
 
     {{-- Rejection Reason Modal --}}
@@ -218,36 +237,75 @@
         });
     });
 
-    // ── Approve action ──────────────────────────────────────────────
+    // ── Approve modal ───────────────────────────────────────────────
+    var approveOverlay = document.getElementById('approve-modal-overlay');
+    var approveCloseBtn = document.getElementById('approve-modal-close');
+    var approveCancelBtn = document.getElementById('approve-modal-cancel');
+    var approveSubmitBtn = document.getElementById('approve-modal-submit');
+    var approveEntityType = document.getElementById('approve-entity-type');
+    var approveEntityId = document.getElementById('approve-entity-id');
+    var approveModalTitle = document.getElementById('approve-modal-title');
+    var approveModalMessage = document.getElementById('approve-modal-message');
+
+    function openApproveModal(entityType, entityId, entityName) {
+        if (approveOverlay) {
+            approveEntityType.value = entityType;
+            approveEntityId.value = entityId;
+            var displayType = entityType.charAt(0).toUpperCase() + entityType.slice(1);
+            approveModalTitle.textContent = 'Approve ' + displayType;
+            approveModalMessage.textContent = 'Are you sure you want to approve ' + displayType + ' "' + entityName + '"?';
+            approveOverlay.classList.add('active');
+        }
+    }
+
+    function closeApproveModal() {
+        if (approveOverlay) approveOverlay.classList.remove('active');
+    }
+
+    if (approveCloseBtn) approveCloseBtn.addEventListener('click', closeApproveModal);
+    if (approveCancelBtn) approveCancelBtn.addEventListener('click', closeApproveModal);
+    if (approveOverlay) approveOverlay.addEventListener('click', function (e) { if (e.target === approveOverlay) closeApproveModal(); });
+
+    // ── Approve button click → open modal ───────────────────────────
     document.querySelectorAll('.btn-approve').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var entityType = this.getAttribute('data-type');
             var entityId = this.getAttribute('data-id');
-            var row = this.closest('tr');
+            var entityName = this.getAttribute('data-name') || entityType;
+            openApproveModal(entityType, entityId, entityName);
+        });
+    });
+
+    // ── Approve modal submit → call API ─────────────────────────────
+    if (approveSubmitBtn) {
+        approveSubmitBtn.addEventListener('click', function () {
+            var entityType = approveEntityType ? approveEntityType.value : '';
+            var entityId = approveEntityId ? approveEntityId.value : '';
+            var row = document.querySelector('tr[data-entity-type="' + entityType + '"][data-entity-id="' + entityId + '"]');
             var entityName = row ? row.querySelector('td:first-child').textContent.trim() : entityType;
 
-            if (!confirm('Are you sure you want to approve "' + entityName + '"?')) return;
-
-            btn.disabled = true;
+            approveSubmitBtn.disabled = true;
             fetch('/admin/approvals/' + encodeURIComponent(entityType) + '/' + encodeURIComponent(entityId) + '/approve', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() }
             })
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
-                btn.disabled = false;
+                approveSubmitBtn.disabled = false;
                 if (result.data.success) {
+                    closeApproveModal();
                     showToast(entityName + ' approved successfully.', 'success');
                     if (row) row.remove();
                     updateEmptyState(entityType);
                     updateTabCount(entityType, -1);
                 } else {
+                    closeApproveModal();
                     showToast(result.data.error || 'Failed to approve ' + entityType + '.', 'error');
                 }
             })
-            .catch(function () { btn.disabled = false; showToast('Network error. Please try again.', 'error'); });
+            .catch(function () { approveSubmitBtn.disabled = false; closeApproveModal(); showToast('Network error. Please try again.', 'error'); });
         });
-    });
+    }
 
     // ── Reject modal ────────────────────────────────────────────────
     var rejectOverlay = document.getElementById('reject-modal-overlay');
@@ -343,9 +401,12 @@
         }
     }
 
-    // ── Close modal on Escape ───────────────────────────────────────
+    // ── Close modals on Escape ──────────────────────────────────────
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeRejectModal();
+        if (e.key === 'Escape') {
+            closeRejectModal();
+            closeApproveModal();
+        }
     });
 })();
 </script>

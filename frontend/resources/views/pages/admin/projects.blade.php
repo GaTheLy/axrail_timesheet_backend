@@ -85,14 +85,7 @@
                                     <button type="button" class="btn btn-danger btn-sm btn-delete-project" data-project-id="{{ $projectId }}" aria-label="Delete project">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                     </button>
-                                    @if($approvalStatus === 'Pending_Approval' && $userType === 'superadmin')
-                                        <button type="button" class="btn btn-sm btn-approve-project" data-project-id="{{ $projectId }}" aria-label="Approve project {{ $project['projectName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✓ Approve
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-reject-project" data-project-id="{{ $projectId }}" data-project-name="{{ $project['projectName'] ?? '' }}" aria-label="Reject project {{ $project['projectName'] ?? '' }}" style="background-color: #dc2626; color: #fff; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem;">
-                                            ✗ Reject
-                                        </button>
-                                    @endif
+
                                 @else
                                     <span style="color: #64748b; font-size: 0.75rem;">—</span>
                                 @endif
@@ -113,28 +106,6 @@
         @endif
     @endif
 
-    {{-- Rejection Reason Modal --}}
-    <div class="modal-overlay" id="reject-project-modal-overlay">
-        <div class="modal" role="dialog" aria-labelledby="reject-project-modal-title" aria-modal="true">
-            <div class="modal-header">
-                <h3 id="reject-project-modal-title">Reject Project</h3>
-                <button type="button" class="modal-close" id="reject-project-modal-close" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="reject-project-form" novalidate>
-                    <input type="hidden" id="reject-project-id" value="">
-                    <div class="form-group">
-                        <label for="reject-project-reason">Rejection Reason</label>
-                        <textarea id="reject-project-reason" placeholder="Enter reason for rejection" required aria-label="Rejection reason" rows="4" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="reject-project-modal-cancel">Cancel</button>
-                <button type="button" class="btn btn-danger" id="reject-project-modal-submit">Reject</button>
-            </div>
-        </div>
-    </div>
 
     {{-- Add Project Modal --}}
     <div class="modal-overlay" id="project-modal-overlay">
@@ -184,13 +155,6 @@
 <script>
 (function () {
     // ── DOM references ──────────────────────────────────────────────
-    var rejectOverlay = document.getElementById('reject-project-modal-overlay');
-    var rejectCloseBtn = document.getElementById('reject-project-modal-close');
-    var rejectCancelBtn = document.getElementById('reject-project-modal-cancel');
-    var rejectSubmitBtn = document.getElementById('reject-project-modal-submit');
-    var rejectProjectIdInput = document.getElementById('reject-project-id');
-    var rejectReasonInput = document.getElementById('reject-project-reason');
-
     var addOverlay = document.getElementById('project-modal-overlay');
     var addCloseBtn = document.getElementById('project-modal-close');
     var addCancelBtn = document.getElementById('project-modal-cancel');
@@ -315,8 +279,14 @@
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
                 addSaveBtn.disabled = false;
-                if (result.data.success) { closeAddModal(); showToast(editingProjectId ? 'Project updated.' : 'Project created.', 'success'); window.location.reload(); }
-                else { closeAddModal(); showToast(result.data.error || 'Failed to save project.', 'error'); }
+                if (result.data.success) {
+                    closeAddModal();
+                    showToast(editingProjectId ? 'Project updated successfully.' : 'Project created successfully.', 'success');
+                    setTimeout(function() { window.location.reload(); }, 1500);
+                } else {
+                    closeAddModal();
+                    showToast(result.data.error || 'Failed to save project.', 'error');
+                }
             })
             .catch(function () { addSaveBtn.disabled = false; closeAddModal(); showToast('Network error. Please try again.', 'error'); });
         });
@@ -336,82 +306,77 @@
             })
             .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
             .then(function (result) {
-                if (result.data.success) { showToast('Project deleted.', 'success'); window.location.reload(); }
-                else { showToast(result.data.error || 'Failed to delete project.', 'error'); }
+                if (result.data.success) {
+                    showToast('Project deleted successfully.', 'success');
+                    setTimeout(function() { window.location.reload(); }, 1500);
+                } else {
+                    showToast(result.data.error || 'Failed to delete project.', 'error');
+                }
             })
             .catch(function () { showToast('Network error. Please try again.', 'error'); });
         });
     });
 
-    // ── Rejection Modal ─────────────────────────────────────────────
-    function openRejectModal(projectId) {
-        if (rejectOverlay) {
-            rejectProjectIdInput.value = projectId;
-            rejectReasonInput.value = '';
-            rejectOverlay.classList.add('active');
-        }
-    }
-    function closeRejectModal() { if (rejectOverlay) rejectOverlay.classList.remove('active'); }
+    // ── Filter controls ─────────────────────────────────────────────
+    var searchInput = document.getElementById('search-input');
+    var startDateSelect = document.getElementById('start-date-select');
+    var statusSelect = document.getElementById('status-select');
 
-    if (rejectCloseBtn) rejectCloseBtn.addEventListener('click', closeRejectModal);
-    if (rejectCancelBtn) rejectCancelBtn.addEventListener('click', closeRejectModal);
-    if (rejectOverlay) rejectOverlay.addEventListener('click', function (e) { if (e.target === rejectOverlay) closeRejectModal(); });
+    // Populate start date dropdown from distinct start dates in the table
+    (function populateStartDates() {
+        if (!startDateSelect) return;
+        var rows = document.querySelectorAll('#report-table tbody tr');
+        var dates = [];
+        rows.forEach(function (row) {
+            var dateText = row.querySelector('td:nth-child(4)').textContent.trim();
+            if (dateText && dateText !== '—' && dates.indexOf(dateText) === -1) {
+                dates.push(dateText);
+            }
+        });
+        dates.sort();
+        dates.forEach(function (d) {
+            var opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            startDateSelect.appendChild(opt);
+        });
+    })();
 
-    if (rejectSubmitBtn) {
-        rejectSubmitBtn.addEventListener('click', function () {
-            var projectId = rejectProjectIdInput ? rejectProjectIdInput.value : '';
-            var reason = rejectReasonInput ? rejectReasonInput.value.trim() : '';
-            if (!reason) { rejectReasonInput.focus(); return; }
+    // Map status dropdown values to data-approval-status attribute values
+    var statusMap = { 'active': 'Approved', 'pending': 'Pending_Approval' };
 
-            rejectSubmitBtn.disabled = true;
-            fetch('/admin/projects/' + encodeURIComponent(projectId) + '/reject', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                body: JSON.stringify({ reason: reason })
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                rejectSubmitBtn.disabled = false;
-                if (result.data.success) { closeRejectModal(); showToast('Project rejected successfully.', 'success'); window.location.reload(); }
-                else { closeRejectModal(); showToast(result.data.error || 'Failed to reject project.', 'error'); }
-            })
-            .catch(function () { rejectSubmitBtn.disabled = false; closeRejectModal(); showToast('Network error. Please try again.', 'error'); });
+    function applyFilters() {
+        var searchValue = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        var startDateValue = startDateSelect ? startDateSelect.value : '';
+        var statusValue = statusSelect ? statusSelect.value : '';
+        var rows = document.querySelectorAll('#report-table tbody tr');
+
+        rows.forEach(function (row) {
+            // Search filter: match against name (col 2) and manager (col 3)
+            var name = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+            var manager = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
+            var matchesSearch = !searchValue || name.indexOf(searchValue) !== -1 || manager.indexOf(searchValue) !== -1;
+
+            // Start date filter: exact match against displayed date (col 4)
+            var rowDate = row.querySelector('td:nth-child(4)').textContent.trim();
+            var matchesDate = !startDateValue || rowDate === startDateValue;
+
+            // Status filter: match against data-approval-status attribute
+            var rowStatus = row.getAttribute('data-approval-status') || '';
+            var mappedStatus = statusValue ? (statusMap[statusValue] || statusValue) : '';
+            var matchesStatus = !mappedStatus || rowStatus === mappedStatus;
+
+            row.style.display = (matchesSearch && matchesDate && matchesStatus) ? '' : 'none';
         });
     }
 
-    // ── Approve action ──────────────────────────────────────────────
-    document.querySelectorAll('.btn-approve-project').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var projectId = this.getAttribute('data-project-id');
-            if (!confirm('Are you sure you want to approve this project?')) return;
-
-            btn.disabled = true;
-            fetch('/admin/projects/' + encodeURIComponent(projectId) + '/approve', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() }
-            })
-            .then(function (res) { return res.json().then(function (data) { return { status: res.status, data: data }; }); })
-            .then(function (result) {
-                btn.disabled = false;
-                if (result.data.success) { showToast('Project approved successfully.', 'success'); window.location.reload(); }
-                else { showToast(result.data.error || 'Failed to approve project.', 'error'); }
-            })
-            .catch(function () { btn.disabled = false; showToast('Network error. Please try again.', 'error'); });
-        });
-    });
-
-    // ── Reject action (opens modal) ─────────────────────────────────
-    document.querySelectorAll('.btn-reject-project').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var projectId = this.getAttribute('data-project-id');
-            openRejectModal(projectId);
-        });
-    });
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (startDateSelect) startDateSelect.addEventListener('change', applyFilters);
+    if (statusSelect) statusSelect.addEventListener('change', applyFilters);
 
     // ── Close modal on Escape ───────────────────────────────────────
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            closeRejectModal();
             closeAddModal();
         }
     });

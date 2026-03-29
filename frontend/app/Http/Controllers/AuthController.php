@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Services\CognitoAuthService;
+use App\Services\SessionTrackerService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class AuthController extends Controller
@@ -61,6 +63,17 @@ class AuthController extends Controller
             $request->session()->put('user', $result['user']);
             $request->session()->put('rememberDevice', $request->boolean('remember'));
 
+            // Generate and store session token for single-device login enforcement
+            $sessionToken = bin2hex(random_bytes(32));
+            $request->session()->put('sessionToken', $sessionToken);
+
+            try {
+                $sessionTracker = app(SessionTrackerService::class);
+                $sessionTracker->putSession($result['user']['userId'], $sessionToken);
+            } catch (Exception $e) {
+                Log::error('Failed to store session token in DynamoDB: ' . $e->getMessage());
+            }
+
             return redirect()->intended('/dashboard');
         } catch (Exception $e) {
             return back()->withErrors([
@@ -70,23 +83,36 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle logout. Signs out globally from Cognito, flushes session.
+     * Handle logout. Signs out globally from Cognito using admin API to revoke
+     * ALL refresh tokens for the user, then flushes the Laravel session.
      */
     public function logout(Request $request)
     {
         try {
-            $accessToken = $request->session()->get('accessToken');
-            if ($accessToken) {
-                $this->cognitoAuth->globalSignOut($accessToken);
+            $user = $request->session()->get('user');
+            if ($user && isset($user['email'])) {
+                $this->cognitoAuth->adminGlobalSignOut($user['email']);
             }
         } catch (Exception $e) {
             // Continue with logout even if Cognito sign-out fails
+        }
+
+        // Delete session tracker entry before flushing (userId won't be available after flush)
+        try {
+            $userId = $request->session()->get('user.userId');
+            if ($userId) {
+                $sessionTracker = app(SessionTrackerService::class);
+                $sessionTracker->deleteSession($userId);
+            }
+        } catch (Exception $e) {
+            Log::error('Failed to delete session tracker entry on logout: ' . $e->getMessage());
         }
 
         $request->session()->flush();
 
         return redirect('/login');
     }
+
 
     /**
      * Show the forgot password form.
@@ -99,6 +125,7 @@ class AuthController extends Controller
     /**
      * Handle forgot password form submission.
      * Initiates the Cognito forgot-password flow.
+     * Always returns a uniform response to prevent account enumeration.
      */
     public function forgotPassword(Request $request)
     {
@@ -106,24 +133,29 @@ class AuthController extends Controller
             'email' => 'required|email',
         ]);
 
-        try {
-            $this->cognitoAuth->forgotPassword($request->input('email'));
+        $email = strtolower($request->input('email'));
 
-            return redirect('/reset-password')
-                ->with('email', $request->input('email'))
-                ->with('status', 'We have sent a verification code to your email address.');
+        try {
+            $this->cognitoAuth->forgotPassword($email);
         } catch (Exception $e) {
-            return back()->withErrors([
-                'auth' => 'Unable to process your request. Please try again.',
-            ])->withInput();
+            \Log::warning('Forgot password failed for email: ' . $email . ' — ' . $e->getMessage());
         }
+
+        return redirect('/reset-password')
+            ->with('email', $email)
+            ->with('status', 'If an account exists with that email, we have sent a verification code.');
     }
 
     /**
      * Show the reset password form.
+     * Only accessible after a valid forgot-password flow (session flash check).
      */
-    public function showResetPassword()
+    public function showResetPassword(Request $request)
     {
+        if (!$request->session()->has('email')) {
+            return redirect('/forgot-password');
+        }
+
         return view('pages.reset-password');
     }
 
@@ -138,9 +170,11 @@ class AuthController extends Controller
             'password'     => 'required|string|min:8|confirmed',
         ]);
 
+        $email = strtolower($request->input('email'));
+
         try {
             $this->cognitoAuth->confirmForgotPassword(
-                $request->input('email'),
+                $email,
                 $request->input('code'),
                 $request->input('password')
             );
@@ -204,6 +238,17 @@ class AuthController extends Controller
             $request->session()->put('refreshToken', $result['refreshToken']);
             $request->session()->put('tokenExpiry', $result['tokenExpiry']);
             $request->session()->put('user', $result['user']);
+
+            // Generate and store session token for single-device login enforcement
+            $sessionToken = bin2hex(random_bytes(32));
+            $request->session()->put('sessionToken', $sessionToken);
+
+            try {
+                $sessionTracker = app(SessionTrackerService::class);
+                $sessionTracker->putSession($result['user']['userId'], $sessionToken);
+            } catch (Exception $e) {
+                Log::error('Failed to store session token in DynamoDB: ' . $e->getMessage());
+            }
 
             return redirect('/dashboard');
         } catch (Exception $e) {

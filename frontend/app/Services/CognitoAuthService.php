@@ -10,6 +10,7 @@ class CognitoAuthService
 {
     protected CognitoIdentityProviderClient $client;
     protected string $clientId;
+    protected string $userPoolId;
 
     public function __construct()
     {
@@ -18,6 +19,7 @@ class CognitoAuthService
             'version' => 'latest',
         ]);
         $this->clientId = config('aws.cognito_client_id');
+        $this->userPoolId = config('aws.cognito_user_pool_id');
     }
 
     /**
@@ -202,6 +204,8 @@ class CognitoAuthService
      */
     public function forgotPassword(string $email): array
     {
+        $email = strtolower($email);
+
         try {
             $result = $this->client->forgotPassword([
                 'ClientId' => $this->clientId,
@@ -230,6 +234,8 @@ class CognitoAuthService
      */
     public function confirmForgotPassword(string $email, string $code, string $newPassword): bool
     {
+        $email = strtolower($email);
+
         try {
             $this->client->confirmForgotPassword([
                 'ClientId'         => $this->clientId,
@@ -287,6 +293,29 @@ class CognitoAuthService
             throw new Exception($this->mapCognitoError($e));
         }
     }
+
+    /**
+     * Sign out the user globally from all devices using admin API.
+     * This revokes ALL refresh tokens for the user regardless of token state.
+     *
+     * @param string $username The Cognito username (email) of the user
+     * @return bool
+     * @throws Exception
+     */
+    public function adminGlobalSignOut(string $username): bool
+    {
+        try {
+            $this->client->adminUserGlobalSignOut([
+                'UserPoolId' => $this->userPoolId,
+                'Username'   => $username,
+            ]);
+
+            return true;
+        } catch (AwsException $e) {
+            throw new Exception($this->mapCognitoError($e));
+        }
+    }
+
 
     /**
      * Parse a JWT ID token and extract claims.

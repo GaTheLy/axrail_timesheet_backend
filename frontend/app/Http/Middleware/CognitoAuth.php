@@ -3,9 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Services\CognitoAuthService;
+use App\Services\SessionTrackerService;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class CognitoAuth
@@ -37,6 +39,7 @@ class CognitoAuth
         }
 
         $tokenExpiry = $session->get('tokenExpiry', 0);
+        $sessionFlushed = false;
 
         // If token is expired, attempt refresh
         if ($tokenExpiry <= time()) {
@@ -57,7 +60,50 @@ class CognitoAuth
                 $session->put('user', $result['user']);
             } catch (Exception $e) {
                 $session->flush();
+                $sessionFlushed = true;
                 return redirect('/login');
+            }
+        }
+
+        // Validate session token against Session_Tracker (single-device login enforcement)
+        // Skip if token refresh failed and session was already flushed
+        if (!$sessionFlushed) {
+            $sessionToken = $session->get('sessionToken');
+            $userId = $session->get('user.userId');
+
+            // Only validate if both sessionToken and userId are present (skip legacy sessions)
+            if ($sessionToken && $userId) {
+                try {
+                    $trackerService = app(SessionTrackerService::class);
+                    $storedToken = $trackerService->getSessionToken($userId);
+
+                    if ($storedToken !== null && $storedToken !== $sessionToken) {
+                        // Stale session detected — user logged in from another device
+                        $accessToken = $session->get('accessToken');
+
+                        try {
+                            $this->cognitoAuth->globalSignOut($accessToken);
+                        } catch (Exception $e) {
+                            Log::error('Failed to globalSignOut during stale session detection', [
+                                'userId' => $userId,
+                                'error'  => $e->getMessage(),
+                            ]);
+                        }
+
+                        $session->flush();
+
+                        return redirect('/login')->with(
+                            'stale_session',
+                            'Your account was logged in from another device. Please log in again.'
+                        );
+                    }
+                } catch (Exception $e) {
+                    // Fail-open: DynamoDB unreachable, log and allow request to proceed
+                    Log::error('Session tracker validation failed — allowing request (fail-open)', [
+                        'userId' => $userId,
+                        'error'  => $e->getMessage(),
+                    ]);
+                }
             }
         }
 
