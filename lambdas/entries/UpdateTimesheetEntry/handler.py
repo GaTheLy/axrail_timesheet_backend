@@ -18,6 +18,7 @@ from shared_utils import (
     get_entries_table, get_submission, validate_submission_editable,
     validate_project_approved, parse_and_validate_daily_hours,
     get_existing_entries, validate_daily_totals, validate_weekly_total,
+    recalculate_submission_total_hours,
 )
 
 
@@ -80,4 +81,7 @@ def update_timesheet_entry(event):
         },
         ReturnValues="ALL_NEW",
     )
+    # Recalculate submission totalHours
+    recalculate_submission_total_hours(submission_id)
+
     return result["Attributes"]

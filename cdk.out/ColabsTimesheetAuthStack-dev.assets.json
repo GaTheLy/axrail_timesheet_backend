@@ -1,16 +1,16 @@
 {
-  "version": "52.0.0",
+  "version": "50.0.0",
   "files": {
-    "09e3c9b2d8cd0f7d32742f92375d94e5abc99e54ef04904e7ba0739d03c4ab98": {
+    "7b52d89b381afddb1a334404ff1a5ed541057c3a3c61f0c0c724459558f07cfd": {
       "displayName": "ColabsTimesheetAuthStack-dev Template",
       "source": {
         "path": "ColabsTimesheetAuthStack-dev.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "815254799325-ap-southeast-1-67f75c87": {
+        "815254799325-ap-southeast-1-7ba95043": {
           "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-          "objectKey": "09e3c9b2d8cd0f7d32742f92375d94e5abc99e54ef04904e7ba0739d03c4ab98.json",
+          "objectKey": "7b52d89b381afddb1a334404ff1a5ed541057c3a3c61f0c0c724459558f07cfd.json",
           "region": "ap-southeast-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }

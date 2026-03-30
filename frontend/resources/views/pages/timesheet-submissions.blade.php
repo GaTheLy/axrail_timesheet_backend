@@ -75,7 +75,12 @@
                             $periodId = $submission['periodId'] ?? '';
                             $periodString = $periodMap[$periodId] ?? $periodId;
                             $status = $submission['status'] ?? '';
-                            $totalHours = $submission['totalHours'] ?? 0;
+                            $submissionEntries = $submission['entries'] ?? [];
+                            $computedTotal = 0;
+                            foreach ($submissionEntries as $e) {
+                                $computedTotal += floatval($e['totalHours'] ?? 0);
+                            }
+                            $totalHours = $computedTotal > 0 ? $computedTotal : floatval($submission['totalHours'] ?? 0);
                             $submissionId = $submission['submissionId'] ?? '';
                         @endphp
                         <tr

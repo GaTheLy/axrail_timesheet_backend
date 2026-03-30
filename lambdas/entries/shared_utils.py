@@ -168,3 +168,28 @@ def validate_weekly_total(existing_entries, new_hours, exclude_entry_id=None):
             f"Total weekly hours across all entries would be {total}, "
             f"which exceeds the maximum of {MAX_WEEKLY_HOURS}"
         )
+
+
+def recalculate_submission_total_hours(submission_id):
+    """Recalculate and update the submission's totalHours from all its entries."""
+    from datetime import datetime, timezone
+
+    entries = get_existing_entries(submission_id)
+    total = Decimal("0")
+    for entry in entries:
+        entry_total = entry.get("totalHours", Decimal("0"))
+        if not isinstance(entry_total, Decimal):
+            entry_total = Decimal(str(entry_total))
+        total += entry_total
+
+    table = get_submissions_table()
+    table.update_item(
+        Key={"submissionId": submission_id},
+        UpdateExpression="SET totalHours = :total, updatedAt = :now",
+        ExpressionAttributeValues={
+            ":total": total,
+            ":now": datetime.now(timezone.utc).isoformat(),
+        },
+    )
+    return total
+

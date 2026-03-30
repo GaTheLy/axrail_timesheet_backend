@@ -20,10 +20,15 @@
         {{-- Sidebar navigation --}}
         @include('components.sidebar')
 
-        {{-- Main content area --}}
-        <main class="main-content" role="main">
-            @yield('content')
-        </main>
+        {{-- Content wrapper: header + main --}}
+        <div class="content-wrapper">
+            @include('components.header-bar')
+
+            {{-- Main content area --}}
+            <main class="main-content" role="main">
+                @yield('content')
+            </main>
+        </div>
     </div>
 
     <script src="{{ asset('js/app.js') }}"></script>

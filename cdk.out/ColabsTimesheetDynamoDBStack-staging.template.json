@@ -1283,7 +1283,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2KQQ6DIBBFz+IephV7Ay9gbPdmgKmlCiQMxhjC3RvbpKv/Xt5XoG4dXBvcWRq7yNVpKPeMZhG481TsEdBHq6E8UK8k+mf4QhXM/nwmF+YBE3rKlM78l1rFSBy3ZKiK4civGC4dtApa1bzZOZm2kJ0nGH/7Af6ghbiLAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z2KQQ6DIBBFz+IepmK9QS9gbPfNANOWKpAwGGMIdzfapKv/Xt7voOtbaBtcWRo7ydlpKPeMZhK48rPYLaCPVkN5oJ5J3F7hhCqY/fFMLrwHTOgpUzryX2oVI3FckqEqhi1/YrhcQSlQffNl52RaQnaeYPztDoaimziLAAAA"
    },
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetDynamoDBStack-staging/CDKMetadata/Default"

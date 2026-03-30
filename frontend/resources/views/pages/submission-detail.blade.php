@@ -23,17 +23,17 @@
             <h1 class="page-title">Submission Detail</h1>
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; padding: 1rem; background: #1e293b; border-radius: 8px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; padding: 1rem; background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
             <div>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Employee</span>
-                <p style="margin: 0.25rem 0 0; font-size: 0.95rem; color: #f1f5f9;">{{ $employeeName }}</p>
+                <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase;">Employee</span>
+                <p style="margin: 0.25rem 0 0; font-size: 0.95rem; color: var(--color-text-primary);">{{ $employeeName }}</p>
             </div>
             <div>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Week Period</span>
-                <p style="margin: 0.25rem 0 0; font-size: 0.95rem; color: #f1f5f9;">{{ $periodString }}</p>
+                <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase;">Week Period</span>
+                <p style="margin: 0.25rem 0 0; font-size: 0.95rem; color: var(--color-text-primary);">{{ $periodString }}</p>
             </div>
             <div>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Status</span>
+                <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase;">Status</span>
                 <p style="margin: 0.25rem 0 0;">
                     @if(($submission['status'] ?? '') === 'Submitted')
                         <span class="badge badge-success">Submitted</span>
@@ -45,8 +45,15 @@
                 </p>
             </div>
             <div>
-                <span style="font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Total Hours</span>
-                <p style="margin: 0.25rem 0 0; font-size: 0.95rem; color: #f1f5f9;">{{ number_format($submission['totalHours'] ?? 0, 1) }}h</p>
+                <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase;">Total Hours</span>
+                @php
+                    $computedTotal = 0;
+                    foreach ($entries as $entry) {
+                        $computedTotal += floatval($entry['totalHours'] ?? 0);
+                    }
+                    $displayTotal = $computedTotal > 0 ? $computedTotal : floatval($submission['totalHours'] ?? 0);
+                @endphp
+                <p style="margin: 0.25rem 0 0; font-size: 0.95rem; color: var(--color-text-primary);">{{ number_format($displayTotal, 1) }}h</p>
             </div>
         </div>
 
@@ -83,7 +90,7 @@
                 </tbody>
             </table>
         @else
-            <div style="text-align: center; padding: 3rem 1rem; color: #94a3b8;">
+            <div style="text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary);">
                 <p style="font-size: 0.9rem;">No entries were logged for this period.</p>
             </div>
         @endif

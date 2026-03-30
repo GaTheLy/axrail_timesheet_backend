@@ -91,12 +91,14 @@
             <select id="position-filter" aria-label="Filter by position">
                 <option value="">All Positions</option>
             </select>
-            <select id="user-approval-status-filter" aria-label="Filter by approval status">
-                <option value="">All</option>
-                <option value="Pending_Approval">Pending_Approval</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-            </select>
+            @if($userType === 'superadmin')
+                <select id="user-approval-status-filter" aria-label="Filter by approval status">
+                    <option value="">All</option>
+                    <option value="Pending_Approval">Pending_Approval</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            @endif
         </div>
 
         {{-- Users table --}}
@@ -112,7 +114,9 @@
                         <th>POSITION</th>
                         <th>CREATED AT</th>
                         <th>STATUS</th>
-                        <th>APPROVAL STATUS</th>
+                        @if($userType === 'superadmin')
+                            <th>APPROVAL STATUS</th>
+                        @endif
                         <th>ACTIONS</th>
                     </tr>
                 </thead>
@@ -151,6 +155,7 @@
                                 @endphp
                                 <span class="badge {{ $badgeClass }}">{{ $statusLabel }}</span>
                             </td>
+                            @if($userType === 'superadmin')
                             <td>
                                 @if($approvalStatus === 'Approved')
                                     <span class="badge" style="background-color: #dcfce7; color: #166534; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.75rem;">Approved</span>
@@ -162,6 +167,7 @@
                                     <span class="badge" style="background-color: #f1f5f9; color: #64748b; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.75rem;">{{ $approvalStatus }}</span>
                                 @endif
                             </td>
+                            @endif
                             <td>
                                 <label class="toggle-switch" title="Toggle user active/inactive">
                                     <input type="checkbox" class="toggle-status" data-user-id="{{ $userId }}" {{ ($user['status'] ?? '') === 'active' ? 'checked' : '' }} {{ $approvalStatus === 'Pending_Approval' ? 'disabled' : '' }}>

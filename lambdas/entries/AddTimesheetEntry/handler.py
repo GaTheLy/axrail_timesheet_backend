@@ -23,7 +23,7 @@ from shared_utils import (
     get_entries_table, get_submission, validate_submission_editable,
     validate_project_approved, validate_max_entries,
     parse_and_validate_daily_hours, get_existing_entries, validate_daily_totals,
-    validate_weekly_total, get_projects_table,
+    validate_weekly_total, get_projects_table, recalculate_submission_total_hours,
 )
 
 PROJECT_ASSIGNMENTS_TABLE = os.environ.get("PROJECT_ASSIGNMENTS_TABLE", "")
@@ -80,6 +80,9 @@ def add_timesheet_entry(event):
 
     entries_table = get_entries_table()
     entries_table.put_item(Item=item)
+
+    # Recalculate submission totalHours
+    recalculate_submission_total_hours(submission_id)
 
     # Auto-create project assignment (employee → project manager as supervisor)
     _ensure_project_assignment(employee_id, project_code, now)

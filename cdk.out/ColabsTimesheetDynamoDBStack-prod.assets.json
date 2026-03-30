@@ -1,16 +1,16 @@
 {
-  "version": "52.0.0",
+  "version": "50.0.0",
   "files": {
-    "fbf69a09544462c05201ce4923906410e7179f6634b77afe019d90edb9a40038": {
+    "dfaa8e2b58852089b2ebce95bc2c3995eb40cede00f59a673c60a8fdfddbc318": {
       "displayName": "ColabsTimesheetDynamoDBStack-prod Template",
       "source": {
         "path": "ColabsTimesheetDynamoDBStack-prod.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "815254799325-ap-southeast-1-05017cba": {
+        "815254799325-ap-southeast-1-a3b624f0": {
           "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-          "objectKey": "fbf69a09544462c05201ce4923906410e7179f6634b77afe019d90edb9a40038.json",
+          "objectKey": "dfaa8e2b58852089b2ebce95bc2c3995eb40cede00f59a673c60a8fdfddbc318.json",
           "region": "ap-southeast-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }

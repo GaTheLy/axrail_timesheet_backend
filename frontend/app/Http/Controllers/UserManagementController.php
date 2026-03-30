@@ -15,6 +15,7 @@ class UserManagementController extends Controller
     public function index(Request $request)
     {
         $graphql = new GraphQLClient();
+        $currentUserType = session('user.userType', 'user');
 
         // Fetch users
         $users = [];
@@ -33,6 +34,13 @@ class UserManagementController extends Controller
                     'error' => 'Failed to load users: ' . $e2->getMessage(),
                 ]);
             }
+        }
+
+        // Filter users by userType based on current user's role
+        if ($currentUserType === 'admin') {
+            $users = array_values(array_filter($users, fn($u) => ($u['userType'] ?? '') === 'user'));
+        } elseif ($currentUserType === 'superadmin') {
+            $users = array_values(array_filter($users, fn($u) => in_array($u['userType'] ?? '', ['user', 'admin'])));
         }
 
         // Fetch departments and positions for dropdowns

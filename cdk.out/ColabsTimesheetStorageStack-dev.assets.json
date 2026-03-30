@@ -1,5 +1,5 @@
 {
-  "version": "52.0.0",
+  "version": "50.0.0",
   "files": {
     "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
       "displayName": "ColabsTimesheetStorageStack-dev/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
@@ -16,16 +16,16 @@
         }
       }
     },
-    "2fc68359f8929c8551f26a264d12ae9a9818e1394528fc5ebfb3aa36811515a0": {
+    "93264f4c29c4b4e2d35b57bd4edccc6b54062fc1e3df5f65d10e8c0d49ca83bc": {
       "displayName": "ColabsTimesheetStorageStack-dev Template",
       "source": {
         "path": "ColabsTimesheetStorageStack-dev.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "815254799325-ap-southeast-1-bb52303b": {
+        "815254799325-ap-southeast-1-c64a8444": {
           "bucketName": "cdk-hnb659fds-assets-815254799325-ap-southeast-1",
-          "objectKey": "2fc68359f8929c8551f26a264d12ae9a9818e1394528fc5ebfb3aa36811515a0.json",
+          "objectKey": "93264f4c29c4b4e2d35b57bd4edccc6b54062fc1e3df5f65d10e8c0d49ca83bc.json",
           "region": "ap-southeast-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::815254799325:role/cdk-hnb659fds-file-publishing-role-815254799325-ap-southeast-1"
         }

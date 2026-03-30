@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from shared.auth import ForbiddenError, get_caller_identity
-from shared_utils import get_entries_table, get_submission, validate_submission_editable
+from shared_utils import get_entries_table, get_submission, validate_submission_editable, recalculate_submission_total_hours
 
 
 def handler(event, context):
@@ -38,4 +38,8 @@ def remove_timesheet_entry(event):
     validate_submission_editable(submission)
 
     entries_table.delete_item(Key={"entryId": entry_id})
+
+    # Recalculate submission totalHours
+    recalculate_submission_total_hours(submission_id)
+
     return True

@@ -130,7 +130,7 @@
      ]
     },
     "Description": "API key for dev/testing only",
-    "Expires": 1806335686
+    "Expires": 1806378908
    },
    "DependsOn": [
     "TimesheetGraphQLApiSchema4D389766"
@@ -350,7 +350,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1VPQU7DMBB8S+/OQpN+IOXAgR5C8oBqMYuzJLaD11EVRf57ZSMEnGZnNNqZqaE+NfB4wJtU+n2qZn6DfYioJ/X04ToMaClSUD2JX4MmhTe57rgssjkN+3PAZfya24WzvbDXy3826JEsZqFd+IW2pBgt7L2fKYsFOz+z3kpiuZKavRG4eNNTJBfZOyXNFUUoCrQZlDRwXvVE8YxCSsTm3oGd+S39d0FKJe1nRvkxRDTsTFLdFkfvHho41nCsD5/CXIXVRbYE/TfeAameWNApAQAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1VPQU7DMBB8S+/O0jT9QMqBAz2E5AHVYhZnSWIbr6Mqivx3ZCMEnGZnNNqZOcHpfITjAe9S6bepmvkV9iGintTju+0w4EKRgupJ3Bo0KbzLbUfvZbMa9qeAfvycW8/ZXtjL9T8b9EgLZqH1/ExbUowL7L2bKYsFOzez3kpiuZKanRG4OtNTJBvZWSXNDUUoCrQZlDRwWfVE8YJCSmTJvQNb81v674KUStrPjPJjiGjYmqS6LY7OPjRQ11CfDx/CXIXVRl4I+m/8AoMqHcMpAQAA"
    },
    "Metadata": {
     "aws:cdk:path": "ColabsTimesheetApiStack-dev/CDKMetadata/Default"

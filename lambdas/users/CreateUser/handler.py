@@ -165,7 +165,7 @@ def create_user(event):
 
     now = _now_iso()
 
-    approval_status = "Approved" if caller["userType"] == "superadmin" else "Pending_Approval"
+    approval_status = "Approved"
 
     # Create Cognito user first to get the sub (used as userId)
     cognito_response = cognito.admin_create_user(
