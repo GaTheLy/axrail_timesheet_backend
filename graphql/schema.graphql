@@ -42,12 +42,12 @@ type User @aws_api_key @aws_cognito_user_pools {
   email: String!
   fullName: String!
   userType: UserType!
-  role: Role!
+  role: Role
   status: UserStatus!
   approval_status: ApprovalStatus!
   rejectionReason: String
-  positionId: ID!
-  departmentId: ID!
+  positionId: ID
+  departmentId: ID
   supervisorId: ID
   createdAt: AWSDateTime!
   createdBy: ID
@@ -209,7 +209,7 @@ input CreateUserInput {
   userType: UserType!
   role: Role
   positionId: ID
-  departmentId: ID!
+  departmentId: ID
   supervisorId: ID
 }
 

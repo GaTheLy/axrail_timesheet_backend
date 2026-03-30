@@ -195,17 +195,21 @@ def create_user(event):
         "email": email,
         "fullName": full_name,
         "userType": target_user_type,
-        "role": role,
         "status": "active",
         "approval_status": approval_status,
         "rejectionReason": "",
-        "positionId": position_id,
-        "departmentId": department_id,
         "createdAt": now,
         "createdBy": caller["userId"],
         "updatedAt": now,
         "updatedBy": caller["userId"],
     }
+    # Only include GSI key attributes if non-empty (DynamoDB rejects empty string GSI keys)
+    if role:
+        item["role"] = role
+    if position_id:
+        item["positionId"] = position_id
+    if department_id:
+        item["departmentId"] = department_id
     if supervisor_id:
         item["supervisorId"] = supervisor_id
 

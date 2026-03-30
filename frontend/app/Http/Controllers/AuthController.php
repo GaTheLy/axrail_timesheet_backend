@@ -70,6 +70,7 @@ class AuthController extends Controller
             try {
                 $sessionTracker = app(SessionTrackerService::class);
                 $sessionTracker->putSession($result['user']['userId'], $sessionToken);
+                Log::info('Session token stored in DynamoDB for user: ' . $result['user']['userId']);
             } catch (Exception $e) {
                 Log::error('Failed to store session token in DynamoDB: ' . $e->getMessage());
             }

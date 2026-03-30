@@ -16,7 +16,11 @@ class SessionTrackerService
             'region'  => config('aws.region'),
             'version' => 'latest',
         ]);
-        $this->tableName = config('aws.session_tracker_table');
+        $this->tableName = config('aws.session_tracker_table') ?? '';
+
+        if (empty($this->tableName)) {
+            \Illuminate\Support\Facades\Log::warning('SESSION_TRACKER_TABLE is not configured — single-device login enforcement is disabled');
+        }
     }
 
     /**

@@ -77,6 +77,13 @@ class CognitoAuth
                     $trackerService = app(SessionTrackerService::class);
                     $storedToken = $trackerService->getSessionToken($userId);
 
+                    Log::debug('Session validation', [
+                        'userId' => $userId,
+                        'sessionTokenPresent' => !empty($sessionToken),
+                        'storedTokenPresent' => !empty($storedToken),
+                        'tokensMatch' => $storedToken === $sessionToken,
+                    ]);
+
                     if ($storedToken !== null && $storedToken !== $sessionToken) {
                         // Stale session detected — user logged in from another device
                         $accessToken = $session->get('accessToken');

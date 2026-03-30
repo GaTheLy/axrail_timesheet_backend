@@ -70,14 +70,28 @@ class UserManagementController extends Controller
     {
         $graphql = new GraphQLClient();
 
+        $userType = $request->input('userType', 'user');
+
         $input = [
             'email'        => $request->input('email'),
             'fullName'     => $request->input('fullName'),
-            'userType'     => 'user',
-            'role'         => 'Employee',
+            'userType'     => $userType,
             'positionId'   => $request->input('positionId', ''),
             'departmentId' => $request->input('departmentId', ''),
         ];
+
+        // Only include role for regular users
+        if ($userType === 'user') {
+            $input['role'] = 'Employee';
+        }
+
+        // Remove empty optional fields to avoid GraphQL null coercion
+        if (empty($input['positionId'])) {
+            unset($input['positionId']);
+        }
+        if (empty($input['departmentId'])) {
+            unset($input['departmentId']);
+        }
 
         try {
             $result = $graphql->mutate(GraphQLQueries::CREATE_USER, [

@@ -303,7 +303,7 @@
                             @endif
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="form-group-department">
                             <label for="user-form-department">Department</label>
                             <select
                                 id="user-form-department"
@@ -797,6 +797,7 @@
     // ── Toggle Position/Role fields based on userType selection ──────
 
     var positionGroup = document.getElementById('form-group-position');
+    var departmentGroup = document.getElementById('form-group-department');
 
     function toggleUserTypeFields() {
         if (!formRole || formRole.tagName !== 'SELECT') return;
@@ -807,10 +808,14 @@
         if (positionGroup) {
             positionGroup.style.display = isAdmin ? 'none' : '';
         }
+        if (departmentGroup) {
+            departmentGroup.style.display = isAdmin ? 'none' : '';
+        }
 
-        // Clear position value when hidden
-        if (isAdmin && formPosition) {
-            formPosition.value = '';
+        // Clear values when hidden
+        if (isAdmin) {
+            if (formPosition) formPosition.value = '';
+            if (formDepartment) formDepartment.value = '';
         }
     }
 
