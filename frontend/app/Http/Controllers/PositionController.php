@@ -19,12 +19,20 @@ class PositionController extends Controller
         } catch (\Exception $e) {
             return view('pages.admin.positions', [
                 'positions' => [],
+                'departments' => [],
                 'error' => 'Failed to load positions: ' . $e->getMessage(),
             ]);
         }
 
+        $departments = [];
+        try {
+            $deptResult = $graphql->query(GraphQLQueries::LIST_DEPARTMENTS);
+            $departments = $deptResult['listDepartments'] ?? [];
+        } catch (\Exception $e) {}
+
         return view('pages.admin.positions', [
             'positions' => $positions,
+            'departments' => $departments,
             'error' => null,
         ]);
     }
@@ -34,8 +42,8 @@ class PositionController extends Controller
         $graphql = new GraphQLClient();
 
         $input = ['positionName' => $request->input('positionName')];
-        $desc = $request->input('description');
-        if ($desc) $input['description'] = $desc;
+        $departmentId = $request->input('departmentId');
+        if ($departmentId) $input['departmentId'] = $departmentId;
 
         try {
             $result = $graphql->mutate(GraphQLQueries::CREATE_POSITION, ['input' => $input]);
@@ -96,8 +104,8 @@ class PositionController extends Controller
         $graphql = new GraphQLClient();
 
         $input = ['positionName' => $request->input('positionName')];
-        $desc = $request->input('description');
-        if ($desc !== null) $input['description'] = $desc;
+        $departmentId = $request->input('departmentId');
+        if ($departmentId !== null) $input['departmentId'] = $departmentId;
 
         try {
             $result = $graphql->mutate(GraphQLQueries::UPDATE_POSITION, [

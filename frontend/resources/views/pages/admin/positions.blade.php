@@ -44,7 +44,7 @@
                 <thead>
                     <tr>
                         <th>POSITION</th>
-                        <th>DESCRIPTION</th>
+                        <th>DEPARTMENT</th>
                         <th>CREATED BY</th>
                         <th>CREATED AT</th>
                         <th>APPROVAL STATUS</th>
@@ -61,7 +61,7 @@
                         @endphp
                         <tr data-position-id="{{ $positionId }}" data-approval-status="{{ $approvalStatus }}">
                             <td><strong>{{ $pos['positionName'] ?? '' }}</strong></td>
-                            <td>{{ $pos['description'] ?? '—' }}</td>
+                            <td>{{ $pos['departmentId'] ?? '—' }}</td>
                             <td>{{ $pos['createdBy'] ?? '—' }}</td>
                             <td>{{ isset($pos['createdAt']) ? \Carbon\Carbon::parse($pos['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>
@@ -125,8 +125,13 @@
                         <input type="text" id="pos-form-name" placeholder="Enter position name" required aria-label="Position name">
                     </div>
                     <div class="form-group">
-                        <label for="pos-form-desc">Description</label>
-                        <input type="text" id="pos-form-desc" placeholder="Enter description (optional)" aria-label="Description">
+                        <label for="pos-form-dept">Department</label>
+                        <select id="pos-form-dept" aria-label="Department">
+                            <option value="">Select Department</option>
+                            @foreach($departments ?? [] as $dept)
+                                <option value="{{ $dept['departmentId'] }}">{{ $dept['departmentName'] }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </form>
             </div>
@@ -151,7 +156,7 @@
     var saveBtn = document.getElementById('pos-modal-save');
     var addBtn = document.getElementById('btn-add-position');
     var nameInput = document.getElementById('pos-form-name');
-    var descInput = document.getElementById('pos-form-desc');
+    var descInput = document.getElementById('pos-form-dept');
 
     var approvalFilter = document.getElementById('approval-status-filter');
     var searchInput = document.getElementById('search-input');
@@ -183,18 +188,18 @@
     var editingPosId = null;
     var modalTitle = document.getElementById('pos-modal-title');
 
-    function openModal(mode, posId, posName, posDesc) {
+    function openModal(mode, posId, posName, posDept) {
         if (!overlay) return;
         if (mode === 'edit') {
             editingPosId = posId;
             modalTitle.textContent = 'Edit Position';
             nameInput.value = posName || '';
-            descInput.value = posDesc || '';
+            if (descInput) descInput.value = posDept || '';
         } else {
             editingPosId = null;
             modalTitle.textContent = 'Add Position';
             nameInput.value = '';
-            descInput.value = '';
+            if (descInput) descInput.value = '';
         }
         overlay.classList.add('active');
     }
@@ -211,9 +216,9 @@
             var posId = this.getAttribute('data-position-id');
             var row = this.closest('tr');
             var posName = row ? row.querySelector('td:nth-child(1)').textContent.trim() : '';
-            var posDesc = row ? row.querySelector('td:nth-child(2)').textContent.trim() : '';
-            if (posDesc === '—') posDesc = '';
-            openModal('edit', posId, posName, posDesc);
+            var posDept = row ? row.querySelector('td:nth-child(2)').textContent.trim() : '';
+            if (posDept === '—') posDept = '';
+            openModal('edit', posId, posName, posDept);
         });
     });
 
@@ -222,8 +227,8 @@
             var name = nameInput ? nameInput.value.trim() : '';
             if (!name) { nameInput.focus(); return; }
             var body = { positionName: name };
-            var desc = descInput ? descInput.value.trim() : '';
-            if (desc) body.description = desc;
+            var dept = descInput ? descInput.value.trim() : '';
+            if (dept) body.departmentId = dept;
 
             saveBtn.disabled = true;
             var url, method;

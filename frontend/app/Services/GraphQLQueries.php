@@ -422,7 +422,7 @@ class GraphQLQueries
         listPositions {
             positionId
             positionName
-            description
+            departmentId
             createdAt
             createdBy
             updatedAt
@@ -459,7 +459,7 @@ class GraphQLQueries
         createPosition(input: $input) {
             positionId
             positionName
-            description
+            departmentId
             createdAt
             createdBy
         }
@@ -567,7 +567,7 @@ class GraphQLQueries
         updatePosition(positionId: $positionId, input: $input) {
             positionId
             positionName
-            description
+            departmentId
             approval_status
         }
     }
@@ -679,7 +679,7 @@ class GraphQLQueries
         approvePosition(positionId: $positionId) {
             positionId
             positionName
-            description
+            departmentId
             approval_status
             rejectionReason
             createdAt
@@ -700,7 +700,7 @@ class GraphQLQueries
         rejectPosition(positionId: $positionId, reason: $reason) {
             positionId
             positionName
-            description
+            departmentId
             approval_status
             rejectionReason
             createdAt
