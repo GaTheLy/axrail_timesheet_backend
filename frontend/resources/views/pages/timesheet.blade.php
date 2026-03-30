@@ -148,5 +148,11 @@
 @endsection
 
 @push('scripts')
+    <script>
+        window.timesheetPeriod = {
+            startDate: '{{ $period['startDate'] ?? '' }}',
+            endDate: '{{ $period['endDate'] ?? '' }}'
+        };
+    </script>
     <script src="{{ asset('js/timesheet.js') }}"></script>
 @endpush

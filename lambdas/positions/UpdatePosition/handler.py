@@ -27,13 +27,20 @@ def handler(event, context):
 
 
 def _check_position_name_unique(table, position_name, exclude_position_id=None):
-    response = table.query(
-        IndexName="positionName-index",
-        KeyConditionExpression=Key("positionName").eq(position_name),
-    )
-    for item in response.get("Items", []):
-        if item["positionId"] != exclude_position_id:
-            raise ValueError(f"Position name '{position_name}' is already in use")
+def _check_position_name_unique(table, position_name, exclude_position_id=None):
+    """Check for case-insensitive duplicate position names."""
+    response = table.scan(ProjectionExpression="positionId, positionName")
+    items = response.get("Items", [])
+    while "LastEvaluatedKey" in response:
+        response = table.scan(
+            ProjectionExpression="positionId, positionName",
+            ExclusiveStartKey=response["LastEvaluatedKey"],
+        )
+        items.extend(response.get("Items", []))
+    for item in items:
+        if item.get("positionName", "").lower() == position_name.lower():
+            if item["positionId"] != exclude_position_id:
+                raise ValueError(f"Position name '{position_name}' is already in use")
 
 
 def update_position(event):

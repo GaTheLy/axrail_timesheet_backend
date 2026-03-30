@@ -244,7 +244,7 @@ input UpdateDepartmentInput {
 
 input CreatePositionInput {
   positionName: String!
-  departmentId: ID
+  departmentId: ID!
 }
 
 input UpdatePositionInput {

@@ -38,12 +38,18 @@ def _now_iso():
 
 
 def _check_department_name_unique(table, department_name):
-    response = table.query(
-        IndexName="departmentName-index",
-        KeyConditionExpression=Key("departmentName").eq(department_name),
-    )
-    for item in response.get("Items", []):
-        raise ValueError(f"Department name '{department_name}' is already in use")
+    """Check for case-insensitive duplicate department names."""
+    response = table.scan(ProjectionExpression="departmentId, departmentName")
+    items = response.get("Items", [])
+    while "LastEvaluatedKey" in response:
+        response = table.scan(
+            ProjectionExpression="departmentId, departmentName",
+            ExclusiveStartKey=response["LastEvaluatedKey"],
+        )
+        items.extend(response.get("Items", []))
+    for item in items:
+        if item.get("departmentName", "").lower() == department_name.lower():
+            raise ValueError(f"Department name '{department_name}' is already in use")
 
 
 def create_department(event):

@@ -174,6 +174,7 @@ def create_user(event):
         UserAttributes=[
             {"Name": "email", "Value": email},
             {"Name": "email_verified", "Value": "true"},
+            {"Name": "name", "Value": full_name},
             {"Name": "custom:userType", "Value": target_user_type},
             {"Name": "custom:role", "Value": role},
             {"Name": "custom:departmentId", "Value": department_id},

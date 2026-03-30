@@ -216,55 +216,74 @@
     }
 
     function handleExportPdf() {
-        var exportUrl = getExportUrl();
-        if (!exportUrl || !exportBtn) return;
-
-        var periodId = periodSelect ? periodSelect.value : '';
-        if (!periodId) {
-            if (window.showNotification) {
-                window.showNotification('Please select a period first.', 'error');
-            } else {
-                alert('Please select a period first.');
-            }
+        var table = document.getElementById('report-table');
+        if (!table) {
+            showExportError('No report data to export.');
             return;
         }
 
-        // Disable button and show loading state
-        var originalText = exportBtn.textContent;
-        exportBtn.disabled = true;
-        exportBtn.textContent = 'Exporting...';
+        var title = document.querySelector('.page-title');
+        var titleText = title ? title.textContent : 'Report';
 
-        var url = exportUrl + '?periodId=' + encodeURIComponent(periodId);
+        // Get the selected period text from the period dropdown
+        var periodText = '';
+        var periodSelect = document.getElementById('period-select');
+        if (periodSelect && periodSelect.selectedIndex >= 0) {
+            periodText = periodSelect.options[periodSelect.selectedIndex].textContent.trim();
+        }
 
-        fetch(url, {
-            method: 'GET',
-            headers: { 'Accept': 'application/json' }
-        })
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            if (data.success && data.url) {
-                window.open(data.url, '_blank');
-            } else {
-                var errorMsg = (data.error) || 'Failed to generate PDF. Please try again.';
-                showExportError(errorMsg);
+        // Extract headers
+        var headers = [];
+        var thElements = table.querySelectorAll('thead th');
+        for (var h = 0; h < thElements.length; h++) {
+            headers.push(thElements[h].textContent.trim());
+        }
+
+        // Extract ALL rows data (not just visible ones)
+        var bodyData = [];
+        for (var i = 0; i < allRows.length; i++) {
+            var row = allRows[i];
+            var cells = row.querySelectorAll('td');
+            var rowData = [];
+            for (var j = 0; j < cells.length; j++) {
+                rowData.push(cells[j].textContent.trim());
             }
-        })
-        .catch(function (err) {
-            showExportError('An error occurred while exporting. Please try again.');
-        })
-        .finally(function () {
-            exportBtn.disabled = false;
-            exportBtn.textContent = '';
-            // Re-add the SVG icon and text
-            exportBtn.innerHTML =
-                '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-                '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>' +
-                '<polyline points="7 10 12 15 17 10"></polyline>' +
-                '<line x1="12" y1="15" x2="12" y2="3"></line>' +
-                '</svg> Export PDF';
+            bodyData.push(rowData);
+        }
+
+        // Generate PDF using jsPDF + AutoTable
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+        doc.setFontSize(16);
+        doc.text(titleText, 14, 15);
+
+        doc.setFontSize(10);
+        var subtitleY = 22;
+        if (periodText) {
+            doc.text('Period: ' + periodText, 14, subtitleY);
+            subtitleY += 6;
+        }
+        doc.setFontSize(9);
+        doc.text('Generated: ' + new Date().toLocaleString(), 14, subtitleY);
+
+        doc.autoTable({
+            head: [headers],
+            body: bodyData,
+            startY: subtitleY + 6,
+            styles: { fontSize: 8, cellPadding: 3 },
+            headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [248, 250, 252] },
+            margin: { left: 14, right: 14 },
         });
+
+        // Auto-download the PDF
+        var filename = titleText.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+        if (periodText) {
+            filename += '_' + periodText.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+        }
+        filename += '.pdf';
+        doc.save(filename);
     }
 
     // ── Sidebar toggle fallback ─────────────────────────────────────────

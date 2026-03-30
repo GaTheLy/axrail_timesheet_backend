@@ -39,13 +39,19 @@ def _validate_planned_hours(value):
 
 
 def _check_project_code_unique(table, project_code, exclude_project_id=None):
-    response = table.query(
-        IndexName="projectCode-index",
-        KeyConditionExpression=Key("projectCode").eq(project_code),
-    )
-    for item in response.get("Items", []):
-        if item["projectId"] != exclude_project_id:
-            raise ValueError(f"Project code '{project_code}' is already in use")
+    """Check for case-insensitive duplicate project codes."""
+    response = table.scan(ProjectionExpression="projectId, projectCode")
+    items = response.get("Items", [])
+    while "LastEvaluatedKey" in response:
+        response = table.scan(
+            ProjectionExpression="projectId, projectCode",
+            ExclusiveStartKey=response["LastEvaluatedKey"],
+        )
+        items.extend(response.get("Items", []))
+    for item in items:
+        if item.get("projectCode", "").lower() == project_code.lower():
+            if item["projectId"] != exclude_project_id:
+                raise ValueError(f"Project code '{project_code}' is already in use")
 
 
 def update_project(event):

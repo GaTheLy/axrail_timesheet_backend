@@ -153,10 +153,6 @@ class AuthController extends Controller
      */
     public function showResetPassword(Request $request)
     {
-        if (!$request->session()->has('email')) {
-            return redirect('/forgot-password');
-        }
-
         return view('pages.reset-password');
     }
 
@@ -183,9 +179,11 @@ class AuthController extends Controller
             return redirect('/login')
                 ->with('status', 'Your password has been reset successfully. Please sign in.');
         } catch (Exception $e) {
-            return back()->withErrors([
-                'auth' => 'Unable to reset your password. Please check your verification code and try again.',
-            ])->withInput($request->only('email'));
+            \Log::error('Reset password failed: ' . $e->getMessage());
+            return redirect('/reset-password')
+                ->with('email', $email)
+                ->withErrors(['auth' => $e->getMessage() ?: 'Unable to reset your password. Please check your verification code and try again.'])
+                ->withInput($request->only('email'));
         }
     }
 
@@ -253,8 +251,14 @@ class AuthController extends Controller
 
             return redirect('/dashboard');
         } catch (Exception $e) {
+            $errorMsg = $e->getMessage();
+            // If the challenge session expired, give a clearer message
+            if (str_contains($errorMsg, 'Invalid session') || str_contains($errorMsg, 'session') || str_contains($errorMsg, 'expired')) {
+                $errorMsg = 'Your session has expired. Please sign in again with your temporary password.';
+                return redirect('/login')->withErrors(['auth' => $errorMsg]);
+            }
             return back()->withErrors([
-                'auth' => $e->getMessage(),
+                'auth' => $errorMsg ?: 'Unable to set your new password. Please try again.',
             ]);
         }
     }

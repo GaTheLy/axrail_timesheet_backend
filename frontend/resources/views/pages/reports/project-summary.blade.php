@@ -136,5 +136,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/jspdf-autotable@latest/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="{{ asset('js/reports.js') }}"></script>
 @endpush
