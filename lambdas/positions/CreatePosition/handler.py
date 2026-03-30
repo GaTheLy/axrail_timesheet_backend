@@ -41,7 +41,7 @@ def create_position(event):
     caller = require_user_type(event, ["superadmin", "admin"])
     args = event["arguments"]["input"]
     position_name = args["positionName"]
-    description = args.get("description", "")
+    department_id = args.get("departmentId", "")
     table = dynamodb.Table(POSITIONS_TABLE)
     _check_position_name_unique(table, position_name)
 
@@ -53,7 +53,6 @@ def create_position(event):
     item = {
         "positionId": position_id,
         "positionName": position_name,
-        "description": description,
         "approval_status": approval_status,
         "rejectionReason": "",
         "createdAt": now,
@@ -61,5 +60,7 @@ def create_position(event):
         "updatedAt": now,
         "updatedBy": caller["userId"],
     }
+    if department_id:
+        item["departmentId"] = department_id
     table.put_item(Item=item)
     return item

@@ -68,11 +68,11 @@ def update_position(event):
         expr_names["#positionName"] = "positionName"
         update_parts.append("#positionName = :positionName")
 
-    new_description = args.get("description")
-    if new_description is not None:
-        expr_values[":description"] = new_description
-        expr_names["#description"] = "description"
-        update_parts.append("#description = :description")
+    new_department_id = args.get("departmentId")
+    if new_department_id is not None:
+        expr_values[":departmentId"] = new_department_id
+        expr_names["#departmentId"] = "departmentId"
+        update_parts.append("#departmentId = :departmentId")
 
     update_expr = "SET " + ", ".join(update_parts)
 
