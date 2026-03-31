@@ -31,12 +31,18 @@ class DepartmentController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'departmentName' => ['required', 'string', 'max:255', 'regex:/^[^=+\-@\t\r].*/'],
+        ], [
+            'departmentName.regex' => 'Department name cannot start with =, +, -, or @ characters.',
+        ]);
+
         $graphql = new GraphQLClient();
 
         try {
             $result = $graphql->mutate(GraphQLQueries::CREATE_DEPARTMENT, [
                 'input' => [
-                    'departmentName' => $request->input('departmentName'),
+                    'departmentName' => $this->sanitizeFormulaChars($request->input('departmentName')),
                 ],
             ]);
 
@@ -94,13 +100,19 @@ class DepartmentController extends Controller
 
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'departmentName' => ['required', 'string', 'max:255', 'regex:/^[^=+\-@\t\r].*/'],
+        ], [
+            'departmentName.regex' => 'Department name cannot start with =, +, -, or @ characters.',
+        ]);
+
         $graphql = new GraphQLClient();
 
         try {
             $result = $graphql->mutate(GraphQLQueries::UPDATE_DEPARTMENT, [
                 'departmentId' => $id,
                 'input' => [
-                    'departmentName' => $request->input('departmentName'),
+                    'departmentName' => $this->sanitizeFormulaChars($request->input('departmentName')),
                 ],
             ]);
 
@@ -108,6 +120,23 @@ class DepartmentController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 422);
         }
+    }
+
+    /**
+     * Sanitize string to prevent CSV formula injection.
+     * Prefixes dangerous characters with a single quote to neutralize formulas.
+     */
+    private function sanitizeFormulaChars(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        
+        if (preg_match('/^[=+\-@\t\r]/', $value)) {
+            return "'" . $value;
+        }
+        
+        return $value;
     }
 
 }

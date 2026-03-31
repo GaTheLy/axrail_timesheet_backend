@@ -27,39 +27,17 @@
     <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
         <h2 style="font-size: 1.1rem; font-weight: 600; color: #f1f5f9; margin-bottom: 1.25rem;">Profile Settings</h2>
 
-        {{-- Avatar --}}
+        {{-- Avatar display (upload disabled) --}}
         <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;">
             <div id="avatar-container" style="position: relative;">
-                @if(!empty($profile['avatarUrl']))
-                    <img
-                        id="avatar-img"
-                        src="{{ $profile['avatarUrl'] }}"
-                        alt="Profile avatar"
-                        style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid #334155;"
-                    >
-                @else
-                    <div
-                        id="avatar-placeholder"
-                        class="user-avatar"
-                        style="width: 72px; height: 72px; font-size: 1.5rem;"
-                        aria-label="Profile avatar placeholder"
-                    >
-                        {{ strtoupper(substr($profile['fullName'] ?? 'U', 0, 1)) }}
-                    </div>
-                @endif
-            </div>
-            <div>
-                <label for="avatar-upload" class="btn btn-secondary btn-sm" style="cursor: pointer;">
-                    Upload Photo
-                </label>
-                <input
-                    type="file"
-                    id="avatar-upload"
-                    accept="image/jpeg,image/png,image/jpg,image/gif"
-                    style="display: none;"
-                    aria-label="Upload avatar image"
+                <div
+                    id="avatar-placeholder"
+                    class="user-avatar"
+                    style="width: 72px; height: 72px; font-size: 1.5rem;"
+                    aria-label="Profile avatar placeholder"
                 >
-                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.375rem;">JPG, PNG or GIF. Max 2MB.</p>
+                    {{ strtoupper(substr($profile['fullName'] ?? 'U', 0, 1)) }}
+                </div>
             </div>
         </div>
 
@@ -166,76 +144,6 @@
 <script>
 (function () {
     var csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-    // ====================================================================
-    // Avatar Upload
-    // ====================================================================
-    var avatarInput = document.getElementById('avatar-upload');
-    if (avatarInput) {
-        avatarInput.addEventListener('change', function () {
-            var file = this.files[0];
-            if (!file) return;
-
-            // Validate file size (2MB max)
-            if (file.size > 2 * 1024 * 1024) {
-                showNotification('File size must be under 2MB.', 'error');
-                this.value = '';
-                return;
-            }
-
-            var formData = new FormData();
-            formData.append('avatar', file);
-
-            var overlay = document.getElementById('loading-overlay');
-            if (overlay) overlay.style.display = 'flex';
-
-            fetch('/settings/avatar', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: formData
-            })
-            .then(function (res) { return res.json(); })
-            .then(function (data) {
-                if (overlay) overlay.style.display = 'none';
-
-                if (data.success) {
-                    showNotification(data.message || 'Avatar uploaded successfully.', 'success');
-                    updateAvatarDisplay(data.avatarUrl);
-                } else {
-                    showNotification(data.message || 'Failed to upload avatar.', 'error');
-                }
-            })
-            .catch(function () {
-                if (overlay) overlay.style.display = 'none';
-                showNotification('Network error. Please try again.', 'error');
-            });
-
-            this.value = '';
-        });
-    }
-
-    function updateAvatarDisplay(url) {
-        var container = document.getElementById('avatar-container');
-        if (!container) return;
-
-        var existingImg = document.getElementById('avatar-img');
-        var placeholder = document.getElementById('avatar-placeholder');
-
-        if (existingImg) {
-            existingImg.src = url;
-        } else {
-            if (placeholder) placeholder.style.display = 'none';
-            var img = document.createElement('img');
-            img.id = 'avatar-img';
-            img.src = url;
-            img.alt = 'Profile avatar';
-            img.style.cssText = 'width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid #334155;';
-            container.insertBefore(img, container.firstChild);
-        }
-    }
 
     // ====================================================================
     // Password Validation & Change

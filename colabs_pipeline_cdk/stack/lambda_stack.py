@@ -520,7 +520,7 @@ class TimesheetLambdaStack(Stack):
         fn = self._make_lambda("AddEntryLambda", "TimesheetAddEntry",
                                "entries.AddTimesheetEntry.handler.handler", add_entry_env)
         self._tables["entries"].grant_read_write_data(fn)
-        self._tables["submissions"].grant_read_data(fn)
+        self._tables["submissions"].grant_read_write_data(fn)
         self._tables["projects"].grant_read_data(fn)
         self._tables["project_assignments"].grant_read_write_data(fn)
         ds = self._graphql_api.add_lambda_data_source("AddEntryDataSource", fn)
@@ -530,7 +530,7 @@ class TimesheetLambdaStack(Stack):
         fn = self._make_lambda("UpdateEntryLambda", "TimesheetUpdateEntry",
                                "entries.UpdateTimesheetEntry.handler.handler", entry_env)
         self._tables["entries"].grant_read_write_data(fn)
-        self._tables["submissions"].grant_read_data(fn)
+        self._tables["submissions"].grant_read_write_data(fn)
         self._tables["projects"].grant_read_data(fn)
         ds = self._graphql_api.add_lambda_data_source("UpdateEntryDataSource", fn)
         ds.create_resolver("Mutation_updateTimesheetEntry_Resolver", type_name="Mutation", field_name="updateTimesheetEntry")
@@ -539,7 +539,7 @@ class TimesheetLambdaStack(Stack):
         fn = self._make_lambda("RemoveEntryLambda", "TimesheetRemoveEntry",
                                "entries.RemoveTimesheetEntry.handler.handler", entry_env)
         self._tables["entries"].grant_read_write_data(fn)
-        self._tables["submissions"].grant_read_data(fn)
+        self._tables["submissions"].grant_read_write_data(fn)
         ds = self._graphql_api.add_lambda_data_source("RemoveEntryDataSource", fn)
         ds.create_resolver("Mutation_removeTimesheetEntry_Resolver", type_name="Mutation", field_name="removeTimesheetEntry")
 

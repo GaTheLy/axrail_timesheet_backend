@@ -39,9 +39,15 @@ class PositionController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'positionName' => ['required', 'string', 'max:255', 'regex:/^[^=+\-@\t\r].*/'],
+        ], [
+            'positionName.regex' => 'Position name cannot start with =, +, -, or @ characters.',
+        ]);
+
         $graphql = new GraphQLClient();
 
-        $input = ['positionName' => $request->input('positionName')];
+        $input = ['positionName' => $this->sanitizeFormulaChars($request->input('positionName'))];
         $departmentId = $request->input('departmentId');
         if ($departmentId) $input['departmentId'] = $departmentId;
 
@@ -101,9 +107,15 @@ class PositionController extends Controller
 
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'positionName' => ['required', 'string', 'max:255', 'regex:/^[^=+\-@\t\r].*/'],
+        ], [
+            'positionName.regex' => 'Position name cannot start with =, +, -, or @ characters.',
+        ]);
+
         $graphql = new GraphQLClient();
 
-        $input = ['positionName' => $request->input('positionName')];
+        $input = ['positionName' => $this->sanitizeFormulaChars($request->input('positionName'))];
         $departmentId = $request->input('departmentId');
         if ($departmentId !== null) $input['departmentId'] = $departmentId;
 
@@ -117,6 +129,23 @@ class PositionController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 422);
         }
+    }
+
+    /**
+     * Sanitize string to prevent CSV formula injection.
+     * Prefixes dangerous characters with a single quote to neutralize formulas.
+     */
+    private function sanitizeFormulaChars(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        
+        if (preg_match('/^[=+\-@\t\r]/', $value)) {
+            return "'" . $value;
+        }
+        
+        return $value;
     }
 
 }

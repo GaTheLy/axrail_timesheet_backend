@@ -47,7 +47,7 @@
             {{-- Reports menu: visible only to Tech_Lead/Project_Manager with userType user --}}
             @if(in_array($role, ['Tech_Lead', 'Project_Manager']) && $userType === 'user')
                 <li class="nav-group {{ request()->is('reports*') ? 'active open' : '' }}">
-                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('reports*') ? 'true' : 'false' }}" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.nav-group').classList.toggle('open');">
+                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('reports*') ? 'true' : 'false' }}" onclick="this.parentElement.classList.toggle('open'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('open'));">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
@@ -93,8 +93,8 @@
             {{-- Admin nav items --}}
             @if(in_array($userType, ['admin', 'superadmin']))
                 {{-- Master Data group --}}
-                <li class="nav-group {{ request()->is('admin/*') ? 'active open' : '' }}">
-                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('admin/*') ? 'true' : 'false' }}" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.nav-group').classList.toggle('open');">
+                <li class="nav-group {{ request()->is('admin/users*', 'admin/departments*', 'admin/positions*', 'admin/projects*') ? 'active open' : '' }}">
+                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('admin/users*', 'admin/departments*', 'admin/positions*', 'admin/projects*') ? 'true' : 'false' }}" onclick="this.parentElement.classList.toggle('open'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('open'));">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M20 7h-9"></path>
                             <path d="M14 17H5"></path>
@@ -132,7 +132,7 @@
 
                 {{-- Reports group for admin --}}
                 <li class="nav-group {{ request()->is('reports*') ? 'active open' : '' }}">
-                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('reports*') ? 'true' : 'false' }}" onclick="this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'); this.closest('.nav-group').classList.toggle('open');">
+                    <button class="nav-group-toggle" aria-expanded="{{ request()->is('reports*') ? 'true' : 'false' }}" onclick="this.parentElement.classList.toggle('open'); this.setAttribute('aria-expanded', this.parentElement.classList.contains('open'));">
                         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>

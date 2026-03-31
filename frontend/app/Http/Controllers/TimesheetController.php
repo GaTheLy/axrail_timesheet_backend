@@ -93,7 +93,10 @@ class TimesheetController extends Controller
     }
 
     /**
-     * Show a specific submission's detail view (admin/superadmin only).
+     * Show a specific submission's detail view.
+     *
+     * Admin/superadmin users can view any submission.
+     * Regular users can only view their own submissions.
      *
      * Fetches the submission via getTimesheetSubmission, resolves the
      * employee name and period string, then renders the detail template.
@@ -101,10 +104,7 @@ class TimesheetController extends Controller
     public function showSubmission(string $submissionId)
     {
         $userType = session('user.userType', 'user');
-
-        if (!in_array($userType, ['admin', 'superadmin'])) {
-            return redirect('/timesheet');
-        }
+        $currentUserId = session('user.userId', '');
 
         try {
             // Fetch the submission with entries
@@ -122,6 +122,16 @@ class TimesheetController extends Controller
                     'entries' => [],
                     'error' => 'Submission not found.',
                 ]);
+            }
+
+            // Authorization check: regular users can only view their own submissions
+            $submissionOwnerId = $submission['employeeId'] ?? '';
+            $isAdmin = in_array($userType, ['admin', 'superadmin']);
+            $isOwner = $currentUserId === $submissionOwnerId;
+
+            if (!$isAdmin && !$isOwner) {
+                \Log::warning("Unauthorized submission access attempt: User {$currentUserId} tried to access submission {$submissionId} owned by {$submissionOwnerId}");
+                return redirect('/timesheet')->withErrors(['auth' => 'You are not authorized to view this submission.']);
             }
 
             $entries = $submission['entries'] ?? [];
@@ -199,7 +209,7 @@ class TimesheetController extends Controller
             }
 
             $submissionData = $this->graphql->query(
-                'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { submissionId periodId status entries { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } } }',
+                'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { submissionId periodId status entries { entryId projectCode description monday tuesday wednesday thursday friday saturday sunday } } }',
                 ['filter' => ['periodId' => $period['periodId']]]
             );
 
@@ -246,6 +256,7 @@ class TimesheetController extends Controller
     {
         $request->validate([
             'projectCode' => 'required|string',
+            'description' => 'nullable|string|max:255',
             'date' => 'required|date',
             'chargedHours' => 'required|numeric|min:0',
         ]);
@@ -266,12 +277,13 @@ class TimesheetController extends Controller
                 $request->input('projectCode'),
                 $request->input('date'),
                 (float) $request->input('chargedHours'),
-                $entries
+                $entries,
+                $request->input('description', '')
             );
 
             if ($mapping['operation'] === 'add') {
                 $result = $this->graphql->mutate(
-                    'mutation AddTimesheetEntry($submissionId: ID!, $input: TimesheetEntryInput!) { addTimesheetEntry(submissionId: $submissionId, input: $input) { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } }',
+                    'mutation AddTimesheetEntry($submissionId: ID!, $input: TimesheetEntryInput!) { addTimesheetEntry(submissionId: $submissionId, input: $input) { entryId projectCode description monday tuesday wednesday thursday friday saturday sunday } }',
                     [
                         'submissionId' => $submission['submissionId'],
                         'input' => $mapping['input'],
@@ -279,7 +291,7 @@ class TimesheetController extends Controller
                 );
             } else {
                 $result = $this->graphql->mutate(
-                    'mutation UpdateTimesheetEntry($entryId: ID!, $input: TimesheetEntryInput!) { updateTimesheetEntry(entryId: $entryId, input: $input) { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } }',
+                    'mutation UpdateTimesheetEntry($entryId: ID!, $input: TimesheetEntryInput!) { updateTimesheetEntry(entryId: $entryId, input: $input) { entryId projectCode description monday tuesday wednesday thursday friday saturday sunday } }',
                     [
                         'entryId' => $mapping['entryId'],
                         'input' => $mapping['input'],
@@ -304,6 +316,7 @@ class TimesheetController extends Controller
             'projectCode' => 'required|string',
             'date' => 'required|date',
             'chargedHours' => 'required|numeric|min:0',
+            'originalDate' => 'nullable|date',
         ]);
 
         try {
@@ -318,18 +331,48 @@ class TimesheetController extends Controller
             }
 
             $entries = $submission['entries'] ?? [];
-            $mapping = $this->mapper->mapToEntryInput(
-                $request->input('projectCode'),
-                $request->input('date'),
-                (float) $request->input('chargedHours'),
-                $entries
-            );
+            
+            // Find the existing entry by entryId
+            $existingEntry = $this->findEntryById($entryId, $entries);
+            
+            if (!$existingEntry) {
+                return response()->json(['error' => 'Entry not found.'], 404);
+            }
+
+            $newProjectCode = $request->input('projectCode');
+            $newDayOfWeek = strtolower(\Carbon\Carbon::parse($request->input('date'))->format('l'));
+            $hours = (float) $request->input('chargedHours');
+            $originalDate = $request->input('originalDate');
+            $originalDayOfWeek = $originalDate 
+                ? strtolower(\Carbon\Carbon::parse($originalDate)->format('l')) 
+                : null;
+
+            $dayColumns = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            // Use the new project code from the request
+            $input = [
+                'projectCode' => $newProjectCode,
+                'description' => $request->input('description', ''),
+            ];
+            
+            foreach ($dayColumns as $day) {
+                if ($day === $newDayOfWeek) {
+                    // Set hours on the new day
+                    $input[$day] = $hours;
+                } elseif ($originalDayOfWeek && $day === $originalDayOfWeek && $originalDayOfWeek !== $newDayOfWeek) {
+                    // Zero out the original day if date changed
+                    $input[$day] = 0;
+                } else {
+                    // Keep existing hours for other days
+                    $input[$day] = (float) ($existingEntry[$day] ?? 0);
+                }
+            }
 
             $result = $this->graphql->mutate(
-                'mutation UpdateTimesheetEntry($entryId: ID!, $input: TimesheetEntryInput!) { updateTimesheetEntry(entryId: $entryId, input: $input) { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } }',
+                'mutation UpdateTimesheetEntry($entryId: ID!, $input: TimesheetEntryInput!) { updateTimesheetEntry(entryId: $entryId, input: $input) { entryId projectCode description monday tuesday wednesday thursday friday saturday sunday } }',
                 [
                     'entryId' => $entryId,
-                    'input' => $mapping['input'],
+                    'input' => $input,
                 ]
             );
 
@@ -344,8 +387,7 @@ class TimesheetController extends Controller
     /**
      * Delete a timesheet entry (AJAX).
      *
-     * Uses the date param to determine whether to zero out a single day
-     * or remove the entire entry row.
+     * Removes the entire entry by its ID.
      */
     public function destroyEntry(Request $request, string $entryId): JsonResponse
     {
@@ -367,28 +409,11 @@ class TimesheetController extends Controller
                 return response()->json(['error' => 'Entry not found.'], 404);
             }
 
-            $date = $request->input('date');
-            $mapping = $this->mapper->mapToEntryInput(
-                $entry['projectCode'],
-                $date,
-                0,
-                $entries
+            // Always remove the entire entry
+            $result = $this->graphql->mutate(
+                'mutation RemoveTimesheetEntry($entryId: ID!) { removeTimesheetEntry(entryId: $entryId) }',
+                ['entryId' => $entryId]
             );
-
-            if ($mapping['operation'] === 'remove') {
-                $result = $this->graphql->mutate(
-                    'mutation RemoveTimesheetEntry($entryId: ID!) { removeTimesheetEntry(entryId: $entryId) { entryId } }',
-                    ['entryId' => $mapping['entryId']]
-                );
-            } else {
-                $result = $this->graphql->mutate(
-                    'mutation UpdateTimesheetEntry($entryId: ID!, $input: TimesheetEntryInput!) { updateTimesheetEntry(entryId: $entryId, input: $input) { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } }',
-                    [
-                        'entryId' => $mapping['entryId'],
-                        'input' => $mapping['input'],
-                    ]
-                );
-            }
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (AuthenticationException $e) {
@@ -434,7 +459,7 @@ class TimesheetController extends Controller
         }
 
         $submissionData = $this->graphql->query(
-            'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { submissionId periodId status entries { entryId projectCode monday tuesday wednesday thursday friday saturday sunday } } }',
+            'query ListMySubmissions($filter: SubmissionFilterInput) { listMySubmissions(filter: $filter) { submissionId periodId status entries { entryId projectCode description monday tuesday wednesday thursday friday saturday sunday } } }',
             ['filter' => ['periodId' => $period['periodId']]]
         );
 

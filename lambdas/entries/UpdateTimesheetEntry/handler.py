@@ -50,6 +50,8 @@ def update_timesheet_entry(event):
         raise ValueError("projectCode is required")
     validate_project_approved(project_code)
 
+    description = input_data.get("description", existing_entry.get("description", ""))
+
     hours = parse_and_validate_daily_hours(input_data)
     existing_entries = get_existing_entries(submission_id)
     validate_daily_totals(existing_entries, hours, exclude_entry_id=entry_id)
@@ -61,6 +63,7 @@ def update_timesheet_entry(event):
         Key={"entryId": entry_id},
         UpdateExpression=(
             "SET projectCode = :projectCode, "
+            "description = :description, "
             "saturday = :saturday, sunday = :sunday, "
             "monday = :monday, tuesday = :tuesday, "
             "wednesday = :wednesday, thursday = :thursday, "
@@ -69,6 +72,7 @@ def update_timesheet_entry(event):
         ),
         ExpressionAttributeValues={
             ":projectCode": project_code,
+            ":description": description,
             ":saturday": hours["saturday"],
             ":sunday": hours["sunday"],
             ":monday": hours["monday"],

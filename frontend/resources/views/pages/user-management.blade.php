@@ -3,7 +3,13 @@
 @section('title', 'User Management — TimeFlow')
 
 @section('content')
-    @php $userType = session('user.userType', 'user'); @endphp
+    @php
+        $userType = session('user.userType', 'user');
+        
+        // Build lookup maps for displaying names instead of IDs
+        $departmentMap = collect($departments ?? [])->pluck('departmentName', 'departmentId')->toArray();
+        $positionMap = collect($positions ?? [])->pluck('positionName', 'positionId')->toArray();
+    @endphp
 
     <style>
         .toggle-switch {
@@ -136,8 +142,8 @@
                                     {{ ucfirst($user['userType'] ?? 'User') }}
                                 </span>
                             </td>
-                            <td>{{ $user['departmentId'] ?? '—' }}</td>
-                            <td>{{ $user['positionId'] ?? '—' }}</td>
+                            <td>{{ $departmentMap[$user['departmentId'] ?? ''] ?? '—' }}</td>
+                            <td>{{ $positionMap[$user['positionId'] ?? ''] ?? '—' }}</td>
                             <td>{{ isset($user['createdAt']) ? \Carbon\Carbon::parse($user['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>
                                 @php
@@ -587,6 +593,10 @@
     var departmentFilter = document.getElementById('department-filter');
     var positionFilter = document.getElementById('position-filter');
 
+    // Lookup maps for displaying names instead of IDs
+    var departmentMap = @json(collect($departments ?? [])->pluck('departmentName', 'departmentId')->toArray());
+    var positionMap = @json(collect($positions ?? [])->pluck('positionName', 'positionId')->toArray());
+
     // ── Populate department and position filter dropdowns ────────────
 
     function populateFilterDropdowns() {
@@ -604,7 +614,7 @@
             for (var d = 0; d < deptKeys.length; d++) {
                 var opt = document.createElement('option');
                 opt.value = deptKeys[d];
-                opt.textContent = deptKeys[d];
+                opt.textContent = departmentMap[deptKeys[d]] || deptKeys[d];
                 departmentFilter.appendChild(opt);
             }
         }
@@ -614,7 +624,7 @@
             for (var p = 0; p < posKeys.length; p++) {
                 var opt = document.createElement('option');
                 opt.value = posKeys[p];
-                opt.textContent = posKeys[p];
+                opt.textContent = positionMap[posKeys[p]] || posKeys[p];
                 positionFilter.appendChild(opt);
             }
         }

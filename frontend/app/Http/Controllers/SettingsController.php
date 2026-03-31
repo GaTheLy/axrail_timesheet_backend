@@ -64,36 +64,6 @@ class SettingsController extends Controller
     }
 
     /**
-     * Handle avatar image upload and storage (AJAX).
-     */
-    public function uploadAvatar(Request $request): JsonResponse
-    {
-        $request->validate([
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        try {
-            $file = $request->file('avatar');
-            $user = session('user');
-            $filename = ($user['userId'] ?? 'user') . '_' . time() . '.' . $file->getClientOriginalExtension();
-
-            $path = $file->storeAs('public/avatars', $filename);
-            $url = asset('storage/avatars/' . $filename);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Avatar uploaded successfully.',
-                'avatarUrl' => $url,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to upload avatar. Please try again.',
-            ], 500);
-        }
-    }
-
-    /**
      * Change the user's password via Cognito (AJAX).
      *
      * Validates password match and policy before calling Cognito.

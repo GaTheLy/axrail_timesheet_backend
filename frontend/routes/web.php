@@ -20,9 +20,9 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
-Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1')->name('password.email');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:forgot-password')->name('password.email');
 Route::get('/reset-password', [AuthController::class, 'showResetPassword'])->name('password.reset');
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:password-reset')->name('password.update');
 Route::get('/force-change-password', [AuthController::class, 'showForceChangePassword'])->name('password.force');
 Route::post('/force-change-password', [AuthController::class, 'forceChangePassword'])->name('password.force.update');
 
@@ -59,7 +59,7 @@ Route::middleware('cognito.auth')->group(function () {
 
     // Settings routes
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-    Route::post('/settings/avatar', [SettingsController::class, 'uploadAvatar'])->name('settings.avatar');
+    // Avatar upload disabled for security (CWE-434 - Unrestricted File Upload)
     Route::post('/settings/password', [SettingsController::class, 'changePassword'])->name('settings.password');
 
     // Reports (accessible by PM roles and admin/superadmin)

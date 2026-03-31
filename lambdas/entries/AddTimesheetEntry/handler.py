@@ -66,6 +66,7 @@ def add_timesheet_entry(event):
         "entryId": entry_id,
         "submissionId": submission_id,
         "projectCode": project_code,
+        "description": input_data.get("description", ""),
         "saturday": hours["saturday"],
         "sunday": hours["sunday"],
         "monday": hours["monday"],

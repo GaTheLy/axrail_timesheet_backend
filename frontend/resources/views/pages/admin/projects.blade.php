@@ -3,7 +3,12 @@
 @section('title', 'Project Management — TimeFlow')
 
 @section('content')
-    @php $userType = session('user.userType', 'user'); @endphp
+    @php
+        $userType = session('user.userType', 'user');
+        
+        // Build lookup map for displaying user names instead of IDs
+        $userMap = collect($users ?? [])->pluck('fullName', 'userId')->toArray();
+    @endphp
 
     <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="/admin/projects">Master Data</a>
@@ -25,9 +30,7 @@
     @else
         <div class="filter-bar">
             <input type="text" id="search-input" class="search-input" placeholder="Search by name or manager..." aria-label="Search">
-            <select id="start-date-select" aria-label="Select start date">
-                <option value="">Select Start Date</option>
-            </select>
+            <input type="date" id="start-date-filter" aria-label="Filter by start date" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 0.375rem; background-color: #1e293b; color: #f1f5f9;">
             <select id="status-select" aria-label="Filter by status">
                 <option value="">All Status</option>
                 <option value="active">Approved</option>
@@ -59,7 +62,7 @@
                         <tr data-project-id="{{ $projectId }}" data-approval-status="{{ $approvalStatus }}">
                             <td style="color: #3b82f6;">{{ $project['projectCode'] ?? '' }}</td>
                             <td><strong>{{ $project['projectName'] ?? '' }}</strong></td>
-                            <td>{{ $project['projectManagerId'] ?? '—' }}</td>
+                            <td>{{ $userMap[$project['projectManagerId'] ?? ''] ?? '—' }}</td>
                             <td>{{ isset($project['startDate']) ? \Carbon\Carbon::parse($project['startDate'])->format('M d, Y') : '—' }}</td>
                             <td>{{ $project['plannedHours'] ?? '—' }}</td>
                             <td>{{ $project['createdBy'] ?? '—' }}</td>
@@ -319,35 +322,15 @@
 
     // ── Filter controls ─────────────────────────────────────────────
     var searchInput = document.getElementById('search-input');
-    var startDateSelect = document.getElementById('start-date-select');
+    var startDateFilter = document.getElementById('start-date-filter');
     var statusSelect = document.getElementById('status-select');
-
-    // Populate start date dropdown from distinct start dates in the table
-    (function populateStartDates() {
-        if (!startDateSelect) return;
-        var rows = document.querySelectorAll('#report-table tbody tr');
-        var dates = [];
-        rows.forEach(function (row) {
-            var dateText = row.querySelector('td:nth-child(4)').textContent.trim();
-            if (dateText && dateText !== '—' && dates.indexOf(dateText) === -1) {
-                dates.push(dateText);
-            }
-        });
-        dates.sort();
-        dates.forEach(function (d) {
-            var opt = document.createElement('option');
-            opt.value = d;
-            opt.textContent = d;
-            startDateSelect.appendChild(opt);
-        });
-    })();
 
     // Map status dropdown values to data-approval-status attribute values
     var statusMap = { 'active': 'Approved', 'pending': 'Pending_Approval' };
 
     function applyFilters() {
         var searchValue = searchInput ? searchInput.value.trim().toLowerCase() : '';
-        var startDateValue = startDateSelect ? startDateSelect.value : '';
+        var startDateValue = startDateFilter ? startDateFilter.value : '';
         var statusValue = statusSelect ? statusSelect.value : '';
         var rows = document.querySelectorAll('#report-table tbody tr');
 
@@ -357,9 +340,17 @@
             var manager = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
             var matchesSearch = !searchValue || name.indexOf(searchValue) !== -1 || manager.indexOf(searchValue) !== -1;
 
-            // Start date filter: exact match against displayed date (col 4)
-            var rowDate = row.querySelector('td:nth-child(4)').textContent.trim();
-            var matchesDate = !startDateValue || rowDate === startDateValue;
+            // Start date filter: compare against row's start date (col 4)
+            var rowDateText = row.querySelector('td:nth-child(4)').textContent.trim();
+            var matchesDate = true;
+            if (startDateValue && rowDateText && rowDateText !== '—') {
+                try {
+                    var rowDate = new Date(rowDateText).toISOString().split('T')[0];
+                    matchesDate = rowDate === startDateValue;
+                } catch(e) {
+                    matchesDate = false;
+                }
+            }
 
             // Status filter: match against data-approval-status attribute
             var rowStatus = row.getAttribute('data-approval-status') || '';
@@ -371,7 +362,7 @@
     }
 
     if (searchInput) searchInput.addEventListener('input', applyFilters);
-    if (startDateSelect) startDateSelect.addEventListener('change', applyFilters);
+    if (startDateFilter) startDateFilter.addEventListener('change', applyFilters);
     if (statusSelect) statusSelect.addEventListener('change', applyFilters);
 
     // ── Close modal on Escape ───────────────────────────────────────

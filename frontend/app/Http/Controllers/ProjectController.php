@@ -42,13 +42,24 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'projectCode' => ['required', 'string', 'max:50', 'regex:/^[^=+\-@\t\r].*/'],
+            'projectName' => ['required', 'string', 'max:255', 'regex:/^[^=+\-@\t\r].*/'],
+            'startDate' => ['required', 'date'],
+            'plannedHours' => ['required', 'numeric', 'min:0'],
+            'projectManagerId' => ['nullable', 'string'],
+        ], [
+            'projectCode.regex' => 'Project code cannot start with =, +, -, or @ characters.',
+            'projectName.regex' => 'Project name cannot start with =, +, -, or @ characters.',
+        ]);
+
         $graphql = new GraphQLClient();
 
         try {
             $result = $graphql->mutate(GraphQLQueries::CREATE_PROJECT, [
                 'input' => [
-                    'projectCode' => $request->input('projectCode'),
-                    'projectName' => $request->input('projectName'),
+                    'projectCode' => $this->sanitizeFormulaChars($request->input('projectCode')),
+                    'projectName' => $this->sanitizeFormulaChars($request->input('projectName')),
                     'startDate' => $request->input('startDate'),
                     'plannedHours' => (float) $request->input('plannedHours'),
                     'projectManagerId' => $request->input('projectManagerId'),
@@ -61,12 +72,46 @@ class ProjectController extends Controller
         }
     }
 
+    /**
+     * Sanitize string to prevent CSV formula injection.
+     * Prefixes dangerous characters with a single quote to neutralize formulas.
+     */
+    private function sanitizeFormulaChars(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        
+        // If string starts with formula characters, prefix with single quote
+        if (preg_match('/^[=+\-@\t\r]/', $value)) {
+            return "'" . $value;
+        }
+        
+        return $value;
+    }
+
     public function update(Request $request, string $id)
     {
+        if ($request->has('projectName')) {
+            $request->validate([
+                'projectName' => ['string', 'max:255', 'regex:/^[^=+\-@\t\r].*/'],
+            ], [
+                'projectName.regex' => 'Project name cannot start with =, +, -, or @ characters.',
+            ]);
+        }
+        if ($request->has('projectCode')) {
+            $request->validate([
+                'projectCode' => ['string', 'max:50', 'regex:/^[^=+\-@\t\r].*/'],
+            ], [
+                'projectCode.regex' => 'Project code cannot start with =, +, -, or @ characters.',
+            ]);
+        }
+
         $graphql = new GraphQLClient();
 
         $input = [];
-        if ($request->has('projectName')) $input['projectName'] = $request->input('projectName');
+        if ($request->has('projectCode')) $input['projectCode'] = $this->sanitizeFormulaChars($request->input('projectCode'));
+        if ($request->has('projectName')) $input['projectName'] = $this->sanitizeFormulaChars($request->input('projectName'));
         if ($request->has('startDate')) $input['startDate'] = $request->input('startDate');
         if ($request->has('plannedHours')) $input['plannedHours'] = (float) $request->input('plannedHours');
         if ($request->has('projectManagerId')) $input['projectManagerId'] = $request->input('projectManagerId');

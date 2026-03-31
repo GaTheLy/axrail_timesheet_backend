@@ -51,7 +51,7 @@ class TimesheetEntryMapper
                     'date'         => $date->format('Y-m-d'),
                     'dayOfWeek'    => $day,
                     'projectCode'  => $entry['projectCode'] ?? '',
-                    'description'  => $entry['projectCode'] ?? '',
+                    'description'  => $entry['description'] ?? '',
                     'chargedHours' => $hours,
                     'isEditable'   => !isset($entry['submissionStatus']) || $entry['submissionStatus'] !== 'Submitted',
                 ];
@@ -64,40 +64,24 @@ class TimesheetEntryMapper
     /**
      * Determine the backend operation and build input for a timesheet entry action.
      *
-     * Maps a user's date + hours input to the correct day-of-week field and decides
-     * whether to add, update, or remove an entry row.
+     * Always creates a new entry - each entry is treated as unique regardless of project code.
+     * This allows multiple entries for the same project on the same day with different descriptions.
      *
      * @param string $projectCode The project code
      * @param string $date ISO date (e.g., "2026-06-18")
      * @param float $hours Hours to set (0 means delete that day)
-     * @param array $existingEntries Current week's entry rows from GraphQL
+     * @param array $existingEntries Current week's entry rows from GraphQL (unused for add, used for context)
+     * @param string $description Optional description
      * @return array{operation: string, entryId?: string, input?: array}
      */
-    public function mapToEntryInput(string $projectCode, string $date, float $hours, array $existingEntries): array
+    public function mapToEntryInput(string $projectCode, string $date, float $hours, array $existingEntries, string $description = ''): array
     {
         $dayOfWeek = $this->dateToDayOfWeek($date);
-        $existingEntry = $this->findEntryByProject($projectCode, $existingEntries);
 
-        // No existing row for this project — create a new one
-        if ($existingEntry === null) {
-            return [
-                'operation' => 'add',
-                'input'     => $this->buildEntryInput($projectCode, $dayOfWeek, $hours),
-            ];
-        }
-
-        $entryId = $existingEntry['entryId'];
-
-        // User is zeroing out this day
-        if ($hours <= 0) {
-            return $this->handleZeroHours($existingEntry, $dayOfWeek, $entryId);
-        }
-
-        // Update the existing row with new hours on the target day
+        // Always create a new entry - treat each entry as unique
         return [
-            'operation' => 'update',
-            'entryId'   => $entryId,
-            'input'     => $this->buildEntryInputFromExisting($existingEntry, $dayOfWeek, $hours),
+            'operation' => 'add',
+            'input'     => $this->buildEntryInput($projectCode, $dayOfWeek, $hours, $description),
         ];
     }
 
@@ -193,11 +177,15 @@ class TimesheetEntryMapper
      * @param string $projectCode
      * @param string $dayOfWeek
      * @param float $hours
+     * @param string $description
      * @return array
      */
-    protected function buildEntryInput(string $projectCode, string $dayOfWeek, float $hours): array
+    protected function buildEntryInput(string $projectCode, string $dayOfWeek, float $hours, string $description = ''): array
     {
-        $input = ['projectCode' => $projectCode];
+        $input = [
+            'projectCode' => $projectCode,
+            'description' => $description,
+        ];
 
         foreach (self::DAY_COLUMNS as $day) {
             $input[$day] = ($day === $dayOfWeek) ? $hours : 0;
@@ -212,11 +200,15 @@ class TimesheetEntryMapper
      * @param array $existingEntry
      * @param string $dayOfWeek
      * @param float $hours
+     * @param string $description
      * @return array
      */
-    protected function buildEntryInputFromExisting(array $existingEntry, string $dayOfWeek, float $hours): array
+    protected function buildEntryInputFromExisting(array $existingEntry, string $dayOfWeek, float $hours, string $description = ''): array
     {
-        $input = ['projectCode' => $existingEntry['projectCode']];
+        $input = [
+            'projectCode' => $existingEntry['projectCode'],
+            'description' => $description ?: ($existingEntry['description'] ?? ''),
+        ];
 
         foreach (self::DAY_COLUMNS as $day) {
             $input[$day] = ($day === $dayOfWeek) ? $hours : (float) ($existingEntry[$day] ?? 0);

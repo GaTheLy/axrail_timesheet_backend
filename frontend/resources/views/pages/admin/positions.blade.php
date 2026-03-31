@@ -3,7 +3,12 @@
 @section('title', 'Position Management — TimeFlow')
 
 @section('content')
-    @php $userType = session('user.userType', 'user'); @endphp
+    @php
+        $userType = session('user.userType', 'user');
+        
+        // Build lookup map for displaying department names instead of IDs
+        $departmentMap = collect($departments ?? [])->pluck('departmentName', 'departmentId')->toArray();
+    @endphp
 
     <nav class="breadcrumb" aria-label="Breadcrumb">
         <a href="/admin/positions">Master Data</a>
@@ -61,7 +66,7 @@
                         @endphp
                         <tr data-position-id="{{ $positionId }}" data-approval-status="{{ $approvalStatus }}">
                             <td><strong>{{ $pos['positionName'] ?? '' }}</strong></td>
-                            <td>{{ $pos['departmentId'] ?? '—' }}</td>
+                            <td>{{ $departmentMap[$pos['departmentId'] ?? ''] ?? '—' }}</td>
                             <td>{{ $pos['createdBy'] ?? '—' }}</td>
                             <td>{{ isset($pos['createdAt']) ? \Carbon\Carbon::parse($pos['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>

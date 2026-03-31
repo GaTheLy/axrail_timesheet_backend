@@ -268,23 +268,9 @@
     }
 
     // ── Sidebar toggle fallback ─────────────────────────────────────────
-
-    function initSidebarToggle() {
-        var toggleBtns = document.querySelectorAll('.nav-group-toggle');
-        for (var i = 0; i < toggleBtns.length; i++) {
-            // Only attach if no inline onclick already handles it
-            // This serves as a fallback for accessibility and robustness
-            (function (btn) {
-                btn.addEventListener('click', function () {
-                    var navGroup = btn.closest('.nav-group');
-                    if (!navGroup) return;
-
-                    var isOpen = navGroup.classList.toggle('open');
-                    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                });
-            })(toggleBtns[i]);
-        }
-    }
+    // NOTE: Removed duplicate event listener that was causing double-toggle issue.
+    // The inline onclick on .nav-group-toggle buttons already handles the toggle.
+    // Adding another listener here caused the class to be toggled twice (on then off).
 
     // ── Initialization ──────────────────────────────────────────────────
 
@@ -339,9 +325,6 @@
         if (exportBtn) {
             exportBtn.addEventListener('click', handleExportPdf);
         }
-
-        // Initialize sidebar toggle fallback
-        initSidebarToggle();
 
         // Run initial pagination on all rows
         if (allRows.length > 0) {

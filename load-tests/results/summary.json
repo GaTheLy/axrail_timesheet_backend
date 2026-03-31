@@ -1,0 +1,531 @@
+{
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "checks": [
+          {
+            "passes": 6844,
+            "fails": 0,
+            "name": "listUsers status 200",
+            "path": "::GraphQL - List Users::listUsers status 200",
+            "id": "287e30ee9ffbff7ffbaafe7da72a8b60"
+          },
+          {
+            "name": "listUsers no errors",
+            "path": "::GraphQL - List Users::listUsers no errors",
+            "id": "cc1418f9e0df58bdff6fcee8ba9dede8",
+            "passes": 6844,
+            "fails": 0
+          }
+        ],
+        "name": "GraphQL - List Users",
+        "path": "::GraphQL - List Users",
+        "id": "617f8caa699c5d233e7bb13a4d738808",
+        "groups": []
+      },
+      {
+        "groups": [],
+        "checks": [
+            {
+              "name": "listDepartments status 200",
+              "path": "::GraphQL - List Departments::listDepartments status 200",
+              "id": "4aa84ba35c275169322326dd313e9bd9",
+              "passes": 6844,
+              "fails": 0
+            },
+            {
+              "name": "listDepartments no errors",
+              "path": "::GraphQL - List Departments::listDepartments no errors",
+              "id": "07302e1150015642c61cd5e1b092a650",
+              "passes": 6844,
+              "fails": 0
+            }
+          ],
+        "name": "GraphQL - List Departments",
+        "path": "::GraphQL - List Departments",
+        "id": "d07bf10888179ddc6089ea789fdd2bc2"
+      },
+      {
+        "name": "Frontend - Login Page",
+        "path": "::Frontend - Login Page",
+        "id": "cbf70dc134c4c130e09380fd0ef60350",
+        "groups": [],
+        "checks": [
+            {
+              "name": "login page loads",
+              "path": "::Frontend - Login Page::login page loads",
+              "id": "8bb94035c2ded5a6aeb30be02796b7b8",
+              "passes": 4770,
+              "fails": 53
+            }
+          ]
+      },
+      {
+        "id": "4475278e3f0e9a1787d5f43441dd25e9",
+        "groups": [],
+        "checks": [
+            {
+              "name": "listProjects status 200",
+              "path": "::GraphQL - List Projects::listProjects status 200",
+              "id": "76af56779db668fc25302e422afec5f8",
+              "passes": 6844,
+              "fails": 0
+            },
+            {
+              "path": "::GraphQL - List Projects::listProjects no errors",
+              "id": "2f7190b3f50ca83800ff42c09e960f81",
+              "passes": 6844,
+              "fails": 0,
+              "name": "listProjects no errors"
+            }
+          ],
+        "name": "GraphQL - List Projects",
+        "path": "::GraphQL - List Projects"
+      },
+      {
+        "path": "::GraphQL - Get Current Period",
+        "id": "e4d0973c845247d83bcca7add924fe8e",
+        "groups": [],
+        "checks": [
+            {
+              "name": "getCurrentPeriod status 200",
+              "path": "::GraphQL - Get Current Period::getCurrentPeriod status 200",
+              "id": "c80f3760286c1dbe8923a0724da94bc5",
+              "passes": 6844,
+              "fails": 0
+            },
+            {
+              "name": "getCurrentPeriod no errors",
+              "path": "::GraphQL - Get Current Period::getCurrentPeriod no errors",
+              "id": "5be151e9afa47f5009f91fb4939a2700",
+              "passes": 6844,
+              "fails": 0
+            }
+          ],
+        "name": "GraphQL - Get Current Period"
+      },
+      {
+        "name": "Frontend - Authentication",
+        "path": "::Frontend - Authentication",
+        "id": "58232bca2b6201aecc4b6e4054278c34",
+        "groups": [],
+        "checks": [
+            {
+              "passes": 4754,
+              "fails": 16,
+              "name": "login successful",
+              "path": "::Frontend - Authentication::login successful",
+              "id": "36cf82c2166cdaa60426df182641ea3e"
+            }
+          ]
+      },
+      {
+        "checks": [
+          {
+            "name": "listTimesheetPeriods status 200",
+            "path": "::GraphQL - List Timesheet Periods::listTimesheetPeriods status 200",
+            "id": "08d2b89387f6e306974836a43ea7f433",
+            "passes": 6844,
+            "fails": 0
+          },
+          {
+            "passes": 6844,
+            "fails": 0,
+            "name": "listTimesheetPeriods no errors",
+            "path": "::GraphQL - List Timesheet Periods::listTimesheetPeriods no errors",
+            "id": "2016631b9dd77fe85b70efa142f485c1"
+          }
+        ],
+        "name": "GraphQL - List Timesheet Periods",
+        "path": "::GraphQL - List Timesheet Periods",
+        "id": "992ac2fafef139b4ce7f174a27a94cb5",
+        "groups": []
+      },
+      {
+        "checks": [
+          {
+            "path": "::Frontend - Dashboard::dashboard loads",
+            "id": "d3349bc92c874bbfa210d89e7a9aed26",
+            "passes": 4754,
+            "fails": 69,
+            "name": "dashboard loads"
+          }
+        ],
+        "name": "Frontend - Dashboard",
+        "path": "::Frontend - Dashboard",
+        "id": "b1ef824bf2708d28b14e1e9b2de9a687",
+        "groups": []
+      },
+      {
+        "checks": [
+          {
+            "name": "listMySubmissions status 200",
+            "path": "::GraphQL - List My Submissions::listMySubmissions status 200",
+            "id": "0b70cac299690b6b6102d110b2ad3c1d",
+            "passes": 6844,
+            "fails": 0
+          }
+        ],
+        "name": "GraphQL - List My Submissions",
+        "path": "::GraphQL - List My Submissions",
+        "id": "3e042d99f1e9e5abd24c76bfb7e481d5",
+        "groups": []
+      },
+      {
+        "id": "ef9615bb98cd804c6625e65a73568d52",
+        "groups": [],
+        "checks": [
+            {
+              "passes": 6844,
+              "fails": 0,
+              "name": "listProjectAssignments status 200",
+              "path": "::GraphQL - List Project Assignments::listProjectAssignments status 200",
+              "id": "e790713550a4a88a2a91144ca003da97"
+            },
+            {
+              "name": "listProjectAssignments no errors",
+              "path": "::GraphQL - List Project Assignments::listProjectAssignments no errors",
+              "id": "4ca588c8845e9b3e8f012566dde0a62a",
+              "passes": 6844,
+              "fails": 0
+            }
+          ],
+        "name": "GraphQL - List Project Assignments",
+        "path": "::GraphQL - List Project Assignments"
+      },
+      {
+        "name": "Frontend - Timesheet",
+        "path": "::Frontend - Timesheet",
+        "id": "0c064dcf65a91a635359f324bbe2eb5e",
+        "groups": [],
+        "checks": [
+            {
+              "path": "::Frontend - Timesheet::timesheet loads",
+              "id": "df4d4c29cb7a2506471e8ca3e478cc42",
+              "passes": 4752,
+              "fails": 71,
+              "name": "timesheet loads"
+            },
+            {
+              "id": "116189902cec641b0a597fd2e3caa5f6",
+              "passes": 4752,
+              "fails": 71,
+              "name": "projects list loads",
+              "path": "::Frontend - Timesheet::projects list loads"
+            }
+          ]
+      },
+      {
+        "groups": [],
+        "checks": [
+            {
+              "name": "history loads",
+              "path": "::Frontend - History::history loads",
+              "id": "593fadee967bb0ec2a008e1b6c6f28e8",
+              "passes": 4749,
+              "fails": 74
+            }
+          ],
+        "name": "Frontend - History",
+        "path": "::Frontend - History",
+        "id": "2c56dc8c507fab3b0b9cfec35c4c205b"
+      },
+      {
+        "id": "4226e1e2cf12f6763efbf23c7675eee1",
+        "groups": [],
+        "checks": [
+            {
+              "name": "settings loads",
+              "path": "::Frontend - Settings::settings loads",
+              "id": "d9ab76125b52be110fe9efc8ddf7d0b2",
+              "passes": 4750,
+              "fails": 73
+            }
+          ],
+        "name": "Frontend - Settings",
+        "path": "::Frontend - Settings"
+      }
+    ],
+    "checks": []
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "max",
+      "p(90)",
+      "p(95)"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": true,
+    "isStdErrTTY": true,
+    "testRunDurationMs": 1930829.588
+  },
+  "metrics": {
+    "errors": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 62186,
+        "rate": 0.37711847429784845,
+        "passes": 37650
+      },
+      "thresholds": {
+        "rate<0.1": {
+          "ok": false
+        }
+      }
+    },
+    "http_req_receiving": {
+      "values": {
+        "avg": 10.232149176713047,
+        "min": 0.004,
+        "med": 0.082,
+        "max": 20918.01,
+        "p(90)": 4.199800000000007,
+        "p(95)": 18.877599999999976
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0.2576619978774378,
+        "min": 0,
+        "med": 0,
+        "max": 982.555
+      }
+    },
+    "group_duration": {
+      "contains": "time",
+      "values": {
+        "min": 0.001083,
+        "med": 1203.9682295,
+        "max": 26900.276125,
+        "p(90)": 2659.4106880000004,
+        "p(95)": 3311.333124999998,
+        "avg": 1613.3157930575371
+      },
+      "type": "trend"
+    },
+    "data_received": {
+      "contains": "data",
+      "values": {
+        "count": 532565731,
+        "rate": 275822.2342923823
+      },
+      "type": "counter"
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 157357,
+        "rate": 81.49709377666736
+      }
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.4865613286988511,
+        "min": 0,
+        "med": 0.001,
+        "max": 1237.973,
+        "p(90)": 0.001,
+        "p(95)": 0.002
+      }
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 3230.6034576491043,
+        "min": 40.7845,
+        "med": 129.384625,
+        "max": 49563.450333,
+        "p(90)": 12663.5287664,
+        "p(95)": 15478.887370299999
+      }
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 49179,
+        "rate": 25.47039899618526
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 75822830,
+        "rate": 39269.56085158148
+      }
+    },
+    "http_req_duration": {
+      "thresholds": {
+        "p(95)<2000": {
+          "ok": true
+        }
+      },
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 621.3348,
+        "p(95)": 931.5571999999975,
+        "avg": 295.0665842256808,
+        "min": 29.266,
+        "med": 158.853,
+        "max": 23066.358
+      }
+    },
+    "timesheet_duration": {
+      "values": {
+        "p(90)": 1315,
+        "p(95)": 1855.1999999999982,
+        "avg": 653.3620153431474,
+        "min": 36,
+        "med": 422,
+        "max": 11696
+      },
+      "thresholds": {
+        "p(95)<2000": {
+          "ok": true
+        }
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 0.092,
+        "max": 19.106,
+        "p(90)": 0.267,
+        "p(95)": 0.339,
+        "avg": 0.1305106922475689,
+        "min": 0.004
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.24110144448610485,
+        "passes": 37939,
+        "fails": 119418
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "passes": 122253,
+        "fails": 427,
+        "rate": 0.9965194000652103
+      }
+    },
+    "graphql_duration": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "avg": 245.32938131418553,
+        "min": 60,
+        "med": 144,
+        "max": 18780,
+        "p(90)": 474,
+        "p(95)": 728
+      },
+      "thresholds": {
+        "p(95)<1500": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 722.5636000000002,
+        "p(95)": 1054.7940999999998,
+        "avg": 342.502814357969,
+        "min": 29.266,
+        "med": 189.7765,
+        "max": 23066.358
+      }
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 0,
+        "max": 1097.438,
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0.22031685911653112,
+        "min": 0
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 200,
+        "min": 200,
+        "max": 200
+      }
+    },
+    "login_duration": {
+      "values": {
+        "avg": 1639.4335429769392,
+        "min": 51,
+        "med": 1222,
+        "max": 23641,
+        "p(90)": 2905.1,
+        "p(95)": 3683.649999999999
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": false
+        }
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 1,
+        "min": 0,
+        "max": 200
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 154.949,
+        "max": 22494.844,
+        "p(90)": 591.54,
+        "p(95)": 897.0865999999992,
+        "avg": 284.70392435671977,
+        "min": 29.102
+      }
+    }
+  }
+}

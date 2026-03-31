@@ -44,7 +44,7 @@
         {{-- Weekly total --}}
         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
             <span style="font-size: 0.875rem; color: #94a3b8;">Weekly Total:</span>
-            <span style="font-size: 1.25rem; font-weight: 700; color: {{ $weeklyTotal >= 40 ? '#22c55e' : '#f1f5f9' }};">
+            <span style="font-size: 1.25rem; font-weight: 700; color: {{ $weeklyTotal >= 40 ? '#22c55e' : '#fbbf24' }};">
                 {{ number_format($weeklyTotal, 1) }}h
             </span>
             <span style="font-size: 0.8rem; color: #64748b;">/ 40h target</span>
