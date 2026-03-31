@@ -483,6 +483,9 @@
 
     if (modalSave) {
         modalSave.addEventListener('click', function () {
+            var form = document.getElementById('user-form');
+            if (form && !form.reportValidity()) return;
+
             var userId = formId ? formId.value : '';
             var body = {
                 fullName:     formName ? formName.value : '',

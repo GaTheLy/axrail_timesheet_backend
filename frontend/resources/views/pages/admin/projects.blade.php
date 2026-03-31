@@ -30,11 +30,15 @@
     @else
         <div class="filter-bar">
             <input type="text" id="search-input" class="search-input" placeholder="Search by name or manager..." aria-label="Search">
-            <input type="date" id="start-date-filter" aria-label="Filter by start date" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 0.375rem; background-color: #1e293b; color: #f1f5f9;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <label for="start-date-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-secondary); white-space: nowrap;">Start Date</label>
+                <input type="date" id="start-date-filter" class="search-input" style="min-width: 160px; flex: none;" aria-label="Filter by start date">
+            </div>
             <select id="status-select" aria-label="Filter by status">
                 <option value="">All Status</option>
                 <option value="active">Approved</option>
                 <option value="pending">Pending</option>
+                <option value="Rejected">Rejected</option>
             </select>
         </div>
 
@@ -198,6 +202,12 @@
 
     function openAddModal(mode, projectId, projectData) {
         if (!addOverlay) return;
+        // Set min date to today to disable past dates
+        var startDateInput = document.getElementById('project-form-start-date');
+        if (startDateInput) {
+            var today = new Date().toISOString().split('T')[0];
+            startDateInput.setAttribute('min', today);
+        }
         if (mode === 'edit' && projectData) {
             editingProjectId = projectId;
             modalTitle.textContent = 'Edit Project';
@@ -249,6 +259,9 @@
 
     if (addSaveBtn) {
         addSaveBtn.addEventListener('click', function () {
+            var form = document.getElementById('project-form');
+            if (form && !form.reportValidity()) return;
+
             var name = formName ? formName.value.trim() : '';
             var startDate = formStartDate ? formStartDate.value : '';
             var hours = formHours ? formHours.value : '';
@@ -326,7 +339,7 @@
     var statusSelect = document.getElementById('status-select');
 
     // Map status dropdown values to data-approval-status attribute values
-    var statusMap = { 'active': 'Approved', 'pending': 'Pending_Approval' };
+    var statusMap = { 'active': 'Approved', 'pending': 'Pending_Approval', 'Rejected': 'Rejected' };
 
     function applyFilters() {
         var searchValue = searchInput ? searchInput.value.trim().toLowerCase() : '';
@@ -335,24 +348,24 @@
         var rows = document.querySelectorAll('#report-table tbody tr');
 
         rows.forEach(function (row) {
-            // Search filter: match against name (col 2) and manager (col 3)
             var name = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
             var manager = row.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
             var matchesSearch = !searchValue || name.indexOf(searchValue) !== -1 || manager.indexOf(searchValue) !== -1;
 
-            // Start date filter: compare against row's start date (col 4)
-            var rowDateText = row.querySelector('td:nth-child(4)').textContent.trim();
+            // Date filter: compare the row's start date with the selected date
             var matchesDate = true;
-            if (startDateValue && rowDateText && rowDateText !== '—') {
-                try {
-                    var rowDate = new Date(rowDateText).toISOString().split('T')[0];
-                    matchesDate = rowDate === startDateValue;
-                } catch(e) {
+            if (startDateValue) {
+                var rowDateText = row.querySelector('td:nth-child(4)').textContent.trim();
+                if (rowDateText && rowDateText !== '—') {
+                    try {
+                        var rowDate = new Date(rowDateText).toISOString().split('T')[0];
+                        matchesDate = rowDate === startDateValue;
+                    } catch(e) { matchesDate = false; }
+                } else {
                     matchesDate = false;
                 }
             }
 
-            // Status filter: match against data-approval-status attribute
             var rowStatus = row.getAttribute('data-approval-status') || '';
             var mappedStatus = statusValue ? (statusMap[statusValue] || statusValue) : '';
             var matchesStatus = !mappedStatus || rowStatus === mappedStatus;

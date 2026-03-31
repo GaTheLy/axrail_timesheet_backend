@@ -162,7 +162,7 @@
         </div>
     </div>
 
-    {{-- Rejection Reason Modal --}}
+    {{-- Rejection Confirmation Modal --}}
     <div class="modal-overlay" id="reject-modal-overlay">
         <div class="modal" role="dialog" aria-labelledby="reject-modal-title" aria-modal="true">
             <div class="modal-header">
@@ -170,14 +170,9 @@
                 <button type="button" class="modal-close" id="reject-modal-close" aria-label="Close modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="reject-form" novalidate>
-                    <input type="hidden" id="reject-entity-type" value="">
-                    <input type="hidden" id="reject-entity-id" value="">
-                    <div class="form-group">
-                        <label for="reject-reason">Rejection Reason</label>
-                        <textarea id="reject-reason" placeholder="Enter reason for rejection" required aria-label="Rejection reason" rows="4" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;"></textarea>
-                    </div>
-                </form>
+                <input type="hidden" id="reject-entity-type" value="">
+                <input type="hidden" id="reject-entity-id" value="">
+                <p id="reject-confirm-message">Are you sure you want to reject this entity?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="reject-modal-cancel">Cancel</button>
@@ -314,15 +309,16 @@
     var rejectSubmitBtn = document.getElementById('reject-modal-submit');
     var rejectEntityType = document.getElementById('reject-entity-type');
     var rejectEntityId = document.getElementById('reject-entity-id');
-    var rejectReasonInput = document.getElementById('reject-reason');
     var rejectModalTitle = document.getElementById('reject-modal-title');
+    var rejectConfirmMessage = document.getElementById('reject-confirm-message');
 
     function openRejectModal(type, id, name) {
         if (rejectOverlay) {
             rejectEntityType.value = type;
             rejectEntityId.value = id;
-            rejectReasonInput.value = '';
-            rejectModalTitle.textContent = 'Reject ' + (name || type);
+            var displayType = type.charAt(0).toUpperCase() + type.slice(1);
+            rejectModalTitle.textContent = 'Reject ' + displayType;
+            rejectConfirmMessage.textContent = 'Are you sure you want to reject ' + displayType + ' "' + (name || type) + '"?';
             rejectOverlay.classList.add('active');
         }
     }
@@ -345,8 +341,7 @@
         rejectSubmitBtn.addEventListener('click', function () {
             var type = rejectEntityType ? rejectEntityType.value : '';
             var id = rejectEntityId ? rejectEntityId.value : '';
-            var reason = rejectReasonInput ? rejectReasonInput.value.trim() : '';
-            if (!reason) { rejectReasonInput.focus(); return; }
+            var reason = 'Rejected by superadmin';
 
             rejectSubmitBtn.disabled = true;
             fetch('/admin/approvals/' + encodeURIComponent(type) + '/' + encodeURIComponent(id) + '/reject', {

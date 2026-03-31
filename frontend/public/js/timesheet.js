@@ -115,7 +115,13 @@
         if (entryId)      entryId.value = '';
         if (projectCode)  projectCode.value = '';
         if (description)  description.value = '';
-        if (dateInput)    dateInput.value = '';
+        if (dateInput) {
+            dateInput.value = '';
+            // Restrict date selection to the current period
+            var period = window.timesheetPeriod || {};
+            if (period.startDate) dateInput.setAttribute('min', period.startDate);
+            if (period.endDate) dateInput.setAttribute('max', period.endDate);
+        }
         if (hoursInput)   hoursInput.value = '';
         if (modalError)   { modalError.style.display = 'none'; modalError.textContent = ''; }
         if (modalTitle)   modalTitle.textContent = 'Add New Entry';

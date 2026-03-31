@@ -131,7 +131,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pos-form-dept">Department</label>
-                        <select id="pos-form-dept" aria-label="Department">
+                        <select id="pos-form-dept" required aria-label="Department">
                             <option value="">Select Department</option>
                             @foreach($departments ?? [] as $dept)
                                 <option value="{{ $dept['departmentId'] }}">{{ $dept['departmentName'] }}</option>
@@ -230,10 +230,21 @@
     if (saveBtn) {
         saveBtn.addEventListener('click', function () {
             var name = nameInput ? nameInput.value.trim() : '';
-            if (!name) { nameInput.focus(); return; }
+            if (!name) {
+                nameInput.setCustomValidity('Fill out this field');
+                nameInput.reportValidity();
+                return;
+            }
+            nameInput.setCustomValidity('');
             var body = { positionName: name };
             var dept = descInput ? descInput.value.trim() : '';
-            if (dept) body.departmentId = dept;
+            if (!dept) {
+                descInput.setCustomValidity('Fill out this field');
+                descInput.reportValidity();
+                return;
+            }
+            descInput.setCustomValidity('');
+            body.departmentId = dept;
 
             saveBtn.disabled = true;
             var url, method;

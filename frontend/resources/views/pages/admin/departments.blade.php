@@ -207,7 +207,12 @@
     if (saveBtn) {
         saveBtn.addEventListener('click', function () {
             var name = nameInput ? nameInput.value.trim() : '';
-            if (!name) { nameInput.focus(); return; }
+            if (!name) {
+                nameInput.setCustomValidity('Fill out this field');
+                nameInput.reportValidity();
+                return;
+            }
+            nameInput.setCustomValidity('');
 
             saveBtn.disabled = true;
             var url, method;

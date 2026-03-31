@@ -103,7 +103,7 @@ class CognitoAuthService
                 ];
 
                 // Non-mutable attributes that must NOT be sent back in challenge response
-                $immutableAttrs = ['sub', 'email_verified', 'phone_number_verified', 'identities'];
+                $immutableAttrs = ['sub', 'email_verified', 'phone_number_verified', 'identities', 'email'];
 
                 // Cognito returns userAttributes as a JSON string with existing values.
                 // Only pass back mutable attributes.
@@ -114,11 +114,6 @@ class CognitoAuthService
                     if ($value !== null && $value !== '' && !in_array($key, $immutableAttrs, true)) {
                         $challengeResponses['userAttributes.' . $key] = $value;
                     }
-                }
-
-                // Ensure email is always included
-                if (!isset($challengeResponses['userAttributes.email'])) {
-                    $challengeResponses['userAttributes.email'] = $email;
                 }
 
                 // Set name from form input (required attribute that may be missing)
@@ -150,6 +145,11 @@ class CognitoAuthService
                     ],
                 ];
             } catch (AwsException $e) {
+                \Illuminate\Support\Facades\Log::error('Force change password failed', [
+                    'code' => $e->getAwsErrorCode(),
+                    'message' => $e->getAwsErrorMessage(),
+                    'email' => $email,
+                ]);
                 throw new Exception($this->mapCognitoError($e));
             }
         }
