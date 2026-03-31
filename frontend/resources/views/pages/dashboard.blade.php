@@ -31,7 +31,9 @@
 
             @include('components.summary-card', [
                 'title' => 'Submission Deadline',
-                'value' => $period['submissionDeadline'] ?? '',
+                'value' => isset($period['submissionDeadline']) 
+                    ? \Carbon\Carbon::parse($period['submissionDeadline'])->setTimezone('Asia/Kuala_Lumpur')->format('l \a\t H:i (T)') 
+                    : '',
                 'icon' => '⏰',
                 'slot' => 'countdown',
                 'countdown' => $countdown,

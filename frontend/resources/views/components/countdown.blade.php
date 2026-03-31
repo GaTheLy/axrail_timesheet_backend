@@ -7,9 +7,9 @@
      data-hours="{{ $countdown['hours'] ?? 0 }}"
      data-minutes="{{ $countdown['minutes'] ?? 0 }}">
     <span class="badge badge-warning">
-        <span id="countdown-days">{{ $countdown['days'] ?? 0 }}</span>d
-        <span id="countdown-hours">{{ $countdown['hours'] ?? 0 }}</span>h
-        <span id="countdown-minutes">{{ $countdown['minutes'] ?? 0 }}</span>m remaining
+        <span id="countdown-days">{{ $countdown['days'] ?? 0 }}</span> Days
+        <span id="countdown-hours">{{ $countdown['hours'] ?? 0 }}</span> Hours
+        <span id="countdown-minutes">{{ $countdown['minutes'] ?? 0 }}</span> Minutes left
     </span>
 </div>
 

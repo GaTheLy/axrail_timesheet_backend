@@ -69,7 +69,7 @@
                             <td>{{ $userMap[$project['projectManagerId'] ?? ''] ?? '—' }}</td>
                             <td>{{ isset($project['startDate']) ? \Carbon\Carbon::parse($project['startDate'])->format('M d, Y') : '—' }}</td>
                             <td>{{ $project['plannedHours'] ?? '—' }}</td>
-                            <td>{{ $project['createdBy'] ?? '—' }}</td>
+                            <td>{{ ($userMap ?? [])[$project['createdBy'] ?? ''] ?? 'Unknown User' }}</td>
                             <td>{{ isset($project['createdAt']) ? \Carbon\Carbon::parse($project['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>
                                 @if($approvalStatus === 'Approved')

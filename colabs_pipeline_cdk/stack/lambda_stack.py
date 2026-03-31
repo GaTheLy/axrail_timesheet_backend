@@ -205,9 +205,16 @@ class TimesheetLambdaStack(Stack):
         )
 
         # CreateUser
+        create_user_env = {
+            **user_env,
+            "PERIODS_TABLE": self._table_names["periods"],
+            "SUBMISSIONS_TABLE": self._table_names["submissions"],
+        }
         fn = self._make_lambda("CreateUserLambda", "TimesheetCreateUser",
-                               "users.CreateUser.handler.handler", user_env)
+                               "users.CreateUser.handler.handler", create_user_env)
         self._tables["users"].grant_read_write_data(fn)
+        self._tables["periods"].grant_read_data(fn)
+        self._tables["submissions"].grant_read_write_data(fn)
         fn.add_to_role_policy(cognito_policy)
         ds = self._graphql_api.add_lambda_data_source("CreateUserDataSource", fn)
         ds.create_resolver("Mutation_createUser_Resolver", type_name="Mutation", field_name="createUser")

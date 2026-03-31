@@ -19,12 +19,23 @@ class DepartmentController extends Controller
         } catch (\Exception $e) {
             return view('pages.admin.departments', [
                 'departments' => [],
+                'userMap' => [],
                 'error' => 'Failed to load departments: ' . $e->getMessage(),
             ]);
         }
 
+        // Build userId → fullName map for "Created By" column
+        $userMap = [];
+        try {
+            $usersResult = $graphql->query(GraphQLQueries::LIST_USERS);
+            foreach ($usersResult['listUsers']['items'] ?? [] as $u) {
+                $userMap[$u['userId']] = $u['fullName'] ?? $u['userId'];
+            }
+        } catch (\Exception $e) {}
+
         return view('pages.admin.departments', [
             'departments' => $departments,
+            'userMap' => $userMap,
             'error' => null,
         ]);
     }

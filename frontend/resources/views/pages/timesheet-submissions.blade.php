@@ -71,7 +71,7 @@
                     @foreach($submissions as $submission)
                         @php
                             $employeeId = $submission['employeeId'] ?? '';
-                            $userName = $userMap[$employeeId] ?? $employeeId;
+                            $userName = $userMap[$employeeId] ?? 'Unknown User';
                             $periodId = $submission['periodId'] ?? '';
                             $periodString = $periodMap[$periodId] ?? $periodId;
                             $status = $submission['status'] ?? '';

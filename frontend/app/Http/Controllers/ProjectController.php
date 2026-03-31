@@ -36,6 +36,7 @@ class ProjectController extends Controller
         return view('pages.admin.projects', [
             'projects' => $projects,
             'users' => $users,
+            'userMap' => collect($users)->pluck('fullName', 'userId')->toArray(),
             'error' => null,
         ]);
     }

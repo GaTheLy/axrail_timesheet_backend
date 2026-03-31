@@ -61,7 +61,7 @@
                         <tr data-department-id="{{ $departmentId }}" data-approval-status="{{ $approvalStatus }}">
                             <td style="color: #3b82f6;">DEP-{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</td>
                             <td><strong>{{ $dept['departmentName'] ?? '' }}</strong></td>
-                            <td>{{ $dept['createdBy'] ?? '—' }}</td>
+                            <td>{{ ($userMap ?? [])[$dept['createdBy'] ?? ''] ?? 'Unknown User' }}</td>
                             <td>{{ isset($dept['createdAt']) ? \Carbon\Carbon::parse($dept['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>
                                 @if($approvalStatus === 'Approved')

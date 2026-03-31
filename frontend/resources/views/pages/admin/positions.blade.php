@@ -67,7 +67,7 @@
                         <tr data-position-id="{{ $positionId }}" data-approval-status="{{ $approvalStatus }}">
                             <td><strong>{{ $pos['positionName'] ?? '' }}</strong></td>
                             <td>{{ $departmentMap[$pos['departmentId'] ?? ''] ?? '—' }}</td>
-                            <td>{{ $pos['createdBy'] ?? '—' }}</td>
+                            <td>{{ ($userMap ?? [])[$pos['createdBy'] ?? ''] ?? 'Unknown User' }}</td>
                             <td>{{ isset($pos['createdAt']) ? \Carbon\Carbon::parse($pos['createdAt'])->format('M d, Y') : '—' }}</td>
                             <td>
                                 @if($approvalStatus === 'Approved')

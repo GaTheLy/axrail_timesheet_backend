@@ -174,7 +174,8 @@
                                 @endif
                             </td>
                             @endif
-                            <td>
+                            <td style="white-space: nowrap;">
+                                <div style="display: flex; align-items: center; gap: 0.375rem;">
                                 <label class="toggle-switch" title="Toggle user active/inactive">
                                     <input type="checkbox" class="toggle-status" data-user-id="{{ $userId }}" {{ ($user['status'] ?? '') === 'active' ? 'checked' : '' }} {{ $approvalStatus === 'Pending_Approval' ? 'disabled' : '' }}>
                                     <span class="toggle-slider"></span>
@@ -206,6 +207,7 @@
                                 @else
                                     <span style="color: #64748b; font-size: 0.75rem;">—</span>
                                 @endif
+                                </div>
                             </td>
                         </tr>
                     @endforeach

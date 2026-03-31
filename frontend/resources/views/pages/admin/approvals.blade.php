@@ -45,7 +45,7 @@
                             <td><strong>{{ $project['projectName'] ?? '' }}</strong></td>
                             <td style="color: #3b82f6;">{{ $project['projectCode'] ?? '' }}</td>
                             <td>{{ isset($project['createdAt']) ? \Carbon\Carbon::parse($project['createdAt'])->format('M d, Y') : '—' }}</td>
-                            <td>{{ $project['createdBy'] ?? '—' }}</td>
+                            <td>{{ ($userMap ?? [])[$project['createdBy'] ?? ''] ?? 'Unknown User' }}</td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-approve" data-type="project" data-id="{{ $project['projectId'] ?? '' }}" data-name="{{ $project['projectName'] ?? '' }}" aria-label="Approve project {{ $project['projectName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
                                     ✓ Approve
@@ -84,7 +84,7 @@
                             <td><strong>{{ $dept['departmentName'] ?? '' }}</strong></td>
                             <td style="color: #3b82f6;">DEP-{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</td>
                             <td>{{ isset($dept['createdAt']) ? \Carbon\Carbon::parse($dept['createdAt'])->format('M d, Y') : '—' }}</td>
-                            <td>{{ $dept['createdBy'] ?? '—' }}</td>
+                            <td>{{ ($userMap ?? [])[$dept['createdBy'] ?? ''] ?? 'Unknown User' }}</td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-approve" data-type="department" data-id="{{ $dept['departmentId'] ?? '' }}" data-name="{{ $dept['departmentName'] ?? '' }}" aria-label="Approve department {{ $dept['departmentName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
                                     ✓ Approve
@@ -123,7 +123,7 @@
                             <td><strong>{{ $pos['positionName'] ?? '' }}</strong></td>
                             <td style="color: #3b82f6;">{{ $pos['positionCode'] ?? '—' }}</td>
                             <td>{{ isset($pos['createdAt']) ? \Carbon\Carbon::parse($pos['createdAt'])->format('M d, Y') : '—' }}</td>
-                            <td>{{ $pos['createdBy'] ?? '—' }}</td>
+                            <td>{{ ($userMap ?? [])[$pos['createdBy'] ?? ''] ?? 'Unknown User' }}</td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-approve" data-type="position" data-id="{{ $pos['positionId'] ?? '' }}" data-name="{{ $pos['positionName'] ?? '' }}" aria-label="Approve position {{ $pos['positionName'] ?? '' }}" style="background-color: #16a34a; color: #fff; border: none; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.75rem; margin-right: 0.25rem;">
                                     ✓ Approve

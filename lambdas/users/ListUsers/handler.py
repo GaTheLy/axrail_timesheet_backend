@@ -51,6 +51,9 @@ def list_users(event):
     else:
         response = table.scan()
         items = response.get("Items", [])
+        while "LastEvaluatedKey" in response:
+            response = table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+            items.extend(response.get("Items", []))
 
     # Apply additional client-side filters
     if "userType" in filter_input:

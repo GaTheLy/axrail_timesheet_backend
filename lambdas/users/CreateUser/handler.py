@@ -222,4 +222,70 @@ def create_user(event):
         GroupName=target_user_type,
     )
 
+    # Auto-create a Draft timesheet submission for the current period (user type only)
+    if target_user_type == "user":
+        try:
+            _create_draft_submission_for_current_period(user_id, now)
+        except Exception:
+            pass  # Don't fail user creation if submission creation fails
+
     return item
+
+
+def _create_draft_submission_for_current_period(employee_id, now):
+    """Find the current active period and create a Draft submission for the new user."""
+    from datetime import date, timedelta, timezone as tz
+    from decimal import Decimal
+
+    periods_table_name = os.environ.get("PERIODS_TABLE", "")
+    submissions_table_name = os.environ.get("SUBMISSIONS_TABLE", "")
+    if not periods_table_name or not submissions_table_name:
+        return
+
+    periods_table = dynamodb.Table(periods_table_name)
+    submissions_table = dynamodb.Table(submissions_table_name)
+
+    # Find the current active (unlocked) period
+    MYT = tz(timedelta(hours=8))
+    today = datetime.now(MYT).date()
+
+    from boto3.dynamodb.conditions import Attr
+    response = periods_table.scan(FilterExpression=Attr("isLocked").eq(False))
+    items = response.get("Items", [])
+
+    current_period = None
+    for item in items:
+        start = date.fromisoformat(str(item["startDate"]))
+        end = date.fromisoformat(str(item["endDate"]))
+        if start <= today <= end:
+            current_period = item
+            break
+
+    if not current_period:
+        return
+
+    period_id = current_period["periodId"]
+
+    # Check if submission already exists for this user + period
+    from boto3.dynamodb.conditions import Key
+    existing = submissions_table.query(
+        IndexName="periodId-status-index",
+        KeyConditionExpression=Key("periodId").eq(period_id),
+    )
+    for sub in existing.get("Items", []):
+        if sub.get("employeeId") == employee_id:
+            return  # Already has a submission
+
+    submission_id = str(uuid.uuid4())
+    submissions_table.put_item(Item={
+        "submissionId": submission_id,
+        "periodId": period_id,
+        "employeeId": employee_id,
+        "status": "Draft",
+        "archived": False,
+        "totalHours": Decimal("0"),
+        "chargeableHours": Decimal("0"),
+        "createdAt": now,
+        "updatedAt": now,
+        "updatedBy": employee_id,
+    })

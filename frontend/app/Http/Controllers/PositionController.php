@@ -30,9 +30,19 @@ class PositionController extends Controller
             $departments = $deptResult['listDepartments'] ?? [];
         } catch (\Exception $e) {}
 
+        // Build userId → fullName map for "Created By" column
+        $userMap = [];
+        try {
+            $usersResult = $graphql->query(GraphQLQueries::LIST_USERS);
+            foreach ($usersResult['listUsers']['items'] ?? [] as $u) {
+                $userMap[$u['userId']] = $u['fullName'] ?? $u['userId'];
+            }
+        } catch (\Exception $e) {}
+
         return view('pages.admin.positions', [
             'positions' => $positions,
             'departments' => $departments,
+            'userMap' => $userMap,
             'error' => null,
         ]);
     }

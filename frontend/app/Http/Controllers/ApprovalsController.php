@@ -64,10 +64,20 @@ class ApprovalsController extends Controller
             \Log::warning('Approvals: failed to load positions: ' . $e->getMessage());
         }
 
+        // Build userId → fullName map for "Created By" column
+        $userMap = [];
+        try {
+            $result = $graphql->query(GraphQLQueries::LIST_USERS);
+            foreach ($result['listUsers']['items'] ?? [] as $u) {
+                $userMap[$u['userId']] = $u['fullName'] ?? $u['userId'];
+            }
+        } catch (\Exception $e) {}
+
         return view('pages.admin.approvals', [
             'pendingProjects' => $pendingProjects,
             'pendingDepartments' => $pendingDepartments,
             'pendingPositions' => $pendingPositions,
+            'userMap' => $userMap,
         ]);
     }
 

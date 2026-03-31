@@ -190,7 +190,7 @@ class ReportsController extends Controller
 
                 $submissionRows[] = [
                     'employeeId' => $employeeId,
-                    'employeeName' => $userMap[$employeeId] ?? $employeeId,
+                    'employeeName' => $userMap[$employeeId] ?? 'Unknown User',
                     'chargeableHours' => $chargeableHours,
                     'totalHours' => $totalHours,
                     'currentChargeability' => $chargeability,
